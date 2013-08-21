@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>IMP admin console</h1>
+<h2>Agents</h2>
+<p>   
+<ul>
+{% for a in db.get_all_type(Agent) %}
+    <li><a href="/agent/{{ escape(a.id) }}">{{ escape(a.id) }}</a> ({{ len(a.resources) }})</li>
+{% end %}
+</ul>
+</p>
+{% end %}

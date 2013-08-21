@@ -1,0 +1,4 @@
+include LICENSE
+recursive-include docs *
+recursive-include src/Imp/server/template *
+recursive-include src/Imp/server/static *

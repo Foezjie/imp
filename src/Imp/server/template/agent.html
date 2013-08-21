@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>IMP admin console</h1>
+<h2>Agent {{ agent_id }}</h2>
+<p><ul>{% for r in agent.resources %}
+    <li><a href="/resource/{{ r.id }}">{{ r.id }}</a></li>
+{% end %}</ul>
+</p>
+{% end %}

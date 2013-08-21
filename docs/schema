@@ -1,0 +1,16 @@
+CREATE KEYSPACE imp;
+
+CREATE TABLE resources (
+    resource_id uuid,
+    type text,
+    hostname text,
+    attribute_name text,
+    attribute_value text
+);
+
+CREATE TABLE versions (
+    resource_id uuid,
+    version timestamp,
+    attributes map<text, text>,
+    requires version,resource_id 
+);

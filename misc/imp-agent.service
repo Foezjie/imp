@@ -1,0 +1,13 @@
+[Unit]
+Description=The agent of the IMP platform
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/imp -c /etc/imp/agent.cfg agent
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+

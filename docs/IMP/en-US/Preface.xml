@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE preface PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "IMP.ent">
+%BOOK_ENTITIES;
+]>
+<preface id="pref-IMP-Preface">
+	<title>Preface</title>
+
+    <section>
+        <title>History and acknowledgments</title>
+
+        <para>IMP is the integration of six years of research, three system
+        configuration tool prototypes, the use of most of the state-of-the-art
+        tools available on the market and hours of dicussions with system
+        administrators around the world that are doing the real work on a day
+        to day basis. This reasearch track was started in 2006 by Thomas Delaet
+        under the supervision of Wouter Joosen at DistriNet, KULeuven. In 2007
+        Bart Vanbrabant joined while working on this master thesis and in 2008
+        working full time on this research.</para>
+        
+        <para>This work would not have been possible without the support and
+        funding of DistriNet, KULeuven, iMinds and the two personal
+        scholarschips of the IWT.</para>
+    </section>
+
+    <section> <title>Feedback</title>
+
+        <para>Any feedback on this document or IMP itself can be directed
+    directly to the authors.</para>
+    </section>
+    
+ 	<xi:include href="Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</preface>
+

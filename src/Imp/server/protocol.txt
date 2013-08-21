@@ -1,0 +1,18 @@
+IMP stomp protocol
+==================
+
+Operations
+----------
+FACTS
+    Request an agent to return facts about the resource in the subject
+    
+FACTS_REPLY
+    The reply by an agent
+    
+IMP server rest protocol
+========================
+The rest protocol of the IMP server, this protocol is used primarily by the 
+compiler.
+
+Operations
+----------
