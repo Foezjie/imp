@@ -10,10 +10,10 @@ distributions already provide at least the python3 runtime. Additionally
 several libraries are used (from which some are embedded, see the 
 acknowledgments section for details):
     
-    * python3-amqplib
-    * python3-tornado
-    * python3-dateutil
-    * python3-apsw
+*   python3-amqplib
+*   python3-tornado
+*   python3-dateutil
+*   python3-apsw
 
 ## Install
 
@@ -31,24 +31,20 @@ Install IMP:
     python3 setup.py install
     
 Now the ``imp`` command should be available. 
+
+## Documentation
+
+Check the docs/sphinx directory of the source distribution.
     
-
-## Usage
-
-Execute the framework compiler:
-```bash
-PYTHONPATH=/path/to/installation/src imp
-```
-
 ## Acknowledgments
 
 IMP depends on a few libraries of which no stable Python3 port was available.
 To be able to use IMP and make distribution easier we embedded Python3 ports
 of the following libraries:
 
-    * Jinja2 (2.6)
-    * antlr3
-    * iplib
+*   Jinja2 (2.6)
+*   antlr3
+*   iplib
     
 These are mostly ports using 2to3 and some manual hacking and slashing of the 
 parts that IMP does not need.

@@ -17,10 +17,7 @@ Requires:       python3
 Requires:       python3-amqplib
 Requires:       python3-tornado
 Requires:       python3-dateutil
-Requires:       mysql-connector-python3
-Requires:       python3-PyYAML
 Requires:       python3-apsw
-Requires:       python3-bson
 
 Requires(pre):  shadow-utils
 
