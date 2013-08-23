@@ -419,3 +419,24 @@ def export_report(options, types):
         with open(path, "w+") as fd:
             fd.write(file.content)
         
+@export("dump",  "std::File", "std::Service", "std::Package")
+def export_dumpfiles(options, types):
+    prefix = "dump"
+    
+    if not os.path.exists(prefix):
+        os.mkdir(prefix)
+
+    for file in types["std::File"]:
+        path = os.path.join(prefix, file.host.name + file.path.replace("/", "+"))
+        with open(path, "w+") as fd:
+            fd.write(file.content)
+        
+    path = os.path.join(prefix, "services")
+    with open(path, "w+") as fd:    
+        for svc in types["std::Service"]:
+            fd.write("%s -> %s\n" % (svc.host.name, svc.name))
+
+    path = os.path.join(prefix, "packages")
+    with open(path, "w+") as fd:        
+        for pkg in types["std::Package"]:
+            fd.write("%s -> %s\n" % (pkg.host.name, pkg.name))
