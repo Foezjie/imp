@@ -266,7 +266,8 @@ class Agent(object):
         #if self._is_simulator:
         #    Simulator.instance = Simulator(path = "/tmp/simulator.pickl")
         
-        logging.basicConfig(filename=config["agent"]["logfile"],
+        if "agent" in config and "logfile" in config["agent"]:
+            logging.basicConfig(filename=config["agent"]["logfile"],
                             filemode='w', level=logging.DEBUG)
 
         if hostnames is None or len(hostnames) == 0:
