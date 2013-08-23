@@ -23,7 +23,7 @@ from . import persistence
 
 from amqplib import client_0_8 as amqp
 
-import sys, logging, os, time, re, json, threading, base64, datetime, bson
+import sys, logging, os, time, re, json, threading, base64, datetime
 import tornado.ioloop
 import tornado.web
 from tornado.web import StaticFileHandler, HTTPError
@@ -236,7 +236,8 @@ class ResourceUpdateHandler(tornado.web.RequestHandler):
         """
         payload = self.request.body
         if "Content-type" in self.request.headers and self.request.headers["Content-type"] == "application/ubjson":
-            resources = bson.parse_bytes(payload)
+            #resources = bson.parse_bytes(payload)
+            raise Exception("BSON not supported")
         else:
             resources = json.loads(payload.decode("utf-8"))
 
