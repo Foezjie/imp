@@ -51,7 +51,7 @@ def get_mgmt_server_from_model(root_scope):
     try:
         mgmt_server = root_scope.get_variable("ManagementServer", ["vm"]).value
     except Exception:
-        print("The agent module is not loaded or does not contain the definition of ManagementServer")
+        print("The vm module is not loaded or does not contain the definition of ManagementServer")
         return
         
     if len(mgmt_server) == 0:
