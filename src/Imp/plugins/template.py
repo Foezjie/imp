@@ -89,8 +89,7 @@ class TemplateStatement(CallStatement):
         """ 
             Execute this function
         """
-        if state.compiler.config.get("config", "template-stats"):
-            TemplateStats.instance = TemplateStats(self._template)
+        TemplateStats.instance = TemplateStats(self._template)
                 
         if self.is_file():
             template = self._env.get_template(self._template)
