@@ -15,6 +15,8 @@ acknowledgments section for details):
 *   python3-dateutil
 *   python3-apsw
 
+For the install python3-setuptools is also required.
+
 ## Install
 
 Download a tarball of IMP or checkout the latest from the git repository:
