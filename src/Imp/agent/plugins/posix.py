@@ -125,6 +125,12 @@ class PosixFileProvider(ResourceHandler):
             if attr_value != value and attr_value is not None:
                 changes[attr] = (value, attr_value)
                 
+        if "group" in changes and not "owner" in changes:
+            changes["owner"] = (status["owner"], resource.owner)
+
+        if "owner" in changes and not "group" in changes:
+            changes["group"] = (status["group"], resource.group)
+                
         return changes
     
     def _get_content(self, resource):
