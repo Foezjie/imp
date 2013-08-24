@@ -501,7 +501,6 @@ class DirectoryHandler(ResourceHandler):
     
     def list_changes(self, resource):
         status = self.check_resource(resource)
-        
         changes = {}
 
         if resource.purged:
@@ -520,7 +519,13 @@ class DirectoryHandler(ResourceHandler):
             attr_value = getattr(resource, attr) 
             if attr_value != value and attr_value is not None:
                 changes[attr] = (value, attr_value)
-                
+
+        if "group" in changes and not "owner" in changes:
+            changes["owner"] = (status["owner"], resource.owner)
+
+        if "owner" in changes and not "group" in changes:
+            changes["group"] = (status["group"], resource.group)
+         
         return changes
     
     def do_changes(self, resource):
