@@ -694,7 +694,7 @@ class SymlinkProvider(ResourceHandler):
     fi
 
     if [[ ! -h $TARGET || $(readlink $TARGET) != $SOURCE ]]; then
-        ln -f $SOURCE $TARGET
+        ln -sf $SOURCE $TARGET
     fi
 
 }
