@@ -99,6 +99,10 @@ def obj_to_id(obj):
     elif ("Package", ("std",)) in cls:
         type_name = "Package"
         id_attr = "name"
+        
+    elif ("Symlink", ("std,")) in cls:
+        type_name = "Symlink"
+        id_attr = "target"
     
     obj_id = "%s=%s" % (id_attr, getattr(obj, id_attr))
     
@@ -137,6 +141,15 @@ def create_host(exporter, host):
             "requires" : [obj_to_id(o) for o in f.requires],
         })
         
+    for f in host.symlinks:
+        exporter.add_resource({
+            "source" : f.source,
+            "target" : f.target,
+            "purged" : f.purged,
+            "id" : obj_to_id(f),
+            "requires" : [obj_to_id(o) for o in f.requires],
+        })
+        
     for f in host.services:
         exporter.add_resource({
             "name" : f.name,
@@ -156,7 +169,7 @@ def create_host(exporter, host):
         })
    
 
-@export("imp-agent", "std::File", "std::Package", "std::Service", "std::Directory")
+@export("imp-agent", "std::File", "std::Package", "std::Service", "std::Directory", "std::Symlink")
 def export_to_imp(exporter, types):
     config_scope = exporter.get_scope(["__config__"])
     

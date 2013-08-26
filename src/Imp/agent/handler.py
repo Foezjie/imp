@@ -105,6 +105,17 @@ class HandlerIO(object):
         """
         return os.path.exists(path)
     
+    def readlink(self, path):
+        """
+            Return the target of the path
+        """
+    
+    def is_symlink(self, path):
+        """
+            Is the given path a symlink
+        """
+        return os.path.islink(path)
+    
     def file_stat(self, path):
         """
             Do a statcall on a file

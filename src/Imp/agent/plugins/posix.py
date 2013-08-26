@@ -78,6 +78,17 @@ class Package(Resource):
         self.state = None
         self.reload = False
 
+@resource("Symlink")
+class Symlink(Resource):
+    """
+        A symbolic link on the filesystem
+    """
+    def __init__(self, _id):
+        Resource.__init__(self, _id)
+        
+        self.source = None
+        self.target = None
+        self.purged = False
         
 @provider(File)
 class PosixFileProvider(ResourceHandler):
@@ -590,3 +601,117 @@ class DirectoryHandler(ResourceHandler):
         """
         return "Directory %s %s %s %d %d" % (resource.path, resource.owner, 
             resource.group, resource.permissions, resource.purged)
+
+@provider(Symlink)
+class SymlinkProvider(ResourceHandler):
+    """
+        This handler can deploy symlinks on unix systems
+    """
+    def __init__(self, agent):
+        ResourceHandler.__init__(self, agent)
+        self._io = HandlerIO()
+    
+    @classmethod
+    def is_available(self):
+        return os.path.exists("/usr/bin/ln")
+    
+    def check_resource(self, resource):
+        status = {"purged" : False}
+         
+        if not self._io.file_exists(resource.target):
+            status["purged"] = True
+            
+        elif not self._io.is_symlink(resource.target):
+            raise Exception("The target of resource %s already exists but is not a symlink." % resource)
+            
+        else:
+            status = {"source" : self._io.readlink(resource.target)}
+        
+        return status 
+    
+    def list_changes(self, resource):
+        status = self.check_resource(resource)
+        
+        changes = {}
+
+        if resource.purged:
+            if status["purged"]:
+                return changes
+            
+            else:
+                changes["purged"] = (False, True)
+                return changes
+        
+        if status["purged"]:
+            changes["source"] = (None, resource.source)
+            changes["target"] = (None, resource.target)
+            
+        else:
+            changes["source"] = (status["source"], resource.source)
+            changes["target"] = (resource.target, resource.target)
+                
+        return changes
+    
+    def do_changes(self, resource):
+        changes = self.list_changes(resource)
+        changed = False
+        
+        if "purged" in changes and changes["purged"][1] == True:
+            self._io.remove(resource.path)
+            return
+        
+        if "hash" in changes:
+            data = self._get_content(resource)
+            self._io.put(resource.path, data)
+            changed = True
+        
+        if "permissions" in changes:
+            mode = int(str(int(changes["permissions"][1])), 8)
+            if not self._io.file_exists(resource.path):
+                raise Exception("Cannot change permissions of %s because does not exist" % resource.path)
+                
+            self._io.chmod(resource.path, mode)
+            changed = True
+            
+        if "owner" in changes or "group" in changes:
+            if not self._io.file_exists(resource.path):
+                raise Exception("Cannot change ownership of %s because does not exist" % resource.path)
+            
+            self._io.chown(resource.path, resource.owner, resource.group)
+            changed = True
+            
+        return changed
+
+    @classmethod
+    def shell_helper(cls):
+        """
+            The bash helper functions
+        """
+        return """function Symlink() {
+    SOURCE=$1
+    TARGET=$2
+    PURGED=$3
+    
+    echo "Symlink $TARGET"
+
+    if [[ $PURGED -eq 1 && -h $P ]]; then
+        sudo rm -f $P
+        return
+    fi
+    
+    if [[ ! -d $(dirname $TARGET) ]]; then
+        sudo mkdir -p $(dirname $TARGET)
+    fi
+
+    if [[ ! -h $TARGET || $(readlink $TARGET) != $SOURCE ]]; then
+        ln -f $SOURCE $TARGET
+    fi
+
+}
+"""
+            
+    def shell(self, resource):
+        """
+            A shell implementation
+        """
+        return "Symlink %s %s %s" % (resource.source, resource.target, resource.purged)

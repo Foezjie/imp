@@ -55,6 +55,10 @@ def deploy(config, root_scope):
         if host_id in item["id"]:
             agent.update(item)
 
+    if agent._queue.size() == 0:
+        print("No configuration found for host %s" % hostname)
+        return
+            
     print("Deploying config")
     while agent._queue.size() > 0:
         agent.deploy_config()
