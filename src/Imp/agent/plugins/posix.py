@@ -646,7 +646,7 @@ class SymlinkProvider(ResourceHandler):
             changes["source"] = (None, resource.source)
             changes["target"] = (None, resource.target)
             
-        else:
+        elif status["source"] != resource.source:
             changes["source"] = (status["source"], resource.source)
             changes["target"] = (resource.target, resource.target)
                 
@@ -656,28 +656,18 @@ class SymlinkProvider(ResourceHandler):
         changes = self.list_changes(resource)
         changed = False
         
-        if "purged" in changes and changes["purged"][1] == True:
-            self._io.remove(resource.path)
-            return
-        
-        if "hash" in changes:
-            data = self._get_content(resource)
-            self._io.put(resource.path, data)
-            changed = True
-        
-        if "permissions" in changes:
-            mode = int(str(int(changes["permissions"][1])), 8)
-            if not self._io.file_exists(resource.path):
-                raise Exception("Cannot change permissions of %s because does not exist" % resource.path)
+        if "purged" in changes:
+            if changes["purged"][1] == True:
+                self._io.remove(resource.path)
+                changed = True
+                return changed
+            
+            else:
+                self._io.symlink(changes["source"][1], changes["target"][1])
+                changed = True
                 
-            self._io.chmod(resource.path, mode)
-            changed = True
-            
-        if "owner" in changes or "group" in changes:
-            if not self._io.file_exists(resource.path):
-                raise Exception("Cannot change ownership of %s because does not exist" % resource.path)
-            
-            self._io.chown(resource.path, resource.owner, resource.group)
+        if "source" in changes:
+            self._io.symlink(changes["source"][1], changes["target"][1])
             changed = True
             
         return changed

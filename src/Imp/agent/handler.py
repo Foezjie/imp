@@ -109,6 +109,13 @@ class HandlerIO(object):
         """
             Return the target of the path
         """
+        return os.readlink(path)
+    
+    def symlink(self, source, target):
+        """
+            Symlink source to target
+        """
+        return os.symlink(source, target)
     
     def is_symlink(self, path):
         """
