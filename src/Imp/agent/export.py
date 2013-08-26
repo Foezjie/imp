@@ -100,7 +100,7 @@ def obj_to_id(obj):
         type_name = "Package"
         id_attr = "name"
         
-    elif ("Symlink", ("std,")) in cls:
+    elif ("Symlink", ("std",)) in cls:
         type_name = "Symlink"
         id_attr = "target"
     

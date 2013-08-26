@@ -625,7 +625,7 @@ class SymlinkProvider(ResourceHandler):
             raise Exception("The target of resource %s already exists but is not a symlink." % resource)
             
         else:
-            status = {"source" : self._io.readlink(resource.target)}
+            status["source"] = self._io.readlink(resource.target)
         
         return status 
     
