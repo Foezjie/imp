@@ -19,24 +19,37 @@ The framework exists of several components:
    * The central IMP server that stores states
    * IMP agents on each managed system that deploy configuration changes.
    
-In this section we will install the entire framework but only use the compiler
-with an embeded agent to deploy configuration changes. 
+In the remainder of this chaper we will install the framework but use on a 
+single machine.
 
-*Currently only Fedora is supported, both in the deployment agent and the 
-configuration modules.*
+.. note::
 
-*Because IMP is a tool to manage systems and their configuration, we recommand
-to start with IMP on a virtual machine to ensure that your current machine 
-keeps working as expected.*
+   Currently only Fedora is supported, both in the deployment agent and the 
+   configuration modules. Because IMP is a tool to manage systems and their 
+   configuration, we recommend to start with IMP on a virtual machine to ensure 
+   that your current machine keeps working as expected. This guide has been tested
+   on a Fedora 18 virtual machine.
 
-TODO: Virtual machine image download 
+.. warning::
+
+   DO NOT run this guide on your own machine, or it will be reconfigured. 
+   Use a fedora 18 VM, with hostname vm1 to be fully compatible with this guide. 
    
 Installing IMP
 ==============
 
 The source of IMP is available on GitHub at https://github.com/bartv/imp
-The Readme in the IMP code repository contains the infrastructions for
-checking out the code and installing it on your machine.
+On Fedora run the following commands to install dependencies, the python3 runtime
+and checking out imp and installing it.
+
+.. code-block:: sh
+
+   yum install -y python3-setuptools python3-amqplib python3-tornado \
+         python3-dateutil python3-apsw git
+   git clone https://github.com/bartv/imp
+   cd imp
+   python3 setup.py install
+   
 
 Create an IMP project
 =====================
@@ -59,17 +72,19 @@ Here we will create a directory ``quickstart`` with a basic configuration file.
    mkdir libs
    touch main.cf
 
-The configuration file defines that the library with modules is stored in ``libs``
-and when the configuration model is compiled, the imp-agent export plugin needs
-to be called. Additionally the compiler will look for a file called ``main.cf`` 
-to start the compilation from.
+The configuration file defines that re-usable modules are stored in ``libs``
+and when the configuration model is compiled, the imp-agent export plug-in needs
+to be called.
+
+The IMP compiler looks for a file called ``main.cf`` to start the compilation from.
+The last line, creates an empty file.
 
 In the next section we will re-use existing modules to deploy our LAMP stack.
 
 Re-use existing modules
 =======================
 
-At github many modules are already hosted that provide at least a meta-model with
+At github many modules are already hosted that provide a meta-model with
 configuration concepts and often an implementation for one or more operating
 systems. Our modules are available in the https://github.com/bartv/imp-* repositories.
 
@@ -134,11 +149,12 @@ website.
       user = "drupal_test", password = "Str0ng-P433w0rd")
    drupal::Site(vhost = vhost, database = db)
  
-On line 2 we define the server on which we want to deploy Drupal. The name 
-is the hostname of the machine, which is later used to determine what configuration
-needs to be deployed on which machine. The os attribute defines what operating
-system this server runs. This attribute can be used to create configuration
-modules that handle the heterogienity of different operating systems.
+On line 2 we define the server on which we want to deploy Drupal. The name is
+the hostname of the machine, which is later used to determine what
+configuration needs to be deployed on which machine. The os attribute defines
+what operating system this server runs. This attribute can be used to create
+configuration modules that handle the heterogienity of different operating
+systems.
 
 Lines 5 and 6 deploy an httpd server and mysql server on our server.
 
@@ -168,23 +184,8 @@ executing the deploy command in the IMP project.
    imp deploy
 
 
-Accessing your new Drupal install
----------------------------------
-
-Use ssh port-forwarding to forward port 80 on vm1 to your local machine, to
-port 2080 for example (ssh -L 2080:localhost:80). This allows you to surf to http://localhost:2080/ This is
-essential because the configuration model generates a named based virtual host 
-that matches the name *localhost*.
-
-On the first access the database will not have been initialised. Surf to
-http://localhost:2080/install.php
-
-The database has already been configured and Drupal should skip this setup to
-the point where you can configure details such as the admin user.
- 
-
-Remarks
--------
+Making it work
+--------------
 
 In a default fedora SELinux and the firewall are configured. This may cause
 problems because managing these services is not covered here. We recommend that
@@ -202,5 +203,27 @@ Or allow apache to connect to the network and open up port 80 in the firewall.
 
    setsebool httpd_can_network_connect true
    firewall-cmd --permanent --zone=public --add-service=http
+
+
+Accessing your new Drupal install
+---------------------------------
+
+Use ssh port-forwarding to forward port 80 on vm1 to your local machine, to
+port 2080 for example (ssh -L 2080:localhost:80). This allows you to surf to
+http://localhost:2080/ 
+
+.. warning::
+
+   Using "localhost" in the url is essential because the configuration model 
+   generates a named based virtual host that matches the name *localhost*.
+
+On the first access the database will not have been initialised. Surf to
+http://localhost:2080/install.php
+
+The database has already been configured and Drupal should skip this setup to
+the point where you can configure details such as the admin user.
+ 
+
+
    
 
