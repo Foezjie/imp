@@ -97,7 +97,7 @@ class HandlerIO(object):
         
         data = result.communicate()
         
-        return (data[0].strip().decode("utf-8"), data[1].strip().decode("utf-8"))
+        return (data[0].strip().decode("utf-8"), data[1].strip().decode("utf-8"), result.returncode)
     
     def file_exists(self, path):
         """
@@ -226,7 +226,7 @@ class ResourceHandler(object):
             changed = self.do_changes(resource)
             
         if changed:
-            LOGGER.debug("%s was changed" % resource.id)
+            LOGGER.info("%s was changed" % resource.id)
             
         self._agent.resource_updated(resource, reload_requires = changed)
         return self.shell(resource) + "\n"

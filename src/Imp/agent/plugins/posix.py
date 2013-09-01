@@ -349,6 +349,98 @@ class SystemdService(ResourceHandler):
         """
         return "Service %s %d %d" % (resource.name, resource.enabled == "true", resource.state == "running")
 
+@provider(Service)
+class ServiceService(ResourceHandler):
+    """
+        A handler for services on systems that use service
+    """
+    def __init__(self, agent):
+        ResourceHandler.__init__(self, agent)
+        self._io = HandlerIO()
+     
+    @classmethod   
+    def is_available(self):
+        return os.path.exists("/sbin/chkconfig") and os.path.exists("/sbin/service")
+    
+    def check_resource(self, resource):
+        exists = self._io.run("/sbin/chkconfig", ["--list", resource.name])[0]
+        
+        if re.search('error reading information on service', exists):
+            raise ResourceNotFoundExcpetion("The %s service does not exist" % resource.name)
+        
+        enabled = ":on" in self._io.run("/sbin/chkconfig", ["--list", resource.name])[0]
+        running = self._io.run("/sbin/service", [resource.name, "status"])[2] == 0
+
+        return {"state" : running, "enabled" : enabled}
+    
+    def list_changes(self, resource):
+        check_result = self.check_resource(resource)
+        
+        changes = {}
+        if (resource.state == "running") != check_result["state"]:
+            changes["state"] = (check_result["state"], resource.state == "running")
+            
+        if resource.enabled != check_result["enabled"]:
+            changes["enabled"] = (check_result["enabled"], resource.enabled)
+        
+        return changes
+        
+    def can_reload(self):
+        """
+            Can this handler reload?
+        """
+        return True
+    
+    def do_reload(self, resource):
+        """
+            Reload this resource
+        """
+        self._io.run("/sbin/service", [resource.name, "reload"])
+        
+    def do_changes(self, resource):
+        changes = self.list_changes(resource)
+        changed = False
+        
+        if "state" in changes and changes["state"][0] != changes["state"][1]:
+            action = "start"
+            if changes["state"][1] == False:
+                action = "stop" 
+            
+            # start or stop the service
+            result = self._io.run("/sbin/service", 
+                            [resource.name, action])
+            
+            if re.search("^Failed", result[1]):
+                raise Exception("Unable to %s %s: %s" % (action, resource.name, result[1]))
+            
+            changed = True
+            
+        if "enabled" in changes and changes["enabled"][0] != changes["enabled"][1]:
+            action = "on"
+            
+            if changes["enabled"][1] == False:
+                action = "off"
+                
+            result = self._io.run("/sbin/chkconfig", [resource.name, action])
+            changed = True
+            
+            if re.search("^Failed", result[1]):
+                raise Exception("Unable to %s %s: %s" % (action, resource.name, result[1]))
+            
+        return changed
+            
+    @classmethod
+    def shell_helper(cls):
+        """
+            The bash helper functions
+        """
+        return """"""
+
+    def shell(self, resource):
+        """
+            A shell implementation
+        """
+        return "Service %s %d %d" % (resource.name, resource.enabled == "true", resource.state == "running")
 
 @provider(Package)
 class YumPackage(ResourceHandler):
@@ -361,7 +453,8 @@ class YumPackage(ResourceHandler):
     
     @classmethod    
     def is_available(self):
-        return os.path.exists("/usr/bin/rpm") and os.path.exists("/usr/bin/yum")
+        return (os.path.exists("/usr/bin/rpm") or os.path.exists("/bin/rpm")) \
+            and os.path.exists("/usr/bin/yum")
     
     def _parse_fields(self, lines):
         props = {}
@@ -443,7 +536,7 @@ class YumPackage(ResourceHandler):
     
     def do_changes(self, resource):
         changes = self.list_changes(resource)
-        changed = True
+        changed = False
         
         if "state" in changes:
             if changes["state"][1] == "removed":
