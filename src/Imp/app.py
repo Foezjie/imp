@@ -145,10 +145,12 @@ def export(options, config, compile):
     export = Exporter(config)
     export.run(compile)
 
-@command("deploy", help = "Deploy the configuration model on the current machine", requires = ["compile"])    
+@command("deploy", help = "Deploy the configuration model on the current machine", 
+        requires = ["compile"],
+        arguments = (("-r", "Deploy on this remote host", "remote"),))    
 def deploy(options, config, compile):
     from Imp.deploy import deploy
-    deploy(config, compile)
+    deploy(config, compile, remote = options.remote)
     
 @command("client", help = "A client to send commands to IMP agents", arguments = \
          (("cmd", "The command to run"),))

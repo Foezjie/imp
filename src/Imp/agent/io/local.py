@@ -121,13 +121,20 @@ class LocalIO(object):
 
 if __name__ == '__channelexec__':
     local_io = LocalIO()
-    fd = open("/tmp/execnet.log", "a+")
+#    fd = open("/tmp/execnet.log", "a+")
     for item in channel:
         if hasattr(local_io, item[0]):
-            fd.write("Calling %s with args %s\n" % item)
-            method = getattr(local_io, item[0])
-            result = method(*item[1])
-            fd.write("Got result %s\n" % result)
+#            fd.write("Calling %s with args %s\n" % item)
+            try:
+                method = getattr(local_io, item[0])
+                result = method(*item[1])
+#                fd.write("Got result %s\n" % repr(result))
+            except Exception as e:
+#                import traceback
+#                fd.write(str(e) + "\n")
+#                fd.write(str(traceback.format_exc()))
+                pass
+                
             channel.send(result)
         else:
             raise AttributeError("Method %s is not supported" % item[0])

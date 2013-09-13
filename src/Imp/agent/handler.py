@@ -17,8 +17,9 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import subprocess, logging, os, hashlib, grp, pwd
+import logging
 from collections import defaultdict
+from Imp.agent.io import get_io
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,26 +31,18 @@ class Commander(object):
     __handlers = {}
     
     @classmethod
-    def get_provider(cls, agent, resource, simulate = False):
+    def get_provider(cls, agent, resource):
         """
             Return a provider to handle the given resource
         """
         resource_type = type(resource)
+        io = get_io(agent._hostnames, agent.remote)
+
         
         if resource_type in cls.__command_functions:
-            for is_simulator, hndlr in cls.__command_functions[resource_type]:
-                if not simulate and not is_simulator and hndlr.is_available():
-#                     if hndlr not in cls.__handlers:
-#                         cls.__handlers[hndlr] = hndlr(agent)
-#                         
-#                     return cls.__handlers[hndlr]
+            for _simulator, hndlr in cls.__command_functions[resource_type]:
+                if hndlr.is_available(io):
                     return hndlr(agent)
-                
-                elif simulate and is_simulator:
-                    if hndlr not in cls.__handlers:
-                        cls.__handlers[hndlr] = hndlr(agent)
-                    
-                    return cls.__handlers[hndlr]
                 
         raise Exception("No resource handler registered for resource of type %s" % resource_type)
         
@@ -74,106 +67,7 @@ class provider(object):
         """
         Commander.add_provider(self._resource_type, self._simulate, function)
         return function
-    
-class HandlerIO(object):
-    """
-        This class provides handler IO methods
-    """
-    def hash_file(self, path):
-        sha1sum = hashlib.sha1()
-        with open(path, 'rb') as f:
-            for chunk in iter(lambda: f.read(32768), b''):
-                sha1sum.update(chunk)
-        
-        return sha1sum.hexdigest()
-    
-    def run(self, command, arguments = []):
-        """
-            Execute a command with the given argument and return the result
-        """
-        cmds = [command] + arguments
-        result = subprocess.Popen(cmds, stdout = subprocess.PIPE, 
-                                  stderr = subprocess.PIPE)
-        
-        data = result.communicate()
-        
-        return (data[0].strip().decode("utf-8"), data[1].strip().decode("utf-8"), result.returncode)
-    
-    def file_exists(self, path):
-        """
-            Check if a given file exists
-        """
-        return os.path.exists(path)
-    
-    def readlink(self, path):
-        """
-            Return the target of the path
-        """
-        return os.readlink(path)
-    
-    def symlink(self, source, target):
-        """
-            Symlink source to target
-        """
-        return os.symlink(source, target)
-    
-    def is_symlink(self, path):
-        """
-            Is the given path a symlink
-        """
-        return os.path.islink(path)
-    
-    def file_stat(self, path):
-        """
-            Do a statcall on a file
-        """
-        stat_result = os.stat(path)
-        status = {}
-        status["owner"] = pwd.getpwuid(stat_result.st_uid).pw_name
-        status["group"] = grp.getgrgid(stat_result.st_gid).gr_name
-        status["permissions"] = int(oct(stat_result.st_mode)[-4:])
-        
-        return status
-    
-    def remove(self, path):
-        """
-            Remove a file
-        """
-        return os.remove(path)
-    
-    def put(self, path, content):
-        """
-            Put the given content at the given path
-        """
-        with open(path, "wb+") as fd:
-            fd.write(content)
-            
-    def chown(self, path, user, group):
-        """
-            Change the ownership information
-        """
-        uid = pwd.getpwnam(user)
-        gid = grp.getgrnam(group)
-        os.chown(path, uid.pw_uid, gid.gr_gid)
-        
-    def chmod(self, path, permissions):
-        """
-            Change the permissions
-        """
-        os.chmod(path, permissions)
-        
-    def mkdir(self, path):
-        """
-            Create a directory
-        """
-        os.mkdir(path)
-        
-    def rmdir(self, path):
-        """
-            Remove a directory
-        """
-        os.rmdir(path)
-
+  
     
 class ResourceHandler(object):
     """
@@ -181,9 +75,10 @@ class ResourceHandler(object):
     """
     def __init__(self, agent):
         self._agent = agent
+        self._io = get_io(self._agent._hostnames, self._agent.remote)
     
     @classmethod
-    def is_available(self):
+    def is_available(self, io):
         """
             Check if this handler is available on the current system
         """

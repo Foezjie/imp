@@ -253,18 +253,15 @@ class Agent(object):
         An agent to enact changes upon resources. This agent listens to the 
         message bus for changes.
     """
-    def __init__(self, config, simulate, hostnames = None, offline = False, deploy = True):
+    def __init__(self, config, simulate, hostnames = None, offline = False, 
+                 deploy = True, remote = False):
         self._config = config
         self.offline = offline
         self.deploy = deploy
         self._offline_files = None
+        self.remote = remote
         
         self._sched = Scheduler()
-        
-        self._is_simulator = simulate
-        
-        #if self._is_simulator:
-        #    Simulator.instance = Simulator(path = "/tmp/simulator.pickl")
         
         if "agent" in config and "logfile" in config["agent"]:
             logging.basicConfig(filename=config["agent"]["logfile"],
@@ -354,7 +351,7 @@ class Agent(object):
         res_obj = resource.create(res)
             
         try:
-            provider = Commander.get_provider(self, res_obj, self._is_simulator)
+            provider = Commander.get_provider(self, res_obj)
         except Exception:
             LOGGER.error("Unable to find a handler for %s" % res_obj.id)
             
@@ -376,7 +373,7 @@ class Agent(object):
         """
         if operation == "PING":
             LOGGER.info("Got ping request, sending pong back")
-            response = {"hostname" : self._hostnames, "simulator" : self._is_simulator }
+            response = {"hostname" : self._hostnames }
             
             self._mq_send("control", "PONG", response)
             
@@ -394,7 +391,7 @@ class Agent(object):
             res_obj = resource.create(message)
             
             try:
-                provider = Commander.get_provider(self, res_obj, self._is_simulator)
+                provider = Commander.get_provider(self, res_obj)
             except Exception:
                 LOGGER.error("Unable to find a handler for %s" % res_obj.id)
             
@@ -409,7 +406,7 @@ class Agent(object):
             res_obj = resource.create(message)
             
             try:
-                provider = Commander.get_provider(self, res_obj, self._is_simulator)
+                provider = Commander.get_provider(self, res_obj)
             except Exception:
                 LOGGER.error("Unable to find a handler for %s" % res_obj.id)
             
@@ -511,7 +508,7 @@ class Agent(object):
             Broadcast a ping to let everyone know we are here
         """
         LOGGER.info("Sending out a ping")
-        response = {"hostname" : self._hostnames, "simulator" : self._is_simulator }
+        response = {"hostname" : self._hostnames }
         self._mq_send("control", "PONG", response)
             
     def deploy_config(self):
@@ -531,9 +528,9 @@ class Agent(object):
                 break
             
             try:
-                provider = Commander.get_provider(self, resource, self._is_simulator)
+                provider = Commander.get_provider(self, resource)
             except Exception as e:
-                LOGGER.error("Unable to find a handler for %s" % resource.id)
+                LOGGER.exception("Unable to find a handler for %s" % resource.id, e)
                 
                 # TODO: submit failure
                 self._queue.remove(resource)

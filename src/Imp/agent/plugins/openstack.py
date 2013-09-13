@@ -17,7 +17,7 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-from Imp.agent.handler import provider, ResourceHandler, HandlerIO
+from Imp.agent.handler import provider, ResourceHandler
 from Imp.agent.resources import Resource, resource
 
 import os, re, logging, json, tempfile, urllib, time
@@ -330,11 +330,10 @@ class VMHandler(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
     
     @classmethod
-    def is_available(self):
-        return os.path.exists("/usr/bin/nova") and os.path.exists("/usr/bin/quantum")
+    def is_available(self, io):
+        return io.file_exists("/usr/bin/nova") and io.file_exists("/usr/bin/quantum")
     
     def get_os_arguments(self, cloud_name):
         """
@@ -533,11 +532,10 @@ class SSHKeyHandler(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
     
     @classmethod
-    def is_available(self):
-        return os.path.exists("/usr/bin/nova")
+    def is_available(self, io):
+        return io.file_exists("/usr/bin/nova")
     
     def get_os_arguments(self, cloud_name):
         """

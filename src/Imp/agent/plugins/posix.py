@@ -18,7 +18,7 @@
 """
 
 from Imp.agent.resources import Resource, resource, ResourceNotFoundExcpetion
-from Imp.agent.handler import provider, ResourceHandler, HandlerIO
+from Imp.agent.handler import provider, ResourceHandler
 
 import os, re, logging
 
@@ -97,10 +97,9 @@ class PosixFileProvider(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
     
     @classmethod
-    def is_available(self):
+    def is_available(self, io):
         return True
     
     def check_resource(self, resource):
@@ -233,11 +232,10 @@ class SystemdService(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
      
     @classmethod   
-    def is_available(self):
-        return os.path.exists("/usr/bin/systemctl")
+    def is_available(self, io):
+        return io.file_exists("/usr/bin/systemctl")
     
     def check_resource(self, resource):
         exists = self._io.run("/usr/bin/systemctl", ["status", "%s.service" % resource.name])[0]
@@ -356,11 +354,10 @@ class ServiceService(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
      
     @classmethod   
-    def is_available(self):
-        return os.path.exists("/sbin/chkconfig") and os.path.exists("/sbin/service")
+    def is_available(self, io):
+        return io.file_exists("/sbin/chkconfig") and io.file_exists("/sbin/service")
     
     def check_resource(self, resource):
         exists = self._io.run("/sbin/chkconfig", ["--list", resource.name])[0]
@@ -449,12 +446,11 @@ class YumPackage(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
     
     @classmethod    
-    def is_available(self):
-        return (os.path.exists("/usr/bin/rpm") or os.path.exists("/bin/rpm")) \
-            and os.path.exists("/usr/bin/yum")
+    def is_available(self, io):
+        return (io.file_exists("/usr/bin/rpm") or io.file_exists("/bin/rpm")) \
+            and io.file_exists("/usr/bin/yum")
     
     def _parse_fields(self, lines):
         props = {}
@@ -591,10 +587,9 @@ class DirectoryHandler(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
      
     @classmethod   
-    def is_available(self):
+    def is_available(self, io):
         return True
     
     def check_resource(self, resource):
@@ -702,11 +697,10 @@ class SymlinkProvider(ResourceHandler):
     """
     def __init__(self, agent):
         ResourceHandler.__init__(self, agent)
-        self._io = HandlerIO()
     
     @classmethod
-    def is_available(self):
-        return os.path.exists("/usr/bin/ln")
+    def is_available(self, io):
+        return io.file_exists("/usr/bin/ln")
     
     def check_resource(self, resource):
         status = {"purged" : False}

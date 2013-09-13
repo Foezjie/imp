@@ -25,7 +25,7 @@ class RemoteIO(object):
         This class provides handler IO methods
     """
     def __init__(self, host):
-        self._gw = execnet.makegateway("ssh=root@" + host + "//python=/usr/bin/python3")
+        self._gw = execnet.makegateway("ssh=root@" + host + "//python=/usr/bin/python")
     
     def _execute(self, function_name, *args):
         ch = self._gw.remote_exec(local)
@@ -40,6 +40,7 @@ class RemoteIO(object):
             channel.
         """
         def call(*args):
-            self._execute(name, *args)
+            result = self._execute(name, *args)
+            return result
             
         return call

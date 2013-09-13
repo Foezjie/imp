@@ -17,15 +17,21 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import socket, json
+import socket, json, time
 
 from Imp.agent import Agent
 from Imp.export import Exporter
 
-def deploy(config, root_scope):
+def deploy(config, root_scope, remote = None):
     deploy_host = None
     all_names = []
-    hostname = socket.gethostname()
+    if remote is None:
+        hostname = socket.gethostname()
+    else:
+        hostname = remote
+    
+    print("Deploying on %s" % hostname)
+        
     try:
         servers = root_scope.get_variable("Host", ["std"]).value
         
@@ -47,7 +53,7 @@ def deploy(config, root_scope):
     json_data = export.run(root_scope, offline = True)
     files = export.get_offline_files()
     
-    agent = Agent(config, False, hostname, offline = True, deploy = True)
+    agent = Agent(config, False, hostname, offline = True, deploy = True, remote = (remote is not None))
     agent._offline_files = files
 
     host_id = "[%s," % deploy_host.name
@@ -62,5 +68,6 @@ def deploy(config, root_scope):
     print("Deploying config")
     while agent._queue.size() > 0:
         agent.deploy_config()
+        time.sleep(1)
     
     
