@@ -222,8 +222,4 @@ http://localhost:2080/install.php
 
 The database has already been configured and Drupal should skip this setup to
 the point where you can configure details such as the admin user.
- 
-
-
-   
 
