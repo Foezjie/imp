@@ -390,7 +390,8 @@ def export_report(options, types):
         # first, generate stats about each host
         fd.write("hostname, files, services, packages, directories\n")
         for host in types["std::Host"]:
-            fd.write("%s,%d,%d,%d,%d\n" % (host.name, len(host.files), len(host.services), len(host.packages), len(host.directories)))
+            fd.write("%s,%d,%d,%d,%d\n" % (host.name, len(host.files), 
+                len(host.services), len(host.packages), len(host.directories)))
 
     report = defaultdict(int)
     with open(prefix + "_parameters.csv", "w+") as fd:
@@ -429,7 +430,10 @@ def export_dumpfiles(options, types):
     for file in types["std::File"]:
         path = os.path.join(prefix, file.host.name + file.path.replace("/", "+"))
         with open(path, "w+") as fd:
-            fd.write(file.content)
+            if isinstance(file.content, Unknown):
+                fd.write("UNKNOWN -> error")
+            else:
+                fd.write(file.content)
         
     path = os.path.join(prefix, "services")
     with open(path, "w+") as fd:    
