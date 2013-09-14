@@ -20,7 +20,7 @@
 from Imp.agent.resources import Resource, resource, ResourceNotFoundExcpetion
 from Imp.agent.handler import provider, ResourceHandler
 
-import os, re, logging
+import re, logging
 
 LOGGER = logging.getLogger(__name__)
 
@@ -29,67 +29,36 @@ class Service(Resource):
     """
         This class represents a service on a system.
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.enabled = None
-        self.state = None
-        self.name = None
-        
+    fields = ("enabled", "state", "name")
+    
 @resource("File")
 class File(Resource):
     """
         A file on a filesystem
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.path = None
-        self.owner = None
-        self.hash = None
-        self.group = None
-        self.permissions = None
-        self.purged = False
-        self.reload = False
-        
+    fields = ("path", "owner", "hash", "group", "permissions", "purged", "reload")
+    
 @resource("Directory")
 class Directory(Resource):
     """
         A directory on a filesystem
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        self.path = None
-        self.owner = None
-        self.group = None
-        self.permissions = None
-        self.purged = False
-        self.reload = False
-
+    fields = ("path", "owner", "group", "permissions", "purged", "reload")
+    
 @resource("Package")
 class Package(Resource):
     """
         A software package installed on an operating system.
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.name = None
-        self.state = None
-        self.reload = False
-
+    fields = ("name", "state", "reload")
+    
 @resource("Symlink")
 class Symlink(Resource):
     """
         A symbolic link on the filesystem
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.source = None
-        self.target = None
-        self.purged = False
-        
+    fields = ("source", "target", "purged")
+    
 @provider(File)
 class PosixFileProvider(ResourceHandler):
     """
@@ -179,52 +148,6 @@ class PosixFileProvider(ResourceHandler):
             
         return changed
 
-    @classmethod
-    def shell_helper(cls):
-        """
-            The bash helper functions
-        """
-        return """function File() {
-    P=$1
-    OWNER=$2
-    GROUP=$3
-    PERM=$4
-    PURGED=$5
-    HASH=$6
-    
-    echo "File $P"
-
-    if [[ $PURGED -eq 1 && -a $P ]]; then
-        sudo rm -f $P
-        return
-    fi
-    
-    if [[ ! -d $(dirname $P) ]]; then
-        sudo mkdir -p $(dirname $P)
-    fi
-
-    if [[ ! -f $P || $(sha1sum $P | cut -f 1 -d " ") != $HASH ]]; then
-        if [[ -a files/$HASH ]]; then
-            sudo cp -va files/$HASH $P
-        else
-            echo "$HASH for $P not found."
-            exit
-        fi
-    fi
-
-    sudo chown $OWNER:$GROUP $P
-    sudo chmod $PERM $P
-}
-"""
-            
-    def shell(self, resource):
-        """
-            A shell implementation
-        """
-        return "File %s %s %s %d %s %s" % (resource.path, resource.owner, 
-            resource.group, resource.permissions, resource.purged, resource.hash)
-        
-
 @provider(Service)
 class SystemdService(ResourceHandler):
     """
@@ -307,46 +230,6 @@ class SystemdService(ResourceHandler):
             
         return changed
             
-    @classmethod
-    def shell_helper(cls):
-        """
-            The bash helper functions
-        """
-        return """function Service() {
-    # name
-    # enabled
-    # running
-    NAME=$1
-    ENABLED=$2
-    RUNNING=$3
-    
-    echo "Service $NAME"
-
-    if [[ -n $(/usr/bin/systemctl status "$NAME.service" | grep "Loaded: error") ]]; then
-        echo "Service $NAME does not exist." >&2
-        return
-    fi
-
-    if [[ $ENABLED -eq 1 ]]; then
-        sudo /usr/bin/systemctl enable $NAME
-    else
-        sudo /usr/bin/systemctl disable $NAME
-    fi
-
-    if [[ $RUNNING -eq 1 ]]; then
-        sudo /usr/bin/systemctl start $NAME
-    else
-        sudo /usr/bin/systemctl stop $NAME
-    fi
-}
-"""
-
-    def shell(self, resource):
-        """
-            A shell implementation
-        """
-        return "Service %s %d %d" % (resource.name, resource.enabled == "true", resource.state == "running")
-
 @provider(Service)
 class ServiceService(ResourceHandler):
     """
@@ -426,19 +309,6 @@ class ServiceService(ResourceHandler):
             
         return changed
             
-    @classmethod
-    def shell_helper(cls):
-        """
-            The bash helper functions
-        """
-        return """"""
-
-    def shell(self, resource):
-        """
-            A shell implementation
-        """
-        return "Service %s %d %d" % (resource.name, resource.enabled == "true", resource.state == "running")
-
 @provider(Package)
 class YumPackage(ResourceHandler):
     """
@@ -547,36 +417,6 @@ class YumPackage(ResourceHandler):
             changed = True
         
         return changed
-            
-    @classmethod
-    def shell_helper(cls):
-        """
-            The bash helper functions
-        """
-        return """function Package() {
-    NAME=$1
-    STATE=$2
-    ARGS="-d 0 -e 0 -y"
-
-    echo "Package $NAME"
-
-    if [[ $STATE == "installed" ]]; then
-        sudo yum $ARGS install $NAME
-    elif [[ $STATE == "removed" ]]; then
-        sudo yum $ARGS remove $NAME
-    elif [[ $STATE == "latest" ]]; then
-        sudo yum $ARGS install $NAME
-        sudo yum $ARGS update $NAME
-    fi
-}
-"""
-
-    def shell(self, resource):
-        """
-            A shell implementation
-        """
-        return "Package %s %s" % (resource.name, resource.state) 
-
 
 @provider(Directory)
 class DirectoryHandler(ResourceHandler):
@@ -655,41 +495,6 @@ class DirectoryHandler(ResourceHandler):
             
         return changed
         
-    @classmethod
-    def shell_helper(cls):
-        """
-            The bash helper functions
-        """
-        return """function Directory() {
-    P=$1
-    OWNER=$2
-    GROUP=$3
-    PERM=$4
-    PURGED=$5
-    
-    echo "Directory $P"
-   
-    if [[ $PURGED -eq 1 && -d $P ]]; then
-        sudo rm -f $P
-        return
-    fi
-
-    if [[ ! -d $P ]]; then
-        sudo mkdir $P
-    fi
-
-    sudo chown $OWNER:$GROUP $P
-    sudo chmod $PERM $P
-}
-"""
-
-    def shell(self, resource):
-        """
-            A shell implementation
-        """
-        return "Directory %s %s %s %d %d" % (resource.path, resource.owner, 
-            resource.group, resource.permissions, resource.purged)
-
 @provider(Symlink)
 class SymlinkProvider(ResourceHandler):
     """
@@ -759,36 +564,3 @@ class SymlinkProvider(ResourceHandler):
             
         return changed
 
-    @classmethod
-    def shell_helper(cls):
-        """
-            The bash helper functions
-        """
-        return """function Symlink() {
-    SOURCE=$1
-    TARGET=$2
-    PURGED=$3
-    
-    echo "Symlink $TARGET"
-
-    if [[ $PURGED -eq 1 && -h $P ]]; then
-        sudo rm -f $P
-        return
-    fi
-    
-    if [[ ! -d $(dirname $TARGET) ]]; then
-        sudo mkdir -p $(dirname $TARGET)
-    fi
-
-    if [[ ! -h $TARGET || $(readlink $TARGET) != $SOURCE ]]; then
-        ln -sf $SOURCE $TARGET
-    fi
-
-}
-"""
-            
-    def shell(self, resource):
-        """
-            A shell implementation
-        """
-        return "Symlink %s %s %s" % (resource.source, resource.target, resource.purged)

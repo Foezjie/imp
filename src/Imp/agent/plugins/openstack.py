@@ -32,51 +32,28 @@ class VirtualMachine(Resource):
     """
         A virtual machine managed by a hypervisor or IaaS
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.hostname = None
-        self.type = None
-        self.image = None
-        self.public_key = None
-        self.user_data = None
-        
+    fields = ("hostname", "type", "image", "public_key", "user_data")
+    
 @resource("SSHKey")
 class SSHKey(Resource):
     """
         An sshkey deployed to an IaaS
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.name = None
-        self.value = None
+    fields = ("name", "value")
 
 @resource("Tenant")
 class Tenant(Resource):
     """
         A tenant/project in openstack
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.name = None
-        self.description = None
-        self.enabled = None
+    fields = ("name", "description", "enabled")
 
 @resource("User")  
 class User(Resource):
     """
         A user in openstack
     """
-    def __init__(self, _id):
-        Resource.__init__(self, _id)
-        
-        self.name = None
-        self.email = None
-        self.enabled = None
-        self.tenant = None
-        
+    fields = ("name", "email", "enabled", "tenant")
 
 class OpenstackAPI(object):
     """

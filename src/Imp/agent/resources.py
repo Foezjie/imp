@@ -91,6 +91,13 @@ class Resource(object):
         
         self.requires = {}
         
+        if not hasattr(self.__class__, "fields"):
+            raise Exception("A resource should have a list of fields")
+        
+        else:
+            for field in self.__class__.fields:
+                setattr(self, field, None)
+        
     def add_require(self, rid, version):
         """
             This resource required resource with id $rid to be at version $version
@@ -107,7 +114,7 @@ class Resource(object):
             del self.requires[rid]
             
         return len(self.requires) == 0
-            
+    
     def __str__(self):
         return self.id
     
