@@ -22,7 +22,7 @@ import socket, json, time
 from Imp.agent import Agent
 from Imp.export import Exporter
 
-def deploy(config, root_scope, remote = None):
+def deploy(config, root_scope, remote = None, dry_run = True):
     deploy_host = None
     all_names = []
     if remote is None:
@@ -53,7 +53,7 @@ def deploy(config, root_scope, remote = None):
     json_data = export.run(root_scope, offline = True)
     files = export.get_offline_files()
     
-    agent = Agent(config, False, hostname, offline = True, deploy = True, remote = (remote is not None))
+    agent = Agent(config, False, hostname, offline = True, deploy = not dry_run, remote = (remote is not None))
     agent._offline_files = files
 
     host_id = "[%s," % deploy_host.name

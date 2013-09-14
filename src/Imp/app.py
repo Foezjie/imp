@@ -147,7 +147,8 @@ def export(options, config, compile):
 
 @command("deploy", help = "Deploy the configuration model on the current machine", 
         requires = ["compile"],
-        arguments = (("-r", "Deploy on this remote host", "remote"),))    
+        arguments = (("-r", "Deploy on this remote host", "remote"),
+                     ("--dry-run", "Only report changes", "store_true", "dryrun")))    
 def deploy(options, config, compile):
     from Imp.deploy import deploy
     deploy(config, compile, remote = options.remote)

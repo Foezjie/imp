@@ -116,29 +116,21 @@ class ResourceHandler(object):
         """
             Update the given resource
         """
+        print(resource)
         changed = False
         if deploy:
             changed = self.do_changes(resource)
-            
+
         if changed:
             LOGGER.info("%s was changed" % resource.id)
-            
+        
         self._agent.resource_updated(resource, reload_requires = changed)
-        return self.shell(resource) + "\n"
+        
+        return changed
         
     def facts(self, resource):
         """
             Returns facts about this resource
         """ 
         return {}
-    
-    def shell(self, resource):
-        """
-            Return the shell implementation for this change
-        """
-        return ""
-    
-    @classmethod
-    def shell_helper(cls):
-        return ""
     

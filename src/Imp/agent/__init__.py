@@ -517,9 +517,6 @@ class Agent(object):
         """
         LOGGER.debug("Execute deploy config")
         
-        offline_script = ""
-        offline_functions = {}
-
         LOGGER.info("Need to update %d resources" % self._queue.size())        
         while self._queue.size() > 0:
             resource = self._queue.pop()
@@ -537,15 +534,12 @@ class Agent(object):
                 continue
                     
             try:
-                offline_script += provider.execute(resource, self.deploy)
+                provider.execute(resource, self.deploy)
                 
                 if resource.do_reload and provider.can_reload():
                     LOGGER.warning("Reloading %s because of updated dependencies" % resource.id)
                     provider.do_reload(resource)
                         
-                if provider.__class__.__name__ not in offline_functions:
-                    offline_functions[provider.__class__.__name__] = provider.__class__.shell_helper()
-
                 LOGGER.debug("Finished %s" % resource)
                 self._queue.remove(resource)
             except Exception as e:
@@ -554,7 +548,7 @@ class Agent(object):
                 self._queue.remove(resource)
 
                     
-        return (offline_functions, offline_script)
+        return
     
     
     def _server_connection(self):
