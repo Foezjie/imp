@@ -151,7 +151,7 @@ def export(options, config, compile):
                      ("--dry-run", "Only report changes", "store_true", "dryrun")))    
 def deploy(options, config, compile):
     from Imp.deploy import deploy
-    deploy(config, compile, remote = options.remote)
+    deploy(config, compile, remote = options.remote, dry_run = options.dryrun)
     
 @command("client", help = "A client to send commands to IMP agents", arguments = \
          (("cmd", "The command to run"),))

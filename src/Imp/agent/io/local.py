@@ -17,7 +17,7 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import hashlib, subprocess, os, pwd, grp
+import hashlib, subprocess, os, pwd, grp, shutil
   
 class LocalIO(object):
     """
@@ -92,13 +92,11 @@ class LocalIO(object):
         with open(path, "wb+") as fd:
             fd.write(content)
             
-    def chown(self, path, user, group):
+    def chown(self, path, user = None, group = None):
         """
             Change the ownership information
         """
-        uid = pwd.getpwnam(user)
-        gid = grp.getgrnam(group)
-        os.chown(path, uid.pw_uid, gid.gr_gid)
+        shutil.chown(path, user, group)
         
     def chmod(self, path, permissions):
         """

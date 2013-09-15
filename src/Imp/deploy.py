@@ -30,7 +30,7 @@ def deploy(config, root_scope, remote = None, dry_run = True):
     else:
         hostname = remote
     
-    print("Deploying on %s" % hostname)
+    print("Deploying on %s (dry-run = %s)" % (hostname, dry_run))
         
     try:
         servers = root_scope.get_variable("Host", ["std"]).value

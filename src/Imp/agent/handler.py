@@ -116,13 +116,18 @@ class ResourceHandler(object):
         """
             Update the given resource
         """
-        print(resource)
         changed = False
         if deploy:
             changed = self.do_changes(resource)
-
-        if changed:
-            LOGGER.info("%s was changed" % resource.id)
+            if changed:
+                LOGGER.info("%s was changed" % resource.id)
+        else:
+            changes = self.list_changes(resource)
+            if len(changes) > 0:
+                LOGGER.info("%s needs an update" % resource.id)
+                for attribute,values in changes.items():
+                    LOGGER.info("\tAttribute %s: %s => %s" % (attribute, values[0], values[1]))
+                    
         
         self._agent.resource_updated(resource, reload_requires = changed)
         

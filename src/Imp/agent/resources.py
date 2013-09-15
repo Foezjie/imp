@@ -17,7 +17,7 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import re, logging
+import re, logging, copy
 
 LOGGER = logging.getLogger(__name__)
 
@@ -120,6 +120,17 @@ class Resource(object):
     
     def __repr__(self):
         return self.id
+    
+    def clone(self):
+        cl = copy.copy(self)
+        
+        for field in cl.__class__.fields:
+            setattr(cl, field, None)
+            
+        id_value = getattr(self, self._parsed_id["attr"])
+        setattr(cl, self._parsed_id["attr"], id_value)
+        
+        return cl
         
 def parse_id(resource_id):
     """

@@ -72,26 +72,30 @@ class PosixFileProvider(ResourceHandler):
         return True
     
     def check_resource(self, resource):
-        status = {"purged" : False, "hash" : 0}
+        current = resource.clone()
+
+        current.purged = False
+        current.reload = resource.reload
+        current.hash = 0
          
         if not self._io.file_exists(resource.path):
-            status["purged"] = True
+            current.purged = True
             
         else:
-            status["hash"] = self._io.hash_file(resource.path)
+            current.hash = self._io.hash_file(resource.path)
             
-            stat_result = self._io.file_stat(resource.path)
-            status.update(stat_result)
+            for key,value in self._io.file_stat(resource.path).items():
+                setattr(current, key, value)
         
-        return status 
+        return current 
     
     def list_changes(self, resource):
-        status = self.check_resource(resource)
+        current = self.check_resource(resource)
         
         changes = {}
 
         if resource.purged:
-            if status["purged"]:
+            if current.purged:
                 return changes
             
             else:
@@ -99,16 +103,12 @@ class PosixFileProvider(ResourceHandler):
                 return changes
         
         # check attributes
-        for attr, value in status.items():
-            attr_value = getattr(resource, attr) 
-            if attr_value != value and attr_value is not None:
-                changes[attr] = (value, attr_value)
-                
-        if "group" in changes and not "owner" in changes:
-            changes["owner"] = (status["owner"], resource.owner)
-
-        if "owner" in changes and not "group" in changes:
-            changes["group"] = (status["group"], resource.group)
+        for field in current.__class__.fields:
+            current_value = getattr(current, field)
+            desired_value = getattr(resource, field)
+            
+            if current_value != desired_value and desired_value is not None:
+                changes[field] = (current_value, desired_value)
                 
         return changes
     
@@ -465,12 +465,6 @@ class DirectoryHandler(ResourceHandler):
             if attr_value != value and attr_value is not None:
                 changes[attr] = (value, attr_value)
 
-        if "group" in changes and not "owner" in changes:
-            changes["owner"] = (status["owner"], resource.owner)
-
-        if "owner" in changes and not "group" in changes:
-            changes["group"] = (status["group"], resource.group)
-         
         return changes
     
     def do_changes(self, resource):
