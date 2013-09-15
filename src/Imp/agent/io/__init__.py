@@ -19,7 +19,9 @@
 
 from .local import LocalIO
 from .remote import RemoteIO
+from Imp.execute.util import memoize
 
+@memoize
 def get_io(hostname, remote = False):
     """
         Get an IO instance.
