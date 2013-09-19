@@ -174,7 +174,7 @@ class Client(object):
             A method called when a reply is received for an info request
         """
         LOGGER.info("Received an info reponse")
-        self._stack["info"] = message        
+        self._stack["info"].append(message)        
         
     def on_facts_reply(self, message):
         """
@@ -275,10 +275,10 @@ class Client(object):
             
     def info(self, agent):
         """
-            Retrieve the current queue of a configuration agent
+            Retrieve the current info of a configuration agent
         """
         wait = 2
-        self._stack["info"] = None
+        self._stack["info"] = []
 
         request = {"agent" : agent}
         self._mq_send("control", "INFO", request)
@@ -290,14 +290,11 @@ class Client(object):
         agents = {}
         agent_list = []
         for response in self._stack["info"]:
+            print(response)
             agent_id = ", ".join(response["source"])
             agents[agent_id] = response
             agent_list.append(agent_id)
-            
-        
-            
-        
-            
+
     def deploy(self, agent):
         """
             Force a deploy of the current queue
