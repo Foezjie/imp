@@ -84,6 +84,19 @@ class ResourceHandler(object):
         """
         raise NotImplementedError()
     
+    def _diff(self, current, desired):
+        changes = {}
+        
+        # check attributes
+        for field in current.__class__.fields:
+            current_value = getattr(current, field)
+            desired_value = getattr(desired, field)
+            
+            if current_value != desired_value and desired_value is not None:
+                changes[field] = (current_value, desired_value)
+                
+        return changes
+    
     def can_reload(self):
         """
             Can this handler reload?

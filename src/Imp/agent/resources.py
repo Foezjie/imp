@@ -121,11 +121,14 @@ class Resource(object):
     def __repr__(self):
         return self.id
     
-    def clone(self):
+    def clone(self, **kwargs):
         cl = copy.copy(self)
         
         for field in cl.__class__.fields:
-            setattr(cl, field, None)
+            if field in kwargs:
+                setattr(cl, field, kwargs[field])
+            else:
+                setattr(cl, field, None)
             
         id_value = getattr(self, self._parsed_id["attr"])
         setattr(cl, self._parsed_id["attr"], id_value)

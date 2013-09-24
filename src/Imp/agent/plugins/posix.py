@@ -72,12 +72,8 @@ class PosixFileProvider(ResourceHandler):
         return True
     
     def check_resource(self, resource):
-        current = resource.clone()
+        current = resource.clone(purged = False, reload = resource.reload, hash = 0)
 
-        current.purged = False
-        current.reload = resource.reload
-        current.hash = 0
-         
         if not self._io.file_exists(resource.path):
             current.purged = True
             
@@ -89,27 +85,17 @@ class PosixFileProvider(ResourceHandler):
         
         return current 
     
-    def list_changes(self, resource):
-        current = self.check_resource(resource)
-        
-        changes = {}
+    def list_changes(self, desired):
+        current = self.check_resource(desired)
+        changes = self._diff(current, desired)
 
-        if resource.purged:
+        if desired.purged:
             if current.purged:
-                return changes
+                return {}
             
             else:
-                changes["purged"] = (False, True)
-                return changes
+                return {"purged": (False, True)}
         
-        # check attributes
-        for field in current.__class__.fields:
-            current_value = getattr(current, field)
-            desired_value = getattr(resource, field)
-            
-            if current_value != desired_value and desired_value is not None:
-                changes[field] = (current_value, desired_value)
-                
         return changes
     
     def _get_content(self, resource):
@@ -161,6 +147,8 @@ class SystemdService(ResourceHandler):
         return io.file_exists("/usr/bin/systemctl")
     
     def check_resource(self, resource):
+        current = resource.clone()
+        
         exists = self._io.run("/usr/bin/systemctl", ["status", "%s.service" % resource.name])[0]
         
         if re.search('Loaded: error', exists):
@@ -171,18 +159,17 @@ class SystemdService(ResourceHandler):
         enabled = self._io.run("/usr/bin/systemctl", 
                             ["is-enabled", "%s.service" % resource.name])[0] == "enabled"
 
-        return {"state" : running, "enabled" : enabled}
-    
-    def list_changes(self, resource):
-        check_result = self.check_resource(resource)
-        
-        changes = {}
-        if (resource.state == "running") != check_result["state"]:
-            changes["state"] = (check_result["state"], resource.state == "running")
+        if running:
+            current.state = "running"
+        else:
+            current.state = "stopped"
             
-        if resource.enabled != check_result["enabled"]:
-            changes["enabled"] = (check_result["enabled"], resource.enabled)
-        
+        current.enabled = enabled
+        return current
+    
+    def list_changes(self, desired):
+        current = self.check_resource(desired)
+        changes = self._diff(current, desired)
         return changes
         
     def can_reload(self):
@@ -203,7 +190,7 @@ class SystemdService(ResourceHandler):
         
         if "state" in changes and changes["state"][0] != changes["state"][1]:
             action = "start"
-            if changes["state"][1] == False:
+            if changes["state"][1] == "stopped":
                 action = "stop" 
             
             # start or stop the service
@@ -243,6 +230,7 @@ class ServiceService(ResourceHandler):
         return io.file_exists("/sbin/chkconfig") and io.file_exists("/sbin/service")
     
     def check_resource(self, resource):
+        current = resource.clone()
         exists = self._io.run("/sbin/chkconfig", ["--list", resource.name])[0]
         
         if re.search('error reading information on service', exists):
@@ -251,18 +239,17 @@ class ServiceService(ResourceHandler):
         enabled = ":on" in self._io.run("/sbin/chkconfig", ["--list", resource.name])[0]
         running = self._io.run("/sbin/service", [resource.name, "status"])[2] == 0
 
-        return {"state" : running, "enabled" : enabled}
+        current.enabled = enabled
+        if running:
+            current.state = "running"
+        else:
+            current.state = "stopped"
+        
+        return current
     
-    def list_changes(self, resource):
-        check_result = self.check_resource(resource)
-        
-        changes = {}
-        if (resource.state == "running") != check_result["state"]:
-            changes["state"] = (check_result["state"], resource.state == "running")
-            
-        if resource.enabled != check_result["enabled"]:
-            changes["enabled"] = (check_result["enabled"], resource.enabled)
-        
+    def list_changes(self, desired):
+        current = self.check_resource(desired)
+        changes = self._diff(current, desired)
         return changes
         
     def can_reload(self):
@@ -283,8 +270,8 @@ class ServiceService(ResourceHandler):
         
         if "state" in changes and changes["state"][0] != changes["state"][1]:
             action = "start"
-            if changes["state"][1] == False:
-                action = "stop" 
+            if changes["state"][1] == "stopped":
+                action = "stop"
             
             # start or stop the service
             result = self._io.run("/sbin/service", 
@@ -433,38 +420,28 @@ class DirectoryHandler(ResourceHandler):
         return True
     
     def check_resource(self, resource):
-        status = {"purged" : False}
-         
+        current = resource.clone(purged = False)
+        
         if not self._io.file_exists(resource.path):
-            status["purged"] = True
+            current.purged = True
             
         else:
-            stat_result = self._io.file_stat(resource.path)
-            status.update(stat_result)
+            for key,value in self._io.file_stat(resource.path).items():
+                setattr(current, key, value)
         
-        return status
+        return current
     
     def list_changes(self, resource):
-        status = self.check_resource(resource)
-        changes = {}
+        current = self.check_resource(resource)
 
         if resource.purged:
-            if status["purged"]:
-                return changes
+            if current.purged:
+                return {}
             
             else:
-                changes["purged"] = (False, True)
-                return changes
-            
-        if status["purged"]:
-            changes["purged"] = (True, False)
-        
-        # check attributes
-        for attr, value in status.items():
-            attr_value = getattr(resource, attr) 
-            if attr_value != value and attr_value is not None:
-                changes[attr] = (value, attr_value)
+                return {"purged": (False, True)}
 
+        changes = self._diff(current, resource)
         return changes
     
     def do_changes(self, resource):
@@ -502,38 +479,38 @@ class SymlinkProvider(ResourceHandler):
         return io.file_exists("/usr/bin/ln")
     
     def check_resource(self, resource):
-        status = {"purged" : False}
-         
+        current = resource.clone(purged = False)
+
         if not self._io.file_exists(resource.target):
-            status["purged"] = True
+            current.purged = True
             
         elif not self._io.is_symlink(resource.target):
             raise Exception("The target of resource %s already exists but is not a symlink." % resource)
             
         else:
-            status["source"] = self._io.readlink(resource.target)
+            current.source = self._io.readlink(resource.target)
         
-        return status 
+        return current
     
     def list_changes(self, resource):
-        status = self.check_resource(resource)
+        current = self.check_resource(resource)
         
         changes = {}
 
         if resource.purged:
-            if status["purged"]:
-                return changes
+            if current.purged:
+                return {}
             
             else:
                 changes["purged"] = (False, True)
                 return changes
         
-        if status["purged"]:
+        if current.purged:
             changes["source"] = (None, resource.source)
             changes["target"] = (None, resource.target)
             
-        elif status["source"] != resource.source:
-            changes["source"] = (status["source"], resource.source)
+        elif current.source != resource.source:
+            changes["source"] = (current.source, resource.source)
             changes["target"] = (resource.target, resource.target)
                 
         return changes
