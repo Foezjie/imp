@@ -271,6 +271,8 @@ class Agent(object):
             self._hostnames = [self._get_hostname()]
         else:
             self._hostnames = hostnames
+            
+        self._hostnames = tuple(self._hostnames)
     
         self._config = config
         self.stop = False
@@ -417,7 +419,7 @@ class Agent(object):
                     LOGGER.exception("Unable to retrieve fact")
                     self._mq_send("control", "FACTS_REPLY", {"subject" : res_obj.id, "code": 404})
             except Exception:
-                LOGGER.error("Unable to find a handler for %s" % res_obj.id)
+                LOGGER.exception("Unable to find a handler for %s" % res_obj.id)
             
         elif operation == "QUEUE":
             response = {"queue" : ["%s,v=%d" % (x.id, x.version) for x in self._queue.all()]}
