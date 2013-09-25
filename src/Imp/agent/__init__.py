@@ -407,18 +407,18 @@ class Agent(object):
             
             try:
                 provider = Commander.get_provider(self, res_obj)
+                
+                try:
+                    result = provider.facts(res_obj)
+                    response = {"operation" : "FACTS_REPLY", "subject" : res_obj.id, "facts" : result}
+                    self._mq_send("control", "FACTS_REPLY", response)
+                    
+                except Exception:
+                    LOGGER.exception("Unable to retrieve fact")
+                    self._mq_send("control", "FACTS_REPLY", {"subject" : res_obj.id, "code": 404})
             except Exception:
                 LOGGER.error("Unable to find a handler for %s" % res_obj.id)
             
-            try:
-                result = provider.facts(res_obj)
-                response = {"operation" : "FACTS_REPLY", "subject" : res_obj.id, "facts" : result}
-                self._mq_send("control", "FACTS_REPLY", response)
-                
-            except Exception:
-                LOGGER.exception("Unable to retrieve fact")
-                self._mq_send("control", "FACTS_REPLY", {"subject" : res_obj.id, "code": 404})
-                
         elif operation == "QUEUE":
             response = {"queue" : ["%s,v=%d" % (x.id, x.version) for x in self._queue.all()]}
                 

@@ -1,12 +1,12 @@
-Name:           imp
-Version:        0.9.1
+Name:           python-imp
+Version:        0.9.3
 Release:        1%{?dist}
 Summary:        Infrastructure management platform
 
 Group:          Development/Languages
 License:        LGPLv2+
 URL:            http://distrinet.cs.kuleuven.be
-Source0:        http://distrinet.cs.kuleuven.be/%{name}-%{version}.tar.gz
+Source0:        http://distrinet.cs.kuleuven.be/imp-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -26,6 +26,7 @@ Requires:       python3
 Requires:       python3-amqplib
 Requires:       python3-tornado
 Requires:       python3-dateutil
+Requires:       python3-execnet
 #Requires:       python3-apsw
 
 Requires(pre):  shadow-utils
@@ -33,7 +34,7 @@ Requires(pre):  shadow-utils
 %description
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n imp-%{version}
 
 %build
 %{__python3} setup.py build
@@ -60,7 +61,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc LICENSE docs/*
-%{python3_sitelib}/%{name}-%{version}-py?.?.egg-info
+%{python3_sitelib}/imp-%{version}-py?.?.egg-info
 %{python3_sitelib}/Imp
 %{_bindir}/imp
 %attr(-, imp, imp) %{_localstatedir}/lib/imp

@@ -3,8 +3,8 @@ from setuptools import setup
 setup(
     name = "imp",
     package_dir = {"" : "src" },
-    packages = ["Imp.jinja2", "Imp.jinja2._markupsafe", "Imp.antlr3", "Imp.parser", "Imp.export", "Imp", "Imp.ast.constraint", "Imp.ast.statements", "Imp.ast", "Imp.plugins", "Imp.compiler", "Imp.execute", "Imp.agent", "Imp.server", "Imp.agent.plugins", "Imp.stats"],
-    version = "0.9.1",
+    packages = ["Imp.jinja2", "Imp.jinja2._markupsafe", "Imp.antlr3", "Imp.parser", "Imp.export", "Imp", "Imp.ast.constraint", "Imp.ast.statements", "Imp.ast", "Imp.plugins", "Imp.compiler", "Imp.execute", "Imp.agent", "Imp.server", "Imp.agent.plugins", "Imp.stats", "Imp.agent.io"],
+    version = "0.9.3",
     description = "Infrastructure management platform",
     author = "Bart Vanbrabant",
     author_email = "bart.vanbrabant@cs.kuleuven.be",
