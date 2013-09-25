@@ -64,9 +64,6 @@ class PosixFileProvider(ResourceHandler):
     """
         This handler can deploy files on a unix system
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-    
     @classmethod
     def is_available(self, io):
         return True
@@ -139,9 +136,6 @@ class SystemdService(ResourceHandler):
     """
         A handler for services on systems that use systemd
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-     
     @classmethod   
     def is_available(self, io):
         return io.file_exists("/usr/bin/systemctl")
@@ -222,9 +216,6 @@ class ServiceService(ResourceHandler):
     """
         A handler for services on systems that use service
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-     
     @classmethod   
     def is_available(self, io):
         return io.file_exists("/sbin/chkconfig") and io.file_exists("/sbin/service")
@@ -301,9 +292,6 @@ class YumPackage(ResourceHandler):
     """
         A Package handler that uses yum
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-    
     @classmethod    
     def is_available(self, io):
         return (io.file_exists("/usr/bin/rpm") or io.file_exists("/bin/rpm")) \
@@ -412,9 +400,6 @@ class DirectoryHandler(ResourceHandler):
         
         TODO: add recursive operations
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-     
     @classmethod   
     def is_available(self, io):
         return True
@@ -471,9 +456,6 @@ class SymlinkProvider(ResourceHandler):
     """
         This handler can deploy symlinks on unix systems
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-    
     @classmethod
     def is_available(self, io):
         return io.file_exists("/usr/bin/ln")

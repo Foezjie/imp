@@ -272,8 +272,6 @@ class Agent(object):
         else:
             self._hostnames = hostnames
             
-        self._hostnames = tuple(self._hostnames)
-    
         self._config = config
         self.stop = False
         self._dm = DependencyManager()

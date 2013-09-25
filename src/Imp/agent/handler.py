@@ -36,12 +36,12 @@ class Commander(object):
             Return a provider to handle the given resource
         """
         resource_type = type(resource)
-        io = get_io(agent._hostnames, agent.remote)
+        io = get_io(resource._parsed_id["hostname"], agent.remote)
         
         if resource_type in cls.__command_functions:
             for _simulator, hndlr in cls.__command_functions[resource_type]:
                 if hndlr.is_available(io):
-                    return hndlr(agent)
+                    return hndlr(agent, io)
                 
         raise Exception("No resource handler registered for resource of type %s" % resource_type)
         
@@ -72,9 +72,13 @@ class ResourceHandler(object):
     """
         A baseclass for classes that handle resource on a platform
     """
-    def __init__(self, agent):
+    def __init__(self, agent, io = None):
         self._agent = agent
-        self._io = get_io(self._agent._hostnames, self._agent.remote)
+        
+        if io is None:
+            self._io = get_io(self._agent._hostnames, self._agent.remote)
+        else:
+            self._io = io
     
     @classmethod
     def is_available(self, io):

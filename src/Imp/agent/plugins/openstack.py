@@ -305,9 +305,6 @@ class VMHandler(ResourceHandler):
     """
         This class handles managing openstack resources
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-    
     @classmethod
     def is_available(self, io):
         return io.file_exists("/usr/bin/nova") and io.file_exists("/usr/bin/quantum")
@@ -507,9 +504,6 @@ class SSHKeyHandler(ResourceHandler):
     """
         This class handles managing ssh key in openstack
     """
-    def __init__(self, agent):
-        ResourceHandler.__init__(self, agent)
-    
     @classmethod
     def is_available(self, io):
         return io.file_exists("/usr/bin/nova")
