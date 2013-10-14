@@ -127,13 +127,15 @@ if __name__ == '__channelexec__':
                 method = getattr(local_io, item[0])
                 result = method(*item[1])
 #                fd.write("Got result %s\n" % repr(result))
+#
+                channel.send(result)
             except Exception as e:
-#                import traceback
+                import traceback
 #                fd.write(str(e) + "\n")
 #                fd.write(str(traceback.format_exc()))
+                channel.send(str(traceback.format_exc())
                 pass
                 
-            channel.send(result)
         else:
             raise AttributeError("Method %s is not supported" % item[0])
     fd.close()
