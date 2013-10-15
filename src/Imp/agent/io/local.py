@@ -133,7 +133,7 @@ if __name__ == '__channelexec__':
                 import traceback
 #                fd.write(str(e) + "\n")
 #                fd.write(str(traceback.format_exc()))
-                channel.send(str(traceback.format_exc())
+                channel.send(str(traceback.format_exc()))
                 pass
                 
         else:
