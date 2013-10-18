@@ -1,5 +1,5 @@
 Name:           python-imp
-Version:        0.9.4
+Version:        0.9.5
 Release:        1%{?dist}
 Summary:        Infrastructure management platform
 
@@ -27,7 +27,7 @@ Requires:       python3-amqplib
 Requires:       python3-tornado
 Requires:       python3-dateutil
 Requires:       python3-execnet
-#Requires:       python3-apsw
+Requires:       python3-apsw
 
 Requires(pre):  shadow-utils
 

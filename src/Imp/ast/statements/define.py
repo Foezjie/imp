@@ -257,7 +257,7 @@ class DefineTypeConstraint(DefinitionStatement):
             Evaluate this statement. 
         """
         basetype = state.get_type("basetype")
-        constraint_type = ConstraintType(basetype)
+        constraint_type = ConstraintType(basetype, self.namespace, self.name)
         constraint_type.constraint = self.expression
         
         local_scope.add_variable(self.name, Variable(constraint_type))
@@ -387,7 +387,7 @@ class DefineEnum(DefinitionStatement):
             
             enum_type = local_scope.get_variable(self.enum_type.name, namespace).value
         except Exception as _exp:
-            enum_type = Enum(self.enum_type)
+            enum_type = Enum(self.enum_type, "::".join(self.enum_type.namespace))
             _var = Variable(enum_type)
             
             if namespace is None:

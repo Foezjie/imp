@@ -263,6 +263,12 @@ class Entity(Type, QList):
         """
         return "Entity(%s)" % self.name
     
+    def __str__(self):
+        """
+            The pretty string of this type
+        """
+        return "%s::%s" % (self.namespace, self.name)
+    
     @classmethod
     def cast(cls, value):
         """

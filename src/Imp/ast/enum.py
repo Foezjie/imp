@@ -21,10 +21,11 @@ from Imp.ast.type import Type
 
 class Enum(Type):
     """
-        A tree enumeration type to create ontology like trees in Westmalle.
+        A tree enumeration type to create ontology like trees in IMP.
     """
-    def __init__(self, name):
+    def __init__(self, name, namespace = ""):
         self._name = name
+        self._namespace = namespace
         
         self._items = {}
         self._in = {}
@@ -74,4 +75,14 @@ class Enum(Type):
             return False
         
         return self.is_child_of(self._in[child], parent)
+        
+    def __repr__(self):
+        """
+            A sensible representation for debugging
+        """
+        return "Enum(%s)" % self.name
+    
+    def __str__(self):
+        return self.name
+        
         

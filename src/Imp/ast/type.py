@@ -92,6 +92,9 @@ class Number(Type):
             return float(value)
         except ValueError:
             raise CastException()
+        
+    def __str__(self):
+        return "number"
     
 class Bool(Type):
     """ 
@@ -124,6 +127,9 @@ class Bool(Type):
         
         raise CastException()
     
+    def __str__(self):
+        return "bool"
+    
 class NoneType(Type):
     """ 
         This class represents an undefined value in the configuration model.
@@ -150,6 +156,9 @@ class NoneType(Type):
             defined on this type.
         """
         return None
+    
+    def __str__(self):
+        return "none"
     
 class String(Type, str):
     """ 
@@ -180,6 +189,9 @@ class String(Type, str):
             raise ValueError("Invalid value '%s'" % value)
         
         return True
+    
+    def __str__(self):
+        return "string"
 
 class ConstraintType(Type):
     """ 
@@ -189,11 +201,13 @@ class ConstraintType(Type):
         
         The constraint on this type is defined by a regular expression.
     """
-    def __init__(self, base_type):
+    def __init__(self, base_type, namespace, name):
         Type.__init__(self)
         
         self.__base_type = base_type        # : ConstrainableType
         self._constraint = None
+        self.name = name
+        self.namespace = namespace
     
     def get_base_type(self):
         """ 
@@ -239,5 +253,8 @@ class ConstraintType(Type):
             raise ValueError("Invalid value '%s'" % value)
         
         return True
+    
+    def __str__(self):
+        return "%s::%s" % (self.namespace, self.name)
 
 TYPES = {"string" : String, "number" : Number, "bool" : Bool, "list" : QList}
