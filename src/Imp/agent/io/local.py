@@ -138,4 +138,4 @@ if __name__ == '__channelexec__':
                 
         else:
             raise AttributeError("Method %s is not supported" % item[0])
-    fd.close()
+#    fd.close()
