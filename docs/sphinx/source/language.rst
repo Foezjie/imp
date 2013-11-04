@@ -35,7 +35,7 @@ Assigning literal values to variables::
     var2 = 3.14 # assign a float, var2 also contains a number
     var3 = "This is a string" # var3 contains a string
 
-    # var 4 and 5 are both floats
+    # var 4 and 5 are both booleans
     var4 = true
     var5 = false
 
@@ -134,7 +134,7 @@ encapsulation.
 Interpolating strings::
 
    hostname = "wwwserv1.example.org"
-   mtod = """Welcome to {{{hostname }}}\n"
+   motd = """Welcome to {{{hostname }}}\n"""
 
 
 Templates
@@ -216,7 +216,7 @@ added.
 Entites can inherit from multiple other entities, thus multiple 
 inheritance. Inheritance implies that an entity inherits attributes and 
 relations from parent entities. Inheritance also introduces a 
-&quot;is-a&quot; relationship. It is however not possible to override 
+"is-a" relationship. It is however not possible to override 
 or rename attributes. Entities that do not explicitly inherit from an 
 other entity inherit from ``std::Entity``
 
@@ -246,8 +246,8 @@ Defining entities in a configuration model::
       number mode = 640
    end
 
-   motd_file = File(path = &quot;/etc/motd&quot;)
-   motd_file.content = &quot;Hello world\n&quot; 
+   motd_file = File(path = "/etc/motd")
+   motd_file.content = "Hello world\n"
 
    entity ConfigFile extends File:
 
