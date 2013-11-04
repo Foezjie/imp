@@ -21,7 +21,7 @@ from Imp.execute.proxy import DynamicProxy, UnknownException
 from Imp.ast.statements.call import ExpressionState
 from Imp.execute.util import Unknown
 
-import inspect, subprocess 
+import inspect, subprocess, os
 
 class Context(object):
     """
@@ -44,6 +44,18 @@ class Context(object):
             Get the given variable
         """
         return DynamicProxy.return_value(self.scope.get_variable(name, scope).value)
+    
+    def get_data_dir(self):
+        """
+            Get the path to the data dir (and create if it does not exist yet
+        """
+        data_dir = os.path.join("data", self.scope.name)
+        
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir, exist_ok = True)
+            
+        return data_dir
+    
 
 class PluginMeta(type):
     """
