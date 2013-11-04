@@ -22,6 +22,7 @@ import os, subprocess, pickle, time, re, json, hashlib, logging, urllib
 from http import client
 from Imp.execute.util import Unknown
 from Imp.server.client import get_client
+from Imp.resources import resource, Resource
 
 from collections import defaultdict
 from Imp.execute import NotFoundException
@@ -112,15 +113,20 @@ class Exporter(object):
             
         return values
             
-                
-    def run(self, scope, offline = False):
+    def _load_resources(self, scope):
         """
-            Run the export functions
+            Load all registered resources
         """
-        self._offline = offline
-        self._scope = scope
-        self._version = int(time.time())
-        
+        entities = resource.get_entity_resources()
+        for entity in entities:
+            instances = self._get_instances_of_types([entity])
+            for instance in instances[entity]:
+                self.add_resource(Resource.create_from_model(self, entity, instance))
+    
+    def _run_export_plugins(self):
+        """
+            Run any additional export plug-ins
+        """
         export = []
         for pl in self.config.get("config", "export").split(","):
             export.append(pl.strip())
@@ -139,6 +145,20 @@ class Exporter(object):
             else:
                 function(self)
                 
+    def run(self, scope, offline = False):
+        """
+        Run the export functions
+        """
+        self._offline = offline
+        self._scope = scope
+        self._version = int(time.time())
+        
+        # first run other export plugins
+        self._run_export_plugins()
+        
+        # then process the configuration model to submit it to the mgmt server
+        self._load_resources(scope)
+                
         # filter out any resource that belong to hosts that have unknown values
         for res_id in list(self._resources.keys()):
             host = self._resource_to_host[res_id]
@@ -150,17 +170,19 @@ class Exporter(object):
             hosts = sorted(list(self._unknown_hosts))                
             for host in hosts:
                 LOGGER.info(" - %s" % host)
+
+        json_data = self.resources_to_json()
         
         if len(self._resources) > 0 and not offline:   
-            self.commit_resources(self._version)
+            self.commit_resources(self._version, json_data)
         
         LOGGER.info("Committed resources with version %d" % self._version)
         
-        return json.dumps(list(self._resources.values())).encode("utf-8")
+        return json_data
         
     def get_variable(self, name):
         """
-            Searches a variables and returns its value.
+        Searches a variables and returns its value.
         """
         parts = name.split("::")
         variable_name = parts[-1]
@@ -175,7 +197,7 @@ class Exporter(object):
     
     def get_scope(self, scope_name):
         """
-            Return the scope with the given name
+        Return the scope with the given name
         """
         return self._scope.get_scope(["__config__"])
     
@@ -188,48 +210,52 @@ class Exporter(object):
             A resource is a map of attributes. This method validates the id 
             of the resource and will add a version (if it is not set already)
         """
-        result = re.search(RESOURCE_ID_RE, resource["id"])
+        if resource.version > 0:
+            raise Exception("Versions should not be added to resources during model compilation.")
         
-        if result is None:
-            raise Exception("Invalid id for resource %s" % resource[id])
-        
-        if result.group("version") is not None and "version" not in resource:
-            raise Exception("If a version is added to the id the version attribute should also be set.")
-                
-        for value in resource.values():
-            if isinstance(value, Unknown):
-                self._unknown_hosts.add(result.group("hostname"))
-                self._unknown_objects.add(Exporter.get_id(value.source))
-                self._unknown_per_host[result.group("hostname")].add(resource["id"])
-                LOGGER.debug("Host %s has unknown values (in resource %s), discarding resources for this host" % (result.group("hostname"), resource["id"]))
-                return
+        for unknown in resource.unknowns:
+            value = getattr(resource, unknown)
+            self._unknown_hosts.add(resource.id.agent_name)
+            self._unknown_objects.add(Exporter.get_id(value.source))
             
-        if result.group("hostname") in self._unknown_hosts:
+            self._unknown_per_host[resource.id.agent_name].add(str(resource.id))
+            LOGGER.debug("Host %s has unknown values (in resource %s), discarding resources for this host" % (resource.id.agent_name, resource.id))
+            return
+        
+        if resource.id.agent_name in self._unknown_hosts:
             return
                 
-        if "version" not in resource:
-            resource["version"] = self._version
-            resource["gid"] = resource["id"]
-            resource["id"] += ",v=%d" % self._version
-            
-        # add a version to the requires
-        if "requires" in resource:
-            new_req = []
-            for req in resource["requires"]:
-                new_req.append(req + ",v=%d" % self._version)
-            
-            resource["requires"] = new_req
-        
-        else:
-            resource["requires"] = []
-        
-        self._resources[resource["id"]] = resource
-        self._resource_to_host[resource["id"]] = result.group("hostname")
-        
+        resource.set_version(self._version)
 
-    def commit_resources(self, version):
+        self._resources[resource.id] = resource
+        self._resource_to_host[resource.id] = resource.id.agent_name
+
+
+    def resources_to_json(self):
         """
-            Commit the entire list of resource to the configuration server.
+        Convert the resource list to a json representation
+        @return: A json string
+        """
+        resources = []
+
+        for resource in self._resources.values():
+            # replace requires with the correct resources
+            new_requires = set()
+            for require in resource.requires:
+                o = Resource.get_resource(require)
+                if o is None:
+                    print(resource.requires)
+                    raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, resource))
+
+                new_requires.add(o)
+
+            resource.requires = new_requires
+            resources.append(resource.serialize())
+        return json.dumps(resources).encode("utf-8")
+
+    def commit_resources(self, version, json_data):
+        """
+        Commit the entire list of resource to the configurations server.
         """
         if not self._offline:
             LOGGER.info("Uploading %d files" % len(self._file_store))
@@ -262,12 +288,42 @@ class Exporter(object):
                 
             conn.close()
 
+
+        LOGGER.info("Sending resources and handler source to server")
+        sources = resource.sources()
+
+        if not self._offline:
+            LOGGER.info("Uploading source files")
+            conn = self._server_connection()
+
+            conn.request("POST", "/stat", body = json.dumps(list(sources.keys())))
+            res = conn.getresponse()
+
+            if res.status != 200:
+                raise Exception("Unable to check status of files at server")
+
+            body = res.read()
+            to_upload = json.loads(body.decode("utf-8"))
+
+            LOGGER.info("Only %d source files are new and need to be uploaded" % len(to_upload))
+            for hash_id in to_upload:
+                file_name, module_name, content = sources[hash_id]
+
+                conn.request("PUT", "/file/" + hash_id, content)
+                res = conn.getresponse()
+                res.read()
+                if res.status != 200:
+                    LOGGER.error("Unable to upload file with hash %s" % hash_id)
+                else:
+                    LOGGER.debug("Uploaded file with hash %s" % hash_id)
+
+            conn.close()
+
         # TODO: start transaction
         LOGGER.info("Sending resource updates to server")
-        
         conn = self._server_connection()
-        conn.request("PUT", "/resources/update/%s" % version, 
-                     body = json.dumps(list(self._resources.values())).encode("utf-8"),
+
+        conn.request("PUT", "/resources/update/%s" % version, body = json_data,
                      headers = {"Content-type" : "application/json"})
         res = conn.getresponse()
         

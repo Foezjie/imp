@@ -292,7 +292,11 @@ class YumPackage(ResourceHandler):
     """
         A Package handler that uses yum
     """
+<<<<<<< Updated upstream
     @classmethod
+=======
+    @classmethod
+>>>>>>> Stashed changes
     def is_available(self, io):
         return (io.file_exists("/usr/bin/rpm") or io.file_exists("/bin/rpm")) \
             and io.file_exists("/usr/bin/yum")

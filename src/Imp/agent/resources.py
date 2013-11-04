@@ -30,6 +30,13 @@ class resource(object):
     
     def __init__(self, name):
         self._cls_name = name
+
+    @classmethod
+    def register(cls, name):
+        # TODO: create class
+        resource._resources[name] = object
+        
+        return cls
     
     def __call__(self, cls):
         """
@@ -140,8 +147,7 @@ def parse_id(resource_id):
         Parse the resource id and return the type, the hostname and the
         resource identifier.
     """
-    result = re.search("^(?P<id>(?P<type>[\w]+)\[(?P<hostname>[^,]+),(?P<attr>[^=]+)=(?P<value>[^\]]+)\])(,v=(?P<version>[0-9]+))?$",
-                       resource_id)
+    result = re.search("^(?P<id>(?P<type>(?P<ns>[\w-]+::)+(?P<class>[\w-]+))\[(?P<hostname>[^,]+),(?P<attr>[^=]+)=(?P<value>[^\]]+)\])(,v=(?P<version>[0-9]+))?$", resource_id)
         
     if result is None:
         raise Exception("Invalid id for resource %s" % resource_id)
