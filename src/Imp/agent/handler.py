@@ -35,8 +35,8 @@ class Commander(object):
         """
             Return a provider to handle the given resource
         """
-        resource_type = type(resource)
-        io = get_io(resource._parsed_id["hostname"], agent.remote)
+        resource_type = resource.id.entity_type
+        io = get_io(resource.id.agent_name, agent.remote)
         
         if resource_type in cls.__command_functions:
             for _simulator, hndlr in cls.__command_functions[resource_type]:

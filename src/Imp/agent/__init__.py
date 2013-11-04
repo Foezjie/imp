@@ -24,9 +24,9 @@ from collections import defaultdict, deque, OrderedDict
 from threading import Timer, Thread, enumerate
 from http import client
 
-from Imp.agent.resources import parse_id, resource
 from Imp.agent.handler import Commander, ResourceHandler
 from Imp.agent import export
+from Imp.resources import Resource
 
 LOGGER = logging.getLogger(__name__)
 
@@ -335,7 +335,7 @@ class Agent(object):
         """
             Process an update
         """
-        res_obj = resource.create(data)
+        res_obj = Resource.deserialize(data)
             
         if "requires" in data:
             for req in data["requires"]:
@@ -348,7 +348,7 @@ class Agent(object):
         """
             Get status 
         """
-        res_obj = resource.create(res)
+        res_obj = Resource.deserialize(res)
             
         try:
             provider = Commander.get_provider(self, res_obj)
@@ -388,7 +388,7 @@ class Agent(object):
             self._dm.resource_update(rid, version, reload)
             
         elif operation == "STATUS":
-            res_obj = resource.create(message)
+            res_obj = Resource.deserialize(message)
             
             try:
                 provider = Commander.get_provider(self, res_obj)
@@ -403,7 +403,7 @@ class Agent(object):
                 self._mq_send("control", "STATUS_REPLY", {"code" : 404})
                 
         elif operation == "FACTS":
-            res_obj = resource.create(message)
+            res_obj = Resource.deserialize(message)
             
             try:
                 provider = Commander.get_provider(self, res_obj)
@@ -600,5 +600,3 @@ class Agent(object):
             # send out the resource update
             self._mq_send("control", "UPDATED", {"id" : resource.id, "version" : resource.version, "reload" : reload})
             
-from Imp.agent.plugins import openstack
-from Imp.agent.plugins import posix

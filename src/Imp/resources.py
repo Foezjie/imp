@@ -173,6 +173,28 @@ class Resource(object):
         """
         Deserialize the resource from the given dictionary
         """
+        obj_id = Id.parse_id(map["id"])
+        cls, options = resource.get_class(obj_id.entity_type)
+        
+        obj = cls(obj_id)
+        
+        for field in cls.fields:
+            if field in map:
+                setattr(obj, field, map[field])
+            else:
+                raise Exception("Resource with id %s does not have field %s" % (map["id"], field))
+            
+        return obj
+#         dictionary = {}
+# 
+#         for field in self.__class__.fields:
+#             dictionary[field] = getattr(self, field)
+# 
+#         dictionary["requires"] = [str(x.id) for x in self.requires]
+#         dictionary["version"] = self.version
+#         dictionary["id"] = str(self.id)
+# 
+#         return dictionary
     
     def __init__(self, _id):
         self.id = _id
@@ -180,6 +202,7 @@ class Resource(object):
         self.requires = set()
         self.unknowns = set()
         self.model = None
+        self.do_reload = False
         
         if not hasattr(self.__class__, "fields"):
             raise Exception("A resource should have a list of fields")
@@ -225,18 +248,7 @@ class Resource(object):
         return str(self)
     
     def clone(self, **kwargs):
-        cl = copy.copy(self)
-        
-        for field in cl.__class__.fields:
-            if field in kwargs:
-                setattr(cl, field, kwargs[field])
-            else:
-                setattr(cl, field, None)
-            
-        id_value = getattr(self, self._parsed_id["attr"])
-        setattr(cl, self._parsed_id["attr"], id_value)
-        
-        return cl
+        return Resource.deserialize(Resource.serialize(self))
     
     def serialize(self):
         """

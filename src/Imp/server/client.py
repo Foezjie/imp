@@ -20,7 +20,6 @@
     services connected to the IMP message bus.
 """
 
-from Imp.agent.resources import parse_id
 import json, time, logging
 from threading import Thread
 
