@@ -17,7 +17,7 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import re, logging, copy, inspect, hashlib
+import re, logging, inspect, hashlib
 from Imp.execute.util import Unknown
 
 LOGGER = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class resource(object):
         Get all source files that define resources
         """
         sources = {}
-        for resource, options in cls._resources.values():
+        for resource, _options in cls._resources.values():
             file_name = inspect.getsourcefile(resource)
 
             source_code = ""
@@ -169,32 +169,22 @@ class Resource(object):
         return obj
         
     @classmethod
-    def deserialize(cls, map):
+    def deserialize(cls, obj_map):
         """
         Deserialize the resource from the given dictionary
         """
-        obj_id = Id.parse_id(map["id"])
-        cls, options = resource.get_class(obj_id.entity_type)
+        obj_id = Id.parse_id(obj_map["id"])
+        cls, _options = resource.get_class(obj_id.entity_type)
         
         obj = cls(obj_id)
         
         for field in cls.fields:
-            if field in map:
-                setattr(obj, field, map[field])
+            if field in obj_map:
+                setattr(obj, field, obj_map[field])
             else:
-                raise Exception("Resource with id %s does not have field %s" % (map["id"], field))
+                raise Exception("Resource with id %s does not have field %s" % (obj_map["id"], field))
             
         return obj
-#         dictionary = {}
-# 
-#         for field in self.__class__.fields:
-#             dictionary[field] = getattr(self, field)
-# 
-#         dictionary["requires"] = [str(x.id) for x in self.requires]
-#         dictionary["version"] = self.version
-#         dictionary["id"] = str(self.id)
-# 
-#         return dictionary
     
     def __init__(self, _id):
         self.id = _id
