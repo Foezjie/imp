@@ -79,7 +79,7 @@ class PosixFileProvider(ResourceHandler):
             
             for key,value in self._io.file_stat(resource.path).items():
                 setattr(current, key, value)
-        
+         
         return current 
     
     def list_changes(self, desired):
@@ -332,8 +332,10 @@ class YumPackage(ResourceHandler):
         
         output = self._parse_fields(lines[1:])
         
-        state = "removed"
+        if "Repo" not in output:
+            return {"state" : "removed" }
         
+        state = "removed"
         if output["Repo"] == "installed":
             state = "installed"
             
@@ -351,7 +353,7 @@ class YumPackage(ResourceHandler):
                 version, release = version_str.split("-")
                 
                 data["update"] = (version, release)
-                
+        
         return data
     
     def list_changes(self, resource):
@@ -361,12 +363,12 @@ class YumPackage(ResourceHandler):
         if resource.state == "removed":
             if state["state"] != "removed":
                 changes["state"] = (state["state"], resource.state)
-        
+            
         elif resource.state == "installed" or resource.state == "latest":
             if state["state"] != "installed":
                 changes["state"] = (state["state"], "installed")
                 
-        if state["update"] is not None and resource.state == "latest":
+        if "update" in state and state["update"] is not None and resource.state == "latest":
             changes["version"] = ((state["version"], state["release"]), state["update"])
     
         return changes

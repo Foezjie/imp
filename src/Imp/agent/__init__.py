@@ -40,15 +40,15 @@ class DependencyManager(object):
         # contains a set of version of a certain resource and a list
         # of resource that depend on a certain version
         self._deps = defaultdict(set)
-        
+
         # a hash that indicates the latest version of every resource that
         # has been updated since we started
         self._resource_versions = {}
-        
+
     def add_dependency(self, resource, version, required_id):
         """
             Register the dependency of resource_id on require_id with version.
-            
+
             :param resource The resource that has dependencies
             :param version The version the of the required resource
             :param required_id The id of the required resource
@@ -59,18 +59,18 @@ class DependencyManager(object):
             if v >= version:
                 # ignore the dep
                 return
-        
+
         resource.add_require(required_id, version)
-        
+
         resource_id = resource.id
-        
+
         # add the version to the list of versions
         self._deps[required_id].add(version)
-        
+
         # add the dependency
         versioned_id = "%s,v=%d" % (required_id, version)
         self._deps[versioned_id].add(resource_id)
-        
+
         # save the resource
         self._local_resources[resource_id] = resource
 
@@ -81,17 +81,17 @@ class DependencyManager(object):
         """
         versions = [int(x) for x in self._deps[resource_id]]
         sorted(versions)
-        
+
         resource_list = []
         for v in versions:
             if v <= version:
                 versioned_id = "%s,v=%d" % (resource_id, version)
                 dep_list = self._deps[versioned_id]
                 resource_list += [self._local_resources[dep] for dep in dep_list if dep in self._local_resources]
-                
+
         # TODO cleanup?
         return resource_list
-    
+
     def resource_update(self, resource_id, version, reload_requires = False):
         """
             This method should be called to indicate that a resource has been
