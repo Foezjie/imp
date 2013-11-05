@@ -186,7 +186,13 @@ class Compiler(object):
         if not os.path.exists(os.path.join(plugin_dir, "__init__.py")):
             raise Exception("The plugin directory %s should be a valid python package with a __init__.py file" % plugin_dir)
 
-        imp.load_package(".".join(namespace.to_path()), plugin_dir)
+        mod_name = ".".join(namespace.to_path())
+        imp.load_package(mod_name, plugin_dir)
+        
+        for py_file in glob.glob(os.path.join(plugin_dir, "*.py")):
+            if not py_file.endswith("__init__.py"):
+                sub_mod = mod_name + "." + os.path.basename(py_file).split(".")[0]
+                imp.load_source(sub_mod, py_file)
 
     def load_libdir(self, cf_dir, root_ns):
         """ 
