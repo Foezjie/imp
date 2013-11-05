@@ -183,11 +183,10 @@ class Compiler(object):
         """
             Load all modules in plugin_dir
         """
-        for py_file in glob.glob(os.path.join(plugin_dir, '*.py')):
-            with open(py_file, "r") as file_p:
-                description = (".py", "r", imp.PY_SOURCE)
-                name = ".".join(namespace.to_path())
-                module = imp.load_module(name, file_p, py_file, description)
+        if not os.path.exists(os.path.join(plugin_dir, "__init__.py")):
+            raise Exception("The plugin directory %s should be a valid python package with a __init__.py file" % plugin_dir)
+
+        imp.load_package(".".join(namespace.to_path()), plugin_dir)
 
     def load_libdir(self, cf_dir, root_ns):
         """ 
