@@ -26,6 +26,7 @@ from Imp.resources import resource, Resource
 
 from collections import defaultdict
 from Imp.execute import NotFoundException
+from Imp.agent.handler import Commander
 
 RESOURCE_ID_RE = r"^(?P<id>(?P<type>[\w]+)\[(?P<hostname>[^,]+),(?P<attr>[^=]+)=(?P<value>[^\]]+)\])(,v=(?P<version>[0-9]+))?$"
 
@@ -175,6 +176,8 @@ class Exporter(object):
         
         if len(self._resources) > 0 and not offline:   
             self.commit_resources(self._version, json_data)
+        self.commit_resources(self._version, json_data)
+
         
         LOGGER.info("Committed resources with version %d" % self._version)
         
@@ -291,6 +294,7 @@ class Exporter(object):
 
         LOGGER.info("Sending resources and handler source to server")
         sources = resource.sources()
+        sources.update(Commander.sources())
 
         if not self._offline:
             LOGGER.info("Uploading source files")
@@ -307,7 +311,7 @@ class Exporter(object):
 
             LOGGER.info("Only %d source files are new and need to be uploaded" % len(to_upload))
             for hash_id in to_upload:
-                file_name, module_name, content = sources[hash_id]
+                _file_name, _module_name, content = sources[hash_id]
 
                 conn.request("PUT", "/file/" + hash_id, content)
                 res = conn.getresponse()

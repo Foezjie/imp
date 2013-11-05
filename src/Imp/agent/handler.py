@@ -17,7 +17,7 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import logging
+import logging, inspect, hashlib
 from collections import defaultdict
 from Imp.agent.io import get_io
 
@@ -51,6 +51,30 @@ class Commander(object):
             Register a new provider
         """
         cls.__command_functions[resource].append((simulate, provider))
+        
+    @classmethod
+    def sources(cls):
+        """
+        Get all source files that define resources
+        """
+        sources = {}
+        for providers in cls.__command_functions.values():
+            for _, provider in providers:
+                file_name = inspect.getsourcefile(provider)
+    
+                source_code = ""
+                with open(file_name, "r") as fd:
+                    source_code = fd.read().encode("utf-8")
+    
+                sha1sum = hashlib.new("sha1")
+                sha1sum.update(source_code)
+    
+                hv = sha1sum.hexdigest()
+    
+                if hv not in sources:
+                    sources[hv] = (file_name, provider.__module__, source_code)
+
+        return sources
 
 class provider(object):
     """

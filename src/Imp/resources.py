@@ -122,6 +122,11 @@ class Resource(object):
         agent_value = model_object
         for el in path_elements:
             try:
+                # TODO cleanup this hack
+                if isinstance(agent_value, list):
+                    print(model_object, agent_value)
+                    agent_value = agent_value[0]
+                
                 agent_value = getattr(agent_value, el)
                 
             except AttributeError:
