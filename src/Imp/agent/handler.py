@@ -167,7 +167,6 @@ class ResourceHandler(object):
                 LOGGER.info("%s needs an update" % resource.id)
                 for attribute,values in changes.items():
                     LOGGER.info("\tAttribute %s: %s => %s" % (attribute, values[0], values[1]))
-                    
         
         self._agent.resource_updated(resource, reload_requires = changed)
         

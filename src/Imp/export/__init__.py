@@ -249,7 +249,7 @@ class Exporter(object):
                     print(resource.requires)
                     raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, resource))
 
-                new_requires.add(o)
+                new_requires.add(o.id)
 
             resource.requires = new_requires
             resources.append(resource.serialize())

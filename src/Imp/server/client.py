@@ -221,7 +221,7 @@ class Client(object):
         """
             Check the state of a resource
         """
-        self._report("Requesting status of %s" % id)
+        self._report("Requesting status of %s" % resource_id)
         
         id_obj = Id.parse_id(resource_id)
         

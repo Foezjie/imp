@@ -189,6 +189,9 @@ class Resource(object):
                 setattr(obj, field, obj_map[field])
             else:
                 raise Exception("Resource with id %s does not have field %s" % (obj_map["id"], field))
+
+        for require in obj_map["requires"]:            
+            obj.requires.add(Id.parse_id(require))
             
         return obj
     
@@ -196,6 +199,7 @@ class Resource(object):
         self.id = _id
         self.version = 0
         self.requires = set()
+        self.requires_queue = {}
         self.unknowns = set()
         self.model = None
         self.do_reload = False
@@ -225,17 +229,17 @@ class Resource(object):
             This resource required resource with id $rid to be at version $version
             or higher.
         """
-        self.requires[rid] = version
+        self.requires_queue[rid] = version
         
     def update_require(self, rid, version):
         """
             This method is called when a resource with id $rid is updated to
             $version
         """
-        if rid in self.requires and self.requires[rid] <= version:
-            del self.requires[rid]
+        if rid in self.requires_queue and self.requires_queue[rid] <= version:
+            del self.requires_queue[rid]
             
-        return len(self.requires) == 0
+        return len(self.requires_queue) == 0
     
     def __str__(self):
         return str(self.id)
@@ -255,7 +259,7 @@ class Resource(object):
         for field in self.__class__.fields:
             dictionary[field] = getattr(self, field)
 
-        dictionary["requires"] = [str(x.id) for x in self.requires]
+        dictionary["requires"] = [str(x) for x in self.requires]
         dictionary["version"] = self.version
         dictionary["id"] = str(self.id)
 
@@ -319,6 +323,20 @@ class Id(object):
 
     def __repr__(self):
         return str(self)
+    
+    def get_instance(self):
+        """
+            Create an instance of this class and set the identifying attribute already
+        """
+        cls, _ = resource.get_class(self.entity_type)
+        
+        if cls is None:
+            return None
+        
+        obj = cls(self)
+        
+        setattr(obj, self.attribute, self.attribute_value)
+        return obj
         
     @classmethod
     def parse_id(cls, resource_id):
@@ -332,7 +350,7 @@ class Id(object):
             raise Exception("Invalid id for resource %s" % resource_id)
             
         version = result.group("version")
-        
+
         if version is not None:
             version = int(version)    
         else:
@@ -345,8 +363,9 @@ class Id(object):
                 "value" : result.group("value"),
                 "id" : result.group("id"),
             }
-            
-        return Id(parts["type"], parts["hostname"], parts["attr"], parts["value"], version)
+
+        id_obj = Id(parts["type"], parts["hostname"], parts["attr"], parts["value"], version)
+        return id_obj
     
     entity_type = property(get_entity_type)
     agent_name = property(get_agent_name)

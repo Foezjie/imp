@@ -62,7 +62,7 @@ class DependencyManager(object):
 
         resource.add_require(required_id, version)
 
-        resource_id = resource.id
+        resource_id = str(resource.id)
 
         # add the version to the list of versions
         self._deps[required_id].add(version)
@@ -73,7 +73,7 @@ class DependencyManager(object):
 
         # save the resource
         self._local_resources[resource_id] = resource
-
+        
     def get_dependencies(self, resource_id, version):
         """
             Get all dependencies on resource_id for all versions that are
@@ -97,20 +97,15 @@ class DependencyManager(object):
             This method should be called to indicate that a resource has been
             updated.
         """
+        resource_id = str(resource_id)
+
         self._resource_versions[resource_id] = version
         
         for res in self.get_dependencies(resource_id, version):
             res.update_require(resource_id, version)
             res.do_reload = reload_requires
 
-class HostAgent(object):
-    """
-        A host agent 
-    """
-    def __init__(self, main_agent, hostname):
-        self.agent = main_agent
-        self.hostname = hostname
-        
+
 class QueueManager(object):
     """
         This class manages the update queue (including the versioning)
@@ -139,7 +134,7 @@ class QueueManager(object):
                 # a newer version
                 return
         
-        if len(resource.requires) == 0:
+        if len(resource.requires_queue) == 0:
             self._ready_queue.append(resource)
             self._resources[resource.id] = (resource, resource.version, self._ready_queue)
         else:
@@ -161,7 +156,7 @@ class QueueManager(object):
             Move resources that are ready to the ready queue
         """
         for res in self._queue:
-            if len(res.requires) == 0:
+            if len(res.requires_queue) == 0:
                 self._ready_queue.append(res)
                 self._queue.remove(res)
         
@@ -209,9 +204,8 @@ class QueueManager(object):
         LOGGER.info("Dumping queue")
         for r in self.all():
             LOGGER.info(r)
-            LOGGER.info("\t-> %s" % r.requires)
+            LOGGER.info("\t-> %s" % r.requires_queue)
             
-    
 class Scheduler(Thread):
     def __init__(self):
         Thread.__init__(self, name = "Scheduler", daemon = True)
@@ -279,7 +273,9 @@ class Agent(object):
         
         self._last_update = 0
         
-        self._loader = CodeLoader(self._config["agent"]["code_dir"])
+        
+        if not self.offline:
+            self._loader = CodeLoader(self._config["agent"]["code_dir"])
         
     def _connect(self):
         """
@@ -338,10 +334,9 @@ class Agent(object):
             Process an update
         """
         res_obj = Resource.deserialize(data)
-            
-        if "requires" in data:
-            for req in data["requires"]:
-                self.register_requires(req, res_obj)
+
+        for req in res_obj.requires:
+            self._dm.add_dependency(res_obj, req.version, req.resource_str())
             
         self._queue.add_resource(res_obj)
         self._last_update = time.time()
@@ -350,14 +345,14 @@ class Agent(object):
         """
             Get status 
         """
-        res_obj = Resource.deserialize(res)
+        res_id = Id.parse_id(res)
             
         try:
-            provider = Commander.get_provider(self, res_obj)
+            provider = Commander.get_provider(self, res_id)
         except Exception:
-            LOGGER.error("Unable to find a handler for %s" % res_obj.id)
+            LOGGER.error("Unable to find a handler for %s" % res_id)
             
-        return provider.facts(res_obj)
+        return provider.facts(res_id)
     
     def _mq_send(self, routing_key, operation, body):
         body["operation"] = operation
@@ -390,18 +385,23 @@ class Agent(object):
             self._dm.resource_update(rid, version, reload)
             
         elif operation == "STATUS":
-            res_obj = Resource.deserialize(message)
+            resource = Id.parse_id(message["id"]).get_instance()
+            
+            if resource is None:
+                self._mq_send("control", "STATUS_REPLY", {"code" : 404})
+                return
             
             try:
-                provider = Commander.get_provider(self, res_obj)
+                provider = Commander.get_provider(self, resource.id)
             except Exception:
-                LOGGER.error("Unable to find a handler for %s" % res_obj.id)
+                LOGGER.exception("Unable to find a handler for %s" % resource)
             
             try:
-                result = provider.check_resource(res_obj)
+                result = provider.check_resource(resource)
                 self._mq_send("control", "STATUS_REPLY", result)
                 
             except Exception:
+                LOGGER.exception("Unable to check status of %s" % resource)
                 self._mq_send("control", "STATUS_REPLY", {"code" : 404})
                 
         elif operation == "FACTS":
@@ -532,7 +532,7 @@ class Agent(object):
                 break
             
             try:
-                provider = Commander.get_provider(self, resource)
+                provider = Commander.get_provider(self, resource.id)
             except Exception as e:
                 LOGGER.exception("Unable to find a handler for %s" % resource.id, e)
                 
@@ -585,12 +585,6 @@ class Agent(object):
                 data = res.read()
                 return data
         
-    def register_requires(self, req_id, resource):
-        """
-            Register a require of a resource
-        """
-        deps = parse_id(req_id)
-        self._dm.add_dependency(resource, deps["version"], deps["id"])
                
     def resource_updated(self, resource, reload_requires = False):
         """
@@ -601,9 +595,9 @@ class Agent(object):
         if hasattr(resource, "reload") and resource.reload and reload_requires:
             reload = True
         
-        self._dm.resource_update(resource.id, resource.version, reload)
+        self._dm.resource_update(resource.id.resource_str(), resource.id.version, reload)
         
         if not self.offline:
             # send out the resource update
-            self._mq_send("control", "UPDATED", {"id" : resource.id, "version" : resource.version, "reload" : reload})
+            self._mq_send("control", "UPDATED", {"id" : str(resource.id), "version" : resource.version, "reload" : reload})
             
