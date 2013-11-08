@@ -37,7 +37,8 @@ class resource(object):
         The wrapping
         """
         if self._cls_name in resource._resources:
-            raise Exception("Only one resource class can be registered per IMP entity.")
+            LOGGER.info("Reloading module %s" % self._cls_name)
+            del resource._resources[self._cls_name] 
         
         resource._resources[self._cls_name] = (cls, self._options)
         return cls
@@ -70,10 +71,10 @@ class resource(object):
 
             source_code = ""
             with open(file_name, "r") as fd:
-                source_code = fd.read().encode("utf-8")
+                source_code = fd.read()
 
             sha1sum = hashlib.new("sha1")
-            sha1sum.update(source_code)
+            sha1sum.update(source_code.encode("utf-8"))
 
             hv = sha1sum.hexdigest()
 
@@ -306,6 +307,9 @@ class Id(object):
                 "version" : self._version,
             }    
         
+        return self.resource_str()
+        
+    def resource_str(self):
         return "%(type)s[%(agent)s,%(attribute)s=%(value)s]" % {
             "type" : self._entity_type,
             "agent" : self._agent_name,

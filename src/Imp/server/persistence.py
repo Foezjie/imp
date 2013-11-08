@@ -17,8 +17,8 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import shelve, re, datetime, apsw, time, threading
-
+import datetime, time, threading, plyvel, pickle
+from Imp.resources import Id
 
 class DataStoreObject(object):
     """
@@ -37,36 +37,7 @@ class DataStoreObject(object):
             self.save_relations()
         
     def key(self):
-        return "%s:%s" % (self.__class__.__type__, self._object_id())
-
-
-def parse_id(resource_id):
-    """
-        Parse the resource id and return the type, the hostname and the
-        resource identifier.
-    """
-    result = re.search("^(?P<id>(?P<type>[\w]+)\[(?P<hostname>[^,]+),(?P<attr>[^=]+)=(?P<value>[^\]]+)\])(,v=(?P<version>[0-9]+))?$",
-                       resource_id)
-        
-    if result is None:
-        raise Exception("Invalid id for resource %s" % resource_id)
-        
-    version = result.group("version")
-    
-    if version is not None:
-        version = int(version)    
-    
-    parts = {
-            "type" : result.group("type"),
-            "hostname" : result.group("hostname"),
-            "attr" : result.group("attr"),
-            "value" : result.group("value"),
-            "version" : version,
-            "id" : result.group("id"),
-            "orig" : resource_id,
-        }
-        
-    return parts
+        return self._object_id()
 
 
 class Agent(DataStoreObject):
@@ -75,6 +46,7 @@ class Agent(DataStoreObject):
         seen.
     """
     __type__ = 'agent'
+    indexes = ()
     
     def __init__(self, agent_id):
         DataStoreObject.__init__(self)
@@ -104,130 +76,65 @@ class Agent(DataStoreObject):
     
     def get_resources(self):
         ds = DataStore.instance()
-        res_keys = ds.get_relation(Agent, self._object_id(), "resources")
+        return ds.get_relation(Agent, self._object_id(), "resources")
         
-        resources = set()
-        for key in res_keys:
-            resources.add(ds.get(Resource, key))
-            
-        return resources
-    
     resources = property(get_resources)
     
-class Fact(object):
+class Fact(DataStoreObject):
     """
         A fact about a resource in the infrastructure
     """
-    _conn = None
-    _cursor = None
-    _rlock = threading.RLock()
+    __type__ = "fact"
+    indexes = (("entity_type", "name"),)
     timeout = 1200
     
-    @classmethod
-    def load(cls, fact_store):
-        """
-            Load the facts data store
-        """
-        if cls._conn is None:
-            cls._conn = apsw.Connection(fact_store)
-            cls._cursor = cls._conn.cursor()
-            
-            # check the schema
-            cls._verify_schema()
-            
-    @classmethod
-    def _verify_schema(cls):
-        """
-            Verify the schema of the database
-        """
-        try:
-            cls._cursor.execute("CREATE TABLE facts(resource_id TEXT, name TEXT, value TEXT, type TEXT, value_time INTEGER, primary key(resource_id, name))")
-        except apsw.SQLError:
-            pass
+    def __init__(self):
+        self.resource_id = None
+        self.name = None
+        self.value = None
+        self.entity_type = None
+        self.value_time = None
+        
+    def _object_id(self):
+        return "%s_%s" % (self.resource_id, self.name)
     
     @classmethod
     def get(cls, resource_id, fact_name):
         """
             Retrieve a fact with the given name about the given resource
         """
-        with cls._rlock:
-            try:
-                result = cls._cursor.execute("SELECT value, value_time FROM facts WHERE resource_id = ? AND name = ?", (resource_id, fact_name));
-                
-                fact = result.fetchall();
-                
-                now = time.time()
-                if len(fact) == 1:
-                    if fact[0][1] + cls.timeout < now:
-                        return fact[0][0], True
-                    
-                    return fact[0][0], False
-            except apsw.SQLError:
-                return (None, None)
+        ds = DataStore.instance()
+        fact = ds.get(Fact, "%s_%s" % (resource_id, fact_name))
+        
+        now = time.time()
+        if fact is not None:
+            if fact.value_time + cls.timeout < now:
+                return fact, True
+
+            return fact, False
             
         return (None, None)
         
-    @classmethod
-    def get_all_by_name(cls, resource_type, fact_name):
-        """
-            Get all facts with a given name about a resource type. For example
-            all ip_addresses of all virtual machines. Only facts that have not
-            timed out are returned
-        """
-        with cls._rlock:
-            try:
-                result = cls._cursor.execute("SELECT resource_id, value, value_time FROM facts WHERE type = ? AND name = ?", (resource_type, fact_name));
-                rows = result.fetchall();
-                
-                now = time.time()
-                facts = {}
-                if len(facts) > 0:
-                    for row in rows:
-                        if not (row[0][2] + cls.timeout < now):
-                            facts[row[0]] = row[1] 
-                
-                return facts
-            except apsw.SQLError:
-                return {}
-            
-        return {}
-        
-    @classmethod
-    def update(cls, resource_id, name, value):
-        """
-            Update a fact or insert if it did not yet exist.
-        """
-        with cls._rlock:
-            result = cls._cursor.execute("SELECT value_time FROM facts WHERE resource_id = ? AND name = ?", (resource_id, name))
-            if len(result.fetchall()) > 0:
-                cls._cursor.execute("UPDATE facts SET value = ?, value_time = ? WHERE resource_id = ? AND name = ?",
-                    (value, time.time(), resource_id, name))
-            else:
-                parts = parse_id(resource_id)
-                cls._cursor.execute("INSERT INTO facts VALUES(?, ?, ?, ?, ?)",
-                    (resource_id, name, value, parts["type"], time.time()));
-    
     @classmethod
     def renew_facts(cls, timeout):
         """
             Renew facts that are about to expire in timeout 
         """
-        with cls._rlock:
-            try:
-                result = cls._cursor.execute("SELECT DISTINCT resource_id FROM facts WHERE value_time < ?", 
-                                            (int(time.time()) - (cls.timeout - timeout),));
-                rows = result.fetchall()
-                
-                if len(rows) > 0:
-                    ids = []
-                    for row in rows:
-                        ids.append(row[0])
-
-                return rows
-            except apsw.SQLError:
-                return []
+#         with cls._rlock:
+#             try:
+#                 result = cls._cursor.execute("SELECT DISTINCT resource_id FROM facts WHERE value_time < ?", 
+#                                             (int(time.time()) - (cls.timeout - timeout),));
+#                 rows = result.fetchall()
+#                 
+#                 if len(rows) > 0:
+#                     ids = []
+#                     for row in rows:
+#                         ids.append(row[0])
+# 
+#                 return rows
+#             except apsw.SQLError:
+        return []
             
-    
 class Resource(DataStoreObject):
     """
         A resource
@@ -236,19 +143,18 @@ class Resource(DataStoreObject):
     
     def __init__(self, res_id):
         DataStoreObject.__init__(self)
-        self._id = res_id
-        parts = parse_id(res_id)
+        self._id = Id.parse_id(res_id)
         
-        self._type_name = parts["type"]
-        self._agent_name = parts["hostname"]
-        self._attribute_name = parts["attr"]
-        self._attribute_value = parts["value"]
+        self._entity_type = self._id.entity_type
+        self._agent_name = self._id.agent_name
+        self._attribute_name = self._id.attribute
+        self._attribute_value = self._id.attribute_value
     
     def get_id(self):
         return self._id
     
-    def get_type_name(self):
-        return self._type_name
+    def get_entity_type(self):
+        return self._entity_type
     
     def get_agent_name(self):
         return self._agent_name
@@ -260,17 +166,17 @@ class Resource(DataStoreObject):
         return self._attribute_value
     
     id = property(get_id)
-    type_name = property(get_type_name)
+    entity_type = property(get_entity_type)
     agent_name = property(get_agent_name)
     attribute_name = property(get_attribute_name)
     attribute_value = property(get_attribute_value)
     
     def _object_id(self):
-        return self._id
+        return str(self._id)
     
     def save_relations(self):
         # save relation to agents
-        DataStore.instance().set_relation(Agent, self._agent_name, "resources", self._object_id())
+        DataStore.instance().set_relation(Agent, self._agent_name, "resources", "%s:%s" % (self.__class__.__type__, self._object_id()))
 
     def get_versions(self):
         ds = DataStore.instance()
@@ -304,18 +210,17 @@ class Version(DataStoreObject):
 
     def set_id(self, _id):
         if self._id is None:
-            parts = parse_id(_id)
             
             self._id = _id
-            self._resource_id = parts["id"]
-            self._agent_name = parts["hostname"]
-            self._version = parts["version"]
+            self._resource_id = _id.resource_str()
+            self._agent_name = _id.agent_name
+            self._version = _id.version
         
         else:    
             raise Exception("The id of a version cannot be changed")
     
     def _object_id(self):
-        return self._id
+        return str(self._id)
         
     def get_id(self):
         return self._id
@@ -370,11 +275,10 @@ class DataStore(object):
         return self._store is not None  
     
     def open(self, database_filename):
-        #self._store = shelve.open(database_filename)
-        self._store = {}
-        
+        self._store = plyvel.DB(database_filename, create_if_missing=True)
+
     def get_store(self):
-        if not self.is_open():
+        if self._store is None or self._store.closed:
             raise Exception("The datastore has not been opened")
         
         return self._store
@@ -385,45 +289,38 @@ class DataStore(object):
         """
             Store the dataobject. If its key already exists it will be replaced
         """
-        if not self.is_open():
-            raise Exception("The datastore has not been opened")
+        lookup_key = ("%s:%s" % (data_object.__class__.__type__, data_object.key())).encode()
+        value = pickle.dumps(data_object)
         
-        lookup_key = data_object.key()
+        wb = self._store.write_batch()
         
-        if lookup_key in self._store:
-            self._store[lookup_key] = data_object
+        # store the data        
+        wb.put(lookup_key, value)
             
-        else:
-            self._store[lookup_key] = data_object
-            type_key = data_object.__class__.__type__
+        # store all other indexes
+        if hasattr(data_object.__class__, "indexes"):
+            indexes = data_object.__class__.indexes
+            for index in indexes:
+                # create the key
+                index_key = lookup_key + b":"
+                for attr in index:
+                    value = getattr(data_object, attr)
+                    index_key += attr.encode() + b"=" + str(value).encode() + b","
+                    
+                wb.put(index_key, lookup_key)
             
-            if type_key not in self._store:
-                type_set = set()
-            else:
-                type_set = self._store[type_key]
-                
-            type_set.add(lookup_key)
+        wb.write()
             
-            self._store[type_key] = type_set
-            
-    def save(self):
-        #self._store.sync()
-        pass
+    def close(self):
+        self._store.close()
         
     def get_all_type(self, type_class):
         """
             Get all objects of a given type
         """
-        if not self.is_open():
-            raise Exception("The datastore has not been opened")
-        
-        key = type_class.__type__
-        if key not in self._store:
-            return []
-        
         objects = []
-        for k in self._store[key]:
-            objects.append(self._store[k])
+        for _key, value in self.store.iterator(prefix = type_class.__type__.encode() + b":"):
+            objects.append(pickle.loads(value))
             
         return objects
     
@@ -431,53 +328,49 @@ class DataStore(object):
         """
             Retrieve an object of the given type and key
         """
-        if not self.is_open():
-            raise Exception("The datastore has not been opened")
         
-        lookup_key = "%s:%s" % (type_class.__type__, key)
-        if lookup_key in self._store:
-            return self._store[lookup_key]
+        lookup_key = ("%s:%s" % (type_class.__type__, key)).encode()
+        
+        value = self.store.get(lookup_key)
+        
+        if value is not None:
+            return pickle.loads(value)
         
         return None
+    
+    def get_index(self, type_class, **kwargs):
+        """
+            Get all objects that are stored in an index
+        """
     
     def contains(self, type_class, key):
         """
             Does this store contain the given key
         """
-        if not self.is_open():
-            raise Exception("The datastore has not been opened")
-        
-        lookup_key = "%s:%s" % (type_class.__type__, key)
-        
-        return lookup_key in self._store
+        lookup_key = ("%s:%s" % (type_class.__type__, key)).encode()
+        return self.store.get(lookup_key) is not None
     
     def set_relation(self, type_class, key, attribute, value_key):
         """
             Set the relation between the object identified by type_class/key 
             and the value 
         """
-        if not self.is_open():
-            raise Exception("The datastore has not been opened")
-        
-        lookup_key = "%s:%s-%s" % (type_class.__type__, key, attribute)
-        
-        values = set()
-        if lookup_key in self._store:
-            values = self._store[lookup_key]
-            
-        values.add(value_key)
-        
-        self._store[lookup_key] = values
-        self.save()
+        lookup_key = ("rel:%s:%s-%s=%s" % (type_class.__type__, key, attribute, value_key)).encode()
+        self.store.put(lookup_key, value_key.encode())
         
     def get_relation(self, type_class, key, attribute):
         """
             Get all values for a given relation attribute
         """
-        lookup_key = "%s:%s-%s" % (type_class.__type__, key, attribute)
+        lookup_key = ("rel:%s:%s-%s=" % (type_class.__type__, key, attribute)).encode()
         
-        if lookup_key in self._store:
-            return self._store[lookup_key]
+        objects = []
         
-        return set()
+        for _key, did in self.store.iterator(prefix = lookup_key):
+            value = self.store.get(did)
+            if value is not None:
+                objects.append(pickle.loads(value))
+        
+        print(objects)
+        return objects
     

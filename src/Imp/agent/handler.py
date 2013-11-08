@@ -31,12 +31,12 @@ class Commander(object):
     __handlers = {}
     
     @classmethod
-    def get_provider(cls, agent, resource):
+    def get_provider(cls, agent, resource_id):
         """
             Return a provider to handle the given resource
         """
-        resource_type = resource.id.entity_type
-        io = get_io(resource.id.agent_name, agent.remote)
+        resource_type = resource_id.entity_type
+        io = get_io(resource_id.agent_name, agent.remote)
         
         if resource_type in cls.__command_functions:
             for _simulator, hndlr in cls.__command_functions[resource_type]:
@@ -64,10 +64,10 @@ class Commander(object):
     
                 source_code = ""
                 with open(file_name, "r") as fd:
-                    source_code = fd.read().encode("utf-8")
+                    source_code = fd.read()
     
                 sha1sum = hashlib.new("sha1")
-                sha1sum.update(source_code)
+                sha1sum.update(source_code.encode("utf-8"))
     
                 hv = sha1sum.hexdigest()
     

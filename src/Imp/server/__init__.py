@@ -18,6 +18,9 @@
 """
 
 from Imp.server.persistence import Fact, Agent, Resource, Version, DataStore
+from Imp.resources import Id
+from Imp.resources import Resource as R
+from Imp.loader import CodeLoader
 
 from . import persistence
 
@@ -27,8 +30,6 @@ import sys, logging, os, time, re, json, threading, base64, datetime
 import tornado.ioloop
 import tornado.web
 from tornado.web import StaticFileHandler, HTTPError
-
-RESOURCE_ID_RE = r"^(?P<id>(?P<type>[\w]+)\[(?P<agent>[^,]+),(?P<attr>[^=]+)=(?P<value>[^\]]+)\])(,v=(?P<version>[0-9]+))?$"
 
 LOGGER = logging.getLogger(__name__)
         
@@ -40,6 +41,7 @@ class ImpServer(object):
     """
     def __init__(self, config):
         self._config = config
+        self._loader = CodeLoader(self._config["server"]["code_dir"])
         self._logger = logging.getLogger(__class__.__name__)
         
         loglevel = self._config["server"]["loglevel"]
@@ -56,7 +58,8 @@ class ImpServer(object):
         self._fact_poll = {}
         
         # open the fact store
-        Fact.load(os.path.join(self._config["server"]["database"], "facts.sqlite"))
+        ds = DataStore.instance()
+        ds.open(self._config["server"]["database"])
         
     def fact_timeout_check(self):
         """
@@ -93,6 +96,7 @@ class ImpServer(object):
             (r"/file/(.*)", FileHandler, {"path" : self._config["server"]["storage"]}),
             (r"/stat", StatHandler, dict(server = self)),
             (r"/resources/update/(.*)", ResourceUpdateHandler, dict(server = self)),
+            (r"/code/(.*)", CodeHandler, dict(server = self)),
             #(r"/state/(.*)", PersistenceHandler, dict(server = self)),
             #(r"/agentstate/(.*)", StateUpdateHandler, dict(server = self)),
         ], **settings)
@@ -119,14 +123,10 @@ class ImpServer(object):
         if resource_id in self._fact_poll and (self._fact_poll[resource_id] + 60) > time.time():
             return
 
-                
-        id_parts = re.search(RESOURCE_ID_RE, resource_id)
-        
-        if id_parts is None:
-            return
+        res_id = Id.parse_id(resource_id)
         
         request = {"id" : resource_id, "operation" : "FACTS"}
-        topic = 'resources.%s.%s' % (id_parts.group("agent"), id_parts.group("type"))
+        topic = 'resources.%s.%s' % (res_id.agent_name, res_id.entity_type)
         
         msg = amqp.Message(json.dumps(request))
         msg.content_type = "application/json"
@@ -137,6 +137,19 @@ class ImpServer(object):
         
         self._fact_poll[resource_id] = time.time()
 
+
+class CodeHandler(tornado.web.RequestHandler):
+    """
+        A handler for submitting code
+    """
+    def initialize(self, server):
+        self._server = server
+        
+    def post(self, version):
+        
+        modules = json.loads(self.request.body.decode("utf-8"))
+        self._server._loader.deploy_version(int(version), modules, persist = True)
+        self._server._stomp.update_modules(int(version), modules)
 
 class MainHandler(tornado.web.RequestHandler):
     def initialize(self, server):
@@ -192,7 +205,7 @@ class FactHandler(tornado.web.RequestHandler):
         
         if fact is not None and not timeout:
             
-            self.write(fact)
+            self.write(fact.value)
 
         if timeout:
             self._server._logger.info("Fact %s about %s has timed out, an update is requested" % (resource_id, fact_name))
@@ -250,10 +263,9 @@ class ResourceUpdateHandler(tornado.web.RequestHandler):
             self._server._stomp.commit_update_transaction()
                 
         except:
+            LOGGER.exception("An exception occured while processing resource updates")
             self._server._stomp.cancel_update_transaction()
             
-        finally:
-            DataStore.instance().save()    
         
 # class PersistenceHandler(tornado.web.RequestHandler):
 #     def initialize(self, server):
@@ -330,9 +342,6 @@ class MQServer(threading.Thread):
         self._run = True
         self._exchange_name = "imp"
         self._queue_name = ""
-        
-        # open the database
-        DataStore.instance().open(self._config["server"]["database"])
         
     def stop(self):
         self._run = False
@@ -411,7 +420,14 @@ class MQServer(threading.Thread):
                         if not isinstance(value, str):
                             value = json.dumps(value)
                         
-                        Fact.update(subject, fact, value)
+                        fact_obj = Fact()
+                        fact_obj.value_time = time.time()
+                        fact_obj.resource_id = Id.parse_id(subject)
+                        fact_obj.name = fact
+                        fact_obj.value = value
+                        fact_obj.entity_type = fact_obj.resource_id.entity_type
+                        
+                        fact_obj.save()
                     
             else:
                 self._logger.error("No facts in message: " + str(message))
@@ -443,7 +459,7 @@ class MQServer(threading.Thread):
             pass
             
         else:
-            self._logger.error("Received message with unknown operation. operation = %s" % str(operation))
+            self._logger.debug("Received message with unknown operation. operation = %s" % str(operation))
     
     def get(self, file_id, content = True):
         """
@@ -463,18 +479,6 @@ class MQServer(threading.Thread):
         
         return data
     
-    def _id_to_topic(self, res_id):
-        """
-            Convert the id of a resource to a topic
-        """
-        result = re.search(RESOURCE_ID_RE, res_id)
-        
-        topic = "%s.%s" % (
-                result.group("agent"),
-                result.group("type"))
-            
-        return topic
-    
     def start_update_transaction(self):
         """
             Start an update transaction
@@ -492,16 +496,28 @@ class MQServer(threading.Thread):
             Cancel the update transaction
         """
         #self._channel.tx_rollback()
+        
+    def update_modules(self, version, modules):
+        """
+            Broadcast module source code to all agents
+        """
+        payload = {"operation" : "MODULE_UPDATE", "version" : version, "modules" : modules}
+        msg = amqp.Message(json.dumps(payload))
+        msg.content_type = "application/json"
+        
+        self._channel.basic_publish(msg, exchange = self._exchange_name, routing_key = "control")
     
-    def update_resource(self, resource):
+    def update_resource(self, resource_data):
         """
             Update a resource. Broadcast it on the bus and store the update
             in the database.
         """
         ds = DataStore.instance()
         
-        version = Version(resource["id"])
-        version.data = resource
+        resource = R.deserialize(resource_data)
+        
+        version = Version(resource.id)
+        version.data = resource_data
         version.save()
         
         if not ds.contains(Resource, version.resource_id):
@@ -513,8 +529,8 @@ class MQServer(threading.Thread):
                 agent.save()
         
         # broadcast
-        topic = self._id_to_topic(resource["id"])
-        msg = amqp.Message(json.dumps({"operation" : "UPDATE", "resource": resource}))
+        topic = "%s.%s" % (resource.id.agent_name, resource.id.entity_type)
+        msg = amqp.Message(json.dumps({"operation" : "UPDATE", "resource": resource_data}))
         msg.content_type = "application/json"
         
         self._channel.basic_publish(msg, exchange = self._exchange_name,

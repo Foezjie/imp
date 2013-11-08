@@ -168,16 +168,15 @@ class Exporter(object):
 
         if len(self._unknown_hosts) > 0:
             LOGGER.info("The configuration of the following hosts is not exported due to unknown configuration parameters:")
-            hosts = sorted(list(self._unknown_hosts))                
+            hosts = sorted(list(self._unknown_hosts))
             for host in hosts:
                 LOGGER.info(" - %s" % host)
 
         json_data = self.resources_to_json()
-        
+        self.deploy_code(self._version)
+
         if len(self._resources) > 0 and not offline:   
             self.commit_resources(self._version, json_data)
-        self.commit_resources(self._version, json_data)
-
         
         LOGGER.info("Committed resources with version %d" % self._version)
         
@@ -255,6 +254,30 @@ class Exporter(object):
             resource.requires = new_requires
             resources.append(resource.serialize())
         return json.dumps(resources).encode("utf-8")
+    
+    def deploy_code(self, version):
+        """
+            Deploy code to the server
+        """
+        if not self._offline:
+            LOGGER.info("Sending resources and handler source to server")
+            sources = resource.sources()
+            sources.update(Commander.sources())
+            
+            LOGGER.info("Uploading source files")
+            
+            conn = self._server_connection()
+
+            conn.request("POST", "/code/%d" % version, body = json.dumps(sources))
+            res = conn.getresponse()
+
+            if res.status != 200:
+                raise Exception("Unable to upload handler plugin code to the server")
+
+            conn.close()
+        
+        else:
+            LOGGER.info("Offline mode, so not deploying")
 
     def commit_resources(self, version, json_data):
         """
@@ -292,36 +315,7 @@ class Exporter(object):
             conn.close()
 
 
-        LOGGER.info("Sending resources and handler source to server")
-        sources = resource.sources()
-        sources.update(Commander.sources())
 
-        if not self._offline:
-            LOGGER.info("Uploading source files")
-            conn = self._server_connection()
-
-            conn.request("POST", "/stat", body = json.dumps(list(sources.keys())))
-            res = conn.getresponse()
-
-            if res.status != 200:
-                raise Exception("Unable to check status of files at server")
-
-            body = res.read()
-            to_upload = json.loads(body.decode("utf-8"))
-
-            LOGGER.info("Only %d source files are new and need to be uploaded" % len(to_upload))
-            for hash_id in to_upload:
-                _file_name, _module_name, content = sources[hash_id]
-
-                conn.request("PUT", "/file/" + hash_id, content)
-                res = conn.getresponse()
-                res.read()
-                if res.status != 200:
-                    LOGGER.error("Unable to upload file with hash %s" % hash_id)
-                else:
-                    LOGGER.debug("Uploaded file with hash %s" % hash_id)
-
-            conn.close()
 
         # TODO: start transaction
         LOGGER.info("Sending resource updates to server")

@@ -25,8 +25,8 @@ from threading import Timer, Thread, enumerate
 from http import client
 
 from Imp.agent.handler import Commander, ResourceHandler
-from Imp.agent import export
-from Imp.resources import Resource
+from Imp.resources import Resource, Id
+from Imp.loader import CodeLoader
 
 LOGGER = logging.getLogger(__name__)
 
@@ -279,6 +279,8 @@ class Agent(object):
         
         self._last_update = 0
         
+        self._loader = CodeLoader(self._config["agent"]["code_dir"])
+        
     def _connect(self):
         """
             Connect to the message bus
@@ -403,21 +405,21 @@ class Agent(object):
                 self._mq_send("control", "STATUS_REPLY", {"code" : 404})
                 
         elif operation == "FACTS":
-            res_obj = Resource.deserialize(message)
+            resource_id = Id.parse_id(message["id"])
             
             try:
-                provider = Commander.get_provider(self, res_obj)
+                provider = Commander.get_provider(self, resource_id)
                 
                 try:
-                    result = provider.facts(res_obj)
-                    response = {"operation" : "FACTS_REPLY", "subject" : res_obj.id, "facts" : result}
+                    result = provider.facts(resource_id)
+                    response = {"operation" : "FACTS_REPLY", "subject" : str(resource_id), "facts" : result}
                     self._mq_send("control", "FACTS_REPLY", response)
                     
                 except Exception:
                     LOGGER.exception("Unable to retrieve fact")
-                    self._mq_send("control", "FACTS_REPLY", {"subject" : res_obj.id, "code": 404})
+                    self._mq_send("control", "FACTS_REPLY", {"subject" : str(resource_id), "code": 404})
             except Exception:
-                LOGGER.exception("Unable to find a handler for %s" % res_obj.id)
+                LOGGER.exception("Unable to find a handler for %s" % resource_id)
             
         elif operation == "QUEUE":
             response = {"queue" : ["%s,v=%d" % (x.id, x.version) for x in self._queue.all()]}
@@ -439,6 +441,11 @@ class Agent(object):
         elif operation == "DUMP":
             LOGGER.info("Dumping!")
             self._queue.dump()
+            
+        elif operation == "MODULE_UPDATE":
+            version = message["version"]
+            modules = message["modules"]
+            self._loader.deploy_version(version, modules)
         
     def on_message(self, msg):
         """

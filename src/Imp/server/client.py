@@ -24,6 +24,7 @@ import json, time, logging
 from threading import Thread
 
 from amqplib import client_0_8 as amqp
+from Imp.resources import Id
 
 LOGGER = logging.getLogger(__name__)
 
@@ -216,16 +217,16 @@ class Client(object):
         self._report("")
         self._report("%s agent(s) detected" % len(self._stack["pong"]))
         
-    def status(self, id, timeout = 10):
+    def status(self, resource_id, timeout = 10):
         """
             Check the state of a resource
         """
         self._report("Requesting status of %s" % id)
         
-        id_parts = parse_id(id)
+        id_obj = Id.parse_id(resource_id)
         
-        request = {"id" : id}
-        topic = 'resources.%s.%s' % (id_parts["hostname"], id_parts["type"])
+        request = {"id" : resource_id}
+        topic = 'resources.%s.%s' % (id_obj.agent_name, id_obj.entity_type)
         
         self._mq_send(topic, "STATUS", request)
         
@@ -237,14 +238,14 @@ class Client(object):
         
         return self._stack["status"]
     
-    def facts(self, id, timeout = 10, wait = True):
+    def facts(self, resource_id, timeout = 10, wait = True):
         """
             Get facts about a resource
         """
-        id_parts = parse_id(id)
-        
-        request = {"id" : id}
-        topic = 'resources.%s.%s' % (id_parts["hostname"], id_parts["type"])
+        id_obj = Id.parse_id(resource_id)
+                
+        request = {"id" : resource_id}
+        topic = 'resources.%s.%s' % (id_obj.agent_name, id_obj.entity_type)
         self._mq_send(topic, "FACTS", request)
         
         self._stack["facts"] = None
