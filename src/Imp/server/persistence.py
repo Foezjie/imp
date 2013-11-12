@@ -86,7 +86,7 @@ class Fact(DataStoreObject):
     """
     __type__ = "fact"
     indexes = (("entity_type", "name"),)
-    timeout = 1200
+    timeout = 12
     
     def __init__(self):
         self.resource_id = None
@@ -114,12 +114,27 @@ class Fact(DataStoreObject):
             return fact, False
             
         return (None, None)
+    
+    def save(self):
+        DataStoreObject.save(self)
+        
+        # index this fact for the timeout mechanism to work
+        ds = DataStore.instance()
+        ds.store.put(("facttimeout:%s" % self._object_id()).encode(), pickle.dumps((self.value_time, self.resource_id)))
         
     @classmethod
     def renew_facts(cls, timeout):
         """
             Renew facts that are about to expire in timeout 
         """
+        time_value = int(time.time()) - (cls.timeout - timeout)
+        expired = set()
+        for _fact_name, value in DataStore.instance().store.iterator(prefix = b"facttimeout:"):
+            timeout, resource_id = pickle.loads(value)
+            
+            if timeout < time_value:
+                expired.add (resource_id)
+            
 #         with cls._rlock:
 #             try:
 #                 result = cls._cursor.execute("SELECT DISTINCT resource_id FROM facts WHERE value_time < ?", 
@@ -133,7 +148,7 @@ class Fact(DataStoreObject):
 # 
 #                 return rows
 #             except apsw.SQLError:
-        return []
+        return expired
             
 class Resource(DataStoreObject):
     """

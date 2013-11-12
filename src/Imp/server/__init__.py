@@ -66,11 +66,11 @@ class ImpServer(object):
             Check if a fact is about to timeout
         """
         LOGGER.debug("Query for expired facts")
-        facts = Fact.renew_facts(timeout = 60)
+        expired_resources = Fact.renew_facts(timeout = 60)
     
-        for fact in facts:
-            LOGGER.debug("%s expired, poll new fact" % fact[0])
-            self.poll_facts(fact[0])
+        for res_id in expired_resources:
+            LOGGER.debug("Facts of resource %s expired, poll new facts" % res_id)
+            self.poll_facts(str(res_id))
             return
         
     def run(self):
