@@ -17,18 +17,15 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import os, subprocess, pickle, time, re, json, hashlib, logging, urllib
+import os, time, json, hashlib, logging, urllib
 
 from http import client
 from Imp.execute.util import Unknown
-from Imp.server.client import get_client
 from Imp.resources import resource, Resource
 
 from collections import defaultdict
 from Imp.execute import NotFoundException
 from Imp.agent.handler import Commander
-
-RESOURCE_ID_RE = r"^(?P<id>(?P<type>[\w]+)\[(?P<hostname>[^,]+),(?P<attr>[^=]+)=(?P<value>[^\]]+)\])(,v=(?P<version>[0-9]+))?$"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -159,6 +156,8 @@ class Exporter(object):
         
         # then process the configuration model to submit it to the mgmt server
         self._load_resources(scope)
+        
+        print(self._resources.keys())
                 
         # filter out any resource that belong to hosts that have unknown values
         for res_id in list(self._resources.keys()):
