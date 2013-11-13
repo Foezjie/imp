@@ -554,9 +554,7 @@ class Agent(object):
                 # TODO: report back
                 self._queue.remove(resource)
 
-                    
         return
-    
     
     def _server_connection(self):
         """
@@ -599,5 +597,5 @@ class Agent(object):
         
         if not self.offline:
             # send out the resource update
-            self._mq_send("control", "UPDATED", {"id" : str(resource.id), "version" : resource.version, "reload" : reload})
+            self._mq_send("control", "UPDATED", {"id" : str(resource.id), "version" : resource.id.version, "reload" : reload})
             

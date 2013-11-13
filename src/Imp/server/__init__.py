@@ -266,32 +266,6 @@ class ResourceUpdateHandler(tornado.web.RequestHandler):
             LOGGER.exception("An exception occured while processing resource updates")
             self._server._stomp.cancel_update_transaction()
             
-        
-# class PersistenceHandler(tornado.web.RequestHandler):
-#     def initialize(self, server):
-#         self._server = server
-#         
-#     def get(self, resource_type):
-#         try:
-#             t = getattr(persistence, resource_type)
-#         except AttributeError:
-#             raise HTTPError(404, "Invalid resource_type %s" % resource_type)
-#         
-#         _id = self.get_argument("id", None, True)
-#         if _id is None:
-#             raise HTTPError(404, "ID not provided")
-#                 
-#                 
-#         session = get_session(self._server._config["server"]["database"])
-#         query = session.query(t).filter(t.id == _id)
-#         
-#         value = 
-#         
-#         try:
-#             self.write(json.dumps(query.one()._asdict()))
-#         except (MultipleResultsFound, NoResultFound):
-#             self.set_status(404)
-
 # class StateUpdateHandler(tornado.web.RequestHandler):
 #     """
 #         Allows agents to fetch the state of their host

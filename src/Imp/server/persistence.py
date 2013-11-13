@@ -135,19 +135,6 @@ class Fact(DataStoreObject):
             if timeout < time_value:
                 expired.add (resource_id)
             
-#         with cls._rlock:
-#             try:
-#                 result = cls._cursor.execute("SELECT DISTINCT resource_id FROM facts WHERE value_time < ?", 
-#                                             (int(time.time()) - (cls.timeout - timeout),));
-#                 rows = result.fetchall()
-#                 
-#                 if len(rows) > 0:
-#                     ids = []
-#                     for row in rows:
-#                         ids.append(row[0])
-# 
-#                 return rows
-#             except apsw.SQLError:
         return expired
             
 class Resource(DataStoreObject):
@@ -195,13 +182,7 @@ class Resource(DataStoreObject):
 
     def get_versions(self):
         ds = DataStore.instance()
-        version_keys = ds.get_relation(Resource, self._object_id(), "versions")
-        
-        versions = set()
-        for key in version_keys:
-            versions.add(ds.get(Version, key))
-            
-        return versions
+        return ds.get_relation(Resource, self._object_id(), "versions")
     
     versions = property(get_versions)
     
@@ -271,7 +252,7 @@ class Version(DataStoreObject):
         
     def save_relations(self):
         # save relation to agents
-        DataStore.instance().set_relation(Resource, self._resource_id, "versions", self._object_id())
+        DataStore.instance().set_relation(Resource, self._resource_id, "versions", "%s:%s" % (self.__class__.__type__, self._object_id()))
 
 class DataStore(object):
     @classmethod
@@ -378,14 +359,13 @@ class DataStore(object):
             Get all values for a given relation attribute
         """
         lookup_key = ("rel:%s:%s-%s=" % (type_class.__type__, key, attribute)).encode()
-        
         objects = []
         
         for _key, did in self.store.iterator(prefix = lookup_key):
+            print(did)
             value = self.store.get(did)
             if value is not None:
                 objects.append(pickle.loads(value))
         
-        print(objects)
         return objects
     
