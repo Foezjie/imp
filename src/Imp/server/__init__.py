@@ -447,9 +447,10 @@ class MQServer(threading.Thread):
                 self._logger.error("Invalid UPDATED operation")
                 return
             
-            version = DataStore.instance().get(Version, message['id'] + ",v=" + str(message['version']))
-            version.mark_updated()
-            version.save()
+            version = DataStore.instance().get(Version, message['id'])
+            if version is not None:
+                version.mark_updated()
+                version.save()
             
         elif operation == "UPDATE":
             # ignore

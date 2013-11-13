@@ -17,7 +17,7 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import datetime, time, threading, plyvel, pickle
+import datetime, time, plyvel, pickle
 from Imp.resources import Id
 
 class DataStoreObject(object):
@@ -86,7 +86,7 @@ class Fact(DataStoreObject):
     """
     __type__ = "fact"
     indexes = (("entity_type", "name"),)
-    timeout = 12
+    timeout = 1200
     
     def __init__(self):
         self.resource_id = None
