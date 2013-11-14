@@ -171,7 +171,7 @@ class Resource(object):
 
         obj.requires = model_object.requires
         cls.__create_cache[model_object] = obj
-
+        obj.model = model_object
         return obj
         
     @classmethod
@@ -190,7 +190,7 @@ class Resource(object):
             else:
                 raise Exception("Resource with id %s does not have field %s" % (obj_map["id"], field))
 
-        for require in obj_map["requires"]:            
+        for require in obj_map["requires"]:
             obj.requires.add(Id.parse_id(require))
             
         return obj

@@ -49,6 +49,7 @@ class Exporter(object):
     """
     __export_functions = {}
     __id_conversion = {}
+    __dep_manager = []
     
     @classmethod
     def add(cls, name, types, function):
@@ -83,6 +84,14 @@ class Exporter(object):
             Reset the state
         """
         cls.__id_conversion = {}
+        
+    @classmethod
+    def add_dependency_manager(cls, function):
+        """
+            Register a new dependency manager
+        """
+        cls.__dep_manager.append(function)
+                                 
         
     def __init__(self, config):
         self.config = config
@@ -120,6 +129,19 @@ class Exporter(object):
             instances = self._get_instances_of_types([entity])
             for instance in instances[entity]:
                 self.add_resource(Resource.create_from_model(self, entity, instance))
+                
+        for res in self._resources.values():
+            # replace requires with the correct resources
+            new_requires = set()
+            for require in res.requires:
+                o = Resource.get_resource(require)
+                if o is None:
+                    print(res.requires)
+                    raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, res))
+
+                new_requires.add(o.id)
+
+            res.requires = new_requires
     
     def _run_export_plugins(self):
         """
@@ -143,6 +165,15 @@ class Exporter(object):
             else:
                 function(self)
                 
+    def _call_dep_manager(self, scope):
+        """
+            Call all dep managers and let them add dependencies
+        """
+        for fnc in self.__class__.__dep_manager:
+            fnc(scope, self._resources)
+            
+        # TODO: check for cycles
+                
     def run(self, scope, offline = False):
         """
         Run the export functions
@@ -157,8 +188,9 @@ class Exporter(object):
         # then process the configuration model to submit it to the mgmt server
         self._load_resources(scope)
         
-        print(self._resources.keys())
-                
+        # call dependency managers
+        self._call_dep_manager(scope)
+                                                       
         # filter out any resource that belong to hosts that have unknown values
         for res_id in list(self._resources.keys()):
             host = self._resource_to_host[res_id]
@@ -240,18 +272,8 @@ class Exporter(object):
         resources = []
 
         for resource in self._resources.values():
-            # replace requires with the correct resources
-            new_requires = set()
-            for require in resource.requires:
-                o = Resource.get_resource(require)
-                if o is None:
-                    print(resource.requires)
-                    raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, resource))
-
-                new_requires.add(o.id)
-
-            resource.requires = new_requires
             resources.append(resource.serialize())
+            
         return json.dumps(resources).encode("utf-8")
     
     def deploy_code(self, version):
@@ -401,6 +423,13 @@ class Offline(object):
             return default
         
         return self._facts[resource][name]
+    
+class dependency_manager(object):
+    """
+    Register a function that manages dependencies in the configuration model that will be deployed.
+    """
+    def __init__(self, function):
+        Exporter.add_dependency_manager(function)
     
 class export(object):
     """
