@@ -27,7 +27,7 @@ Requires:       python3-amqplib
 Requires:       python3-tornado
 Requires:       python3-dateutil
 Requires:       python3-execnet
-Requires:       python3-apsw
+Requires:       python3-plyvel
 
 Requires(pre):  shadow-utils
 
