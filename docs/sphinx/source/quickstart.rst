@@ -1,4 +1,4 @@
-.. vim: tw=80 spell
+.. vim: spell
 
 Getting started
 ***************
@@ -11,7 +11,7 @@ get started with IMP:
    * Use existing configuration modules
    * Create a configuration model to deploy a LAMP (Linux, Apache, Mysql and PHP) stack
    * Deploy the configuration
-   
+
 The remainder of the documentation goes further into the architecture, the
 configuration model, language reference and the framework API.
 
@@ -20,23 +20,23 @@ The framework exists of several components:
    * A stateless compiler that builds the configuration model
    * The central IMP server that stores states
    * IMP agents on each managed system that deploy configuration changes.
-   
-In the remainder of this chaper we will install the framework but use on a 
+
+In the remainder of this chaper we will install the framework but use on a
 single machine.
 
 .. note::
 
-   Currently only Fedora is supported, both in the deployment agent and the 
-   configuration modules. Because IMP is a tool to manage systems and their 
-   configuration, we recommend to start with IMP on a virtual machine to ensure 
+   Currently only Fedora is supported, both in the deployment agent and the
+   configuration modules. Because IMP is a tool to manage systems and their
+   configuration, we recommend to start with IMP on a virtual machine to ensure
    that your current machine keeps working as expected. This guide has been tested
    on a Fedora 18 virtual machine.
 
 .. warning::
 
-   DO NOT run this guide on your own machine, or it will be reconfigured. 
-   Use a fedora 18 VM, with hostname vm1 to be fully compatible with this guide. 
-   
+   DO NOT run this guide on your own machine, or it will be reconfigured.
+   Use a fedora 18 VM, with hostname vm1 to be fully compatible with this guide.
+
 Installing IMP
 ==============
 
@@ -47,11 +47,11 @@ and checking out imp and installing it.
 .. code-block:: sh
 
    yum install -y python3-setuptools python3-amqplib python3-tornado \
-         python3-dateutil python3-apsw python3-execnet git
+         python3-dateutil python3-plyvel python3-execnet git
    git clone https://github.com/bartv/imp
    cd imp
    python3 setup.py install
-   
+
 
 Create an IMP project
 =====================
@@ -63,7 +63,7 @@ such as the location to search for modules and where to find the server.
 Here we will create a directory ``quickstart`` with a basic configuration file.
 
 .. code-block:: sh
-   
+
    mkdir quickstart
    cd quickstart
    cat > .imp <<EOF
@@ -91,16 +91,16 @@ configuration concepts and often an implementation for one or more operating
 systems. Our modules are available in the https://github.com/bartv/imp-* repositories.
 
 
-In the previous section we configured the project to use the imp-agent for 
+In the previous section we configured the project to use the imp-agent for
 deployment. This agent knows how to deploy and configure File, Directories,
 Services and Packages. The ``std`` module defines these concepts and therefore
 it is the first package we need.
 
 .. code-block:: sh
-   
+
    cd libs
    git clone https://github.com/bartv/imp-std.git std
-   
+
 For the LAMP stack we need modules that provide basic functionality
 such as networking (``net`` and ``ip``) and support for redhat based operating systems
 (``redhat``). Addionally also the modules that configure the Apache webserver
@@ -113,7 +113,7 @@ a module to configure PHP and Drupal (``php`` and ``drupal``).
        git clone https://github.com/bartv/imp-$mod.git $mod
    done
 
-We now have all configuration modules required to deploy Drupal on a LAMP stack. 
+We now have all configuration modules required to deploy Drupal on a LAMP stack.
 
 The configuration model
 =======================
@@ -135,22 +135,22 @@ website. This composition needs to be put in the main.cf file.
 
    # define the machine we want to deploy Drupal on
    vm1 = ip::Host(name = "vm1", os = "fedora-18", ip = "172.16.1.3")
-   
+
    # add a mysql and apache http server
    web_server = httpd::Server(host = vm1)
    mysql_server = mysql::Server(host = vm1)
-   
+
    # define a new virtual host to deploy drupal in
    vhost_name = httpd::VhostName(name = "localhost")
-   vhost = httpd::Vhost(webserver = web_server, name = vhost_name, 
+   vhost = httpd::Vhost(webserver = web_server, name = vhost_name,
       document_root = "/var/www/html/drupal_test")
-   
+
    # deploy drupal in that virtual host
    drupal::Common(host = vm1)
-   db = mysql::Database(server = mysql_server, name = "drupal_test", 
+   db = mysql::Database(server = mysql_server, name = "drupal_test",
       user = "drupal_test", password = "Str0ng-P433w0rd")
    drupal::Site(vhost = vhost, database = db)
- 
+
 On line 2 we define the server on which we want to deploy Drupal. The name is
 the hostname of the machine, which is later used to determine what
 configuration needs to be deployed on which machine. The os attribute defines
@@ -162,7 +162,7 @@ automatically.
 
 Lines 5 and 6 deploy an httpd server and mysql server on our server.
 
-Lines 9 to 11 define a virtual host in which we want to deploy our Drupal 
+Lines 9 to 11 define a virtual host in which we want to deploy our Drupal
 website.
 
 Line 14 deploys common Drupal configuration on our server and line 17 creates
@@ -177,10 +177,10 @@ Deploy the configuration model
 The normal mode of operation of IMP is in a setting where each managed host runs
 a configuration agent that is receives configuration updates from a central
 server. This setup is quite elaborate and in this introduction we will use the
-single shot *deploy* command. This command compiles, exports and enforces the 
+single shot *deploy* command. This command compiles, exports and enforces the
 configuration of the server it is executed on.
 
-The configuration mode we made in the previous section can be deployed by 
+The configuration mode we made in the previous section can be deployed by
 executing the deploy command in the IMP project.
 
 .. code-block:: sh
@@ -200,7 +200,7 @@ you either set SELinux to permissive mode and disable the firewall with:
    setenforce 0
    sed -i "s/SELINUX=enforcing/SELINUX=permissive/g" /etc/sysconfig/selinux
    systemctl stop firewalld
-   
+
 Or allow apache to connect to the network and open up port 80 in the firewall.
 
 .. code-block:: sh
@@ -214,11 +214,11 @@ Accessing your new Drupal install
 
 Use ssh port-forwarding to forward port 80 on vm1 to your local machine, to
 port 2080 for example (ssh -L 2080:localhost:80 ec2-user@172.16.1.3). This allows you to surf to
-http://localhost:2080/ 
+http://localhost:2080/
 
 .. warning::
 
-   Using "localhost" in the url is essential because the configuration model 
+   Using "localhost" in the url is essential because the configuration model
    generates a named based virtual host that matches the name *localhost*.
 
 On the first access the database will not have been initialised. Surf to
@@ -254,7 +254,7 @@ the host (in the absence of a configured DNS server).
     :linenos:
 
     ssh-keygen -t rsa
-    cat /root/.ssh/id_rsa.pub 
+    cat /root/.ssh/id_rsa.pub
     ssh-rsa AAAAB3NzaC1yc...Poid94ZA0kZQ229wCxwtIERI8EFGyJa1BFd9t8wYlT3/J+uSzAfifN+sjPL root@vm1
 
 
@@ -316,15 +316,15 @@ to the new virtual machine.
    # add a mysql and apache http server
    web_server = httpd::Server(host = vm1)
    mysql_server = mysql::Server(host = vm2)
-   
+
    # define a new virtual host to deploy drupal in
    vhost_name = httpd::VhostName(name = "localhost")
-   vhost = httpd::Vhost(webserver = web_server, name = vhost_name, 
+   vhost = httpd::Vhost(webserver = web_server, name = vhost_name,
       document_root = "/var/www/html/drupal_test")
-   
+
    # deploy drupal in that virtual host
    drupal::Common(host = vm1)
-   db = mysql::Database(server = mysql_server, name = "drupal_test", 
+   db = mysql::Database(server = mysql_server, name = "drupal_test",
       user = "drupal_test", password = "Str0ng-P433w0rd")
    drupal::Site(vhost = vhost, database = db)
 
@@ -412,31 +412,31 @@ configuration module.
         string stack_id
         string vhostname
     end
-    
+
     index DrupalStack(stack_id)
-    
+
     ip::Host webserver [1] -- [0:1] DrupalStack drupal_stack_webserver
     ip::Host mysqlserver [1] -- [0:1] DrupalStack drupal_stack_mysqlserver
-    
+
     implementation drupalStackImplementation:
         # add a mysql and apache http server
         web = httpd::Server(host = webserver)
         mysql = mysql::Server(host = mysqlserver)
-    
+
         # define a new virtual host to deploy drupal in
         vhost_name = httpd::VhostName(name = vhostname)
-        vhost = httpd::Vhost(webserver = web, name = vhost_name,        
+        vhost = httpd::Vhost(webserver = web, name = vhost_name,
                 document_root = "/var/www/html/{{ stack_id }}")
-       
+
         # deploy drupal in that virtual host
         drupal::Common(host = webserver)
-        db = mysql::Database(server = mysql, name = stack_id,     
+        db = mysql::Database(server = mysql, name = stack_id,
                 user = stack_id, password = "Str0ng-P433w0rd")
-        drupal::Site(vhost = vhost, database = db)   
+        drupal::Site(vhost = vhost, database = db)
     end
-    
+
     implement DrupalStack using drupalStackImplementation
-    
+
 On line 1 to 4 we define an entity which is the definition of a ``concept`` in
 the configuration model. Entities behave as an interface to a partial
 configuration model that encapsulates parts of the configuration, in this case
@@ -463,26 +463,25 @@ multiplicity. The first relations reads as following:
    multiplicity that starts from zero. Setting this to one would break the ip
    module because each Host would require an instance of DrupalStack.
 
-On line 11 to 26 an implementation is defined that provides a refinement of the
-DrupalStack entity. It encapsulates the configuration of a LAMP stack behind the
-interface of the entity by defining DrupalStack in function of other entities,
-which on their turn do the same. The refinement process is evaluated by the
-compiler and continues until all instances are refined into instances of
+On line 11 to 26 an implementation is defined that provides a refinement of the DrupalStack entity.
+It encapsulates the configuration of a LAMP stack behind the interface of the entity by defining
+DrupalStack in function of other entities, which on their turn do the same. The refinement process
+is evaluated by the compiler and continues until all instances are refined into instances of
 entities that IMP knows how to deploy.
 
-Inside the implementation the attributes and relations of the entity are
-available as variables. They can be hidden by new variable definitions, but are
-also accessible through the ``self`` variable (not used in this example). On
-line 19 an attribute is used in an inline template with the {{ }} syntax.
+Inside the implementation the attributes and relations of the entity are available as variables.
+They can be hidden by new variable definitions, but are also accessible through the ``self``
+variable (not used in this example). On line 19 an attribute is used in an inline template with the
+{{ }} syntax.
 
 And finally on line 28 we link the implementation to the entity itself.
 
 The composition
 ---------------
 
-With our new LAMP module we can reduce the amount of required configuration code
-in the main.cf file by using more ``reusable`` configure code. Only three lines
-of site specific configuration code are left.
+With our new LAMP module we can reduce the amount of required configuration code in the main.cf file
+by using more ``reusable`` configure code. Only three lines of site specific configuration code are
+left.
 
 .. code-block:: ruby
     :linenos:
@@ -491,45 +490,50 @@ of site specific configuration code are left.
     vm1 = ip::Host(name = "vm1", os = "fedora-18", ip = "172.16.1.3")
     vm2 = ip::Host(name = "vm2", os = "fedora-18", ip = "172.16.1.4")
 
-    lamp::DrupalStack(webserver = vm1, mysqlserver = vm2, 
+    lamp::DrupalStack(webserver = vm1, mysqlserver = vm2,
         stack_id = "drupal_test", vhostname = "localhost")
 
 Deploy the changes
 ------------------
 
-Deploy the changes as before and nothing should change because it generates
-exactly the same configuration.
+Deploy the changes as before and nothing should change because it generates exactly the same
+configuration.
 
 .. code-block:: sh
-    
+
     imp deploy
     imp deploy -r vm2
 
 Deploy a file
 -------------
 
-Until know we only used high level concepts in the new configuration module. In
-this section we will add an additional implementation (that is also always
-selected) and installs a customized message of the day file on each of the
-virtual machines.
+Until know we only used high level concepts in the new configuration module. In this section we will
+add an additional implementation (that is also always selected) and installs a customized message of
+the day file on each of the virtual machines.
 
 .. code-block:: ruby
     :linenos:
-    
+
     implementation stackMotd:
-        std::File(host = webserver, path = “/etc/motd”, owner = “root”, 
-            group = “root”, group = “root”, mode = 644, 
+        std::File(host = webserver, path = “/etc/motd”, owner = “root”,
+            group = “root”, group = “root”, mode = 644,
             content = template(“lamp/motd.tmpl”))
-    
-        std::File(host = mysqlserver, path = “/etc/motd”, owner = “root”, 
-            group = “root”, group = “root”, mode = 644, 
+
+        std::File(host = mysqlserver, path = “/etc/motd”, owner = “root”,
+            group = “root”, group = “root”, mode = 644,
             content = template(“lamp/motd.tmpl”))
     end
-    
+
     implement DrupalStack using stackMotd
-    
 
 
+Using a central server
+======================
+
+The deploy and remote deploy commands become cumbersome when multiple hosts need to be managed.
+Especially when dependencies exists between managed hosts. In this section we will configure vm1 as
+the management server for our small infrastructure. On this machine we will install a RabbitMQ AMQP
+server, the IMP management server and the IMP agent. On all other virtual machines only the IMP
+agent is required.
 
 
-    
