@@ -1,5 +1,5 @@
 Name:           python-imp
-Version:        0.10.2
+Version:        0.10.3
 Release:        1%{?dist}
 Summary:        Infrastructure management platform
 
