@@ -372,13 +372,14 @@ class Agent(object):
             
         elif operation == "UPDATE":
             LOGGER.debug("Received update for %s", message["resource"]["id"])
-            self.update(message["resource"])
+            resource = Resource.deserialize(message["resource"])
+            self.update(resource)
             
         elif operation == "UPDATED":
-            rid = message["id"]
+            rid = Id.parse_id(message["id"])
             version = message["version"]
             reload = message["reload"]
-            self._dm.resource_update(rid, version, reload)
+            self._dm.resource_update(rid.resource_str(), version, reload)
             
         elif operation == "STATUS":
             resource = Id.parse_id(message["id"]).get_instance()
