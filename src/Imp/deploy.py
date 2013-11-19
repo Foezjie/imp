@@ -17,12 +17,13 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-import socket, json, time
+import socket, json
 
 from Imp.agent import Agent
 from Imp.export import Exporter
+from Imp.resources import Resource
 
-def deploy(config, root_scope, remote = None, dry_run = True):
+def deploy(config, root_scope, remote = None, dry_run = True, ip_address = None):
     deploy_host = None
     all_names = []
     if remote is None:
@@ -53,21 +54,21 @@ def deploy(config, root_scope, remote = None, dry_run = True):
     json_data = export.run(root_scope, offline = True)
     files = export.get_offline_files()
     
-    agent = Agent(config, False, hostname, offline = True, deploy = not dry_run, remote = (remote is not None))
+    if remote is not None and ip_address is not None:
+        remote = ip_address
+    
+    agent = Agent(config, False, hostname, offline = True, deploy = not dry_run, remote = ip_address)
     agent._offline_files = files
 
     host_id = "[%s," % deploy_host.name
     for item in json.loads(json_data.decode("utf-8")):
         if host_id in item["id"]:
-            agent.update(item)
+            agent.update(Resource.deserialize(item))
 
     if agent._queue.size() == 0:
         print("No configuration found for host %s" % hostname)
         return
             
     print("Deploying config")
-    while agent._queue.size() > 0:
-        agent.deploy_config()
-        time.sleep(1)
-    
-    
+    agent.deploy_config()
+    #agent.close()

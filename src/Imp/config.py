@@ -17,16 +17,30 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-from .local import LocalIO
-from .remote import RemoteIO
-from Imp.execute.util import memoize
+from configparser import ConfigParser
 
-@memoize
-def get_io(remote = None):
-    """
-        Get an IO instance.
-    """
-    if remote is not None:
-        return RemoteIO(remote)
-    else:
-        return LocalIO()
+import os
+
+class Config(object):
+    __instance = None
+    
+    @classmethod
+    def load_config(cls, config_file = None):
+        """
+        Load the configuration file
+        """
+        config = ConfigParser()
+        
+        files = ["/etc/imp.cfg", os.path.expanduser("~/.imp.cfg"), ".wm", ".imp"]
+        if config_file is not None:
+            files.append(config_file)
+    
+        config.read(files)
+        cls.__instance = config
+    
+    @classmethod
+    def get(cls):
+        if cls.__instance is None:
+            raise Exception("Load the configuration first")
+        
+        return cls.__instance

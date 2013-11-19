@@ -125,7 +125,23 @@ class ImpServer(object):
 
         res_id = Id.parse_id(resource_id)
         
-        request = {"id" : resource_id, "operation" : "FACTS"}
+        # fetch the last deployed resource
+        resource = DataStore.instance().get(Resource, resource_id)
+        
+        if resource is None:
+            return
+        
+        versions = [v.version for v in resource.versions]
+        sorted(versions)
+        
+        version = versions[-1]
+        data = {}
+        for v in resource.versions:
+            if version == v.version:
+                data = v.data
+                break
+            
+        request = {"id" : resource_id, "resource": data, "operation" : "FACTS"}
         topic = 'resources.%s.%s' % (res_id.agent_name, res_id.entity_type)
         
         msg = amqp.Message(json.dumps(request))

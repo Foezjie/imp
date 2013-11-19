@@ -115,6 +115,9 @@ class LocalIO(object):
             Remove a directory
         """
         os.rmdir(path)
+        
+    def close(self):
+        pass
 
 
 if __name__ == '__channelexec__':

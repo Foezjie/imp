@@ -20,39 +20,17 @@
 # pylint: disable-msg=W0703
 
 from argparse import ArgumentParser
-from configparser import ConfigParser
 
-import os, logging, sys
+import logging, sys
 from Imp.compiler.main import Compiler
 from Imp.execute import scheduler
 from Imp.command import command, Commander
 from Imp.server import ImpServer
 from Imp.agent import Agent
 from Imp.bootstrap import bootstrap as bootstrap_call
+from Imp.config import Config
 
 LOGGER = logging.getLogger()
-
-def check_dir(name, directory):
-    """
-        Check if a directory exists
-    """
-    if (not os.path.exists(directory)):
-        sys.stderr.write("%s at path %s does not exist.\n" % (name, directory))
-        sys.exit(1)
-
-def load_config(config_file = None):
-    """
-        Load the configuration file
-    """
-    config = ConfigParser()
-    
-    files = ["/etc/imp.cfg", os.path.expanduser("~/.imp.cfg"), ".wm", ".imp"]
-    if config_file is not None:
-        files.append(config_file)
-
-    config.read(files)
-        
-    return config
 
 def do_compile(options, config):
     """
@@ -148,10 +126,11 @@ def export(options, config, compile):
 @command("deploy", help = "Deploy the configuration model on the current machine", 
         requires = ["compile"],
         arguments = (("-r", "Deploy on this remote host", "remote"),
+                     ("-i", "The ip to connecto to", "ip"),
                      ("--dry-run", "Only report changes", "store_true", "dryrun")))    
 def deploy(options, config, compile):
     from Imp.deploy import deploy
-    deploy(config, compile, remote = options.remote, dry_run = options.dryrun)
+    deploy(config, compile, remote = options.remote, dry_run = options.dryrun, ip_address=options.ip)
     
 @command("client", help = "A client to send commands to IMP agents", arguments = \
          (("cmd", "The command to run"),))
@@ -216,7 +195,8 @@ def app():
         except:
             print("Unable to start pydev debugger")
 
-    config = load_config(options.config_file)
+    Config.load_config(options.config_file)
+    config = Config.get()
     
     if not hasattr(options, "command"):
         # show help

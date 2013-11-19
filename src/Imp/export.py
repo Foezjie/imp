@@ -130,18 +130,7 @@ class Exporter(object):
             for instance in instances[entity]:
                 self.add_resource(Resource.create_from_model(self, entity, instance))
                 
-        for res in self._resources.values():
-            # replace requires with the correct resources
-            new_requires = set()
-            for require in res.requires:
-                o = Resource.get_resource(require)
-                if o is None:
-                    print(res.requires)
-                    raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, res))
-
-                new_requires.add(o.id)
-
-            res.requires = new_requires
+        Resource.convert_requires()
     
     def _run_export_plugins(self):
         """
@@ -181,6 +170,7 @@ class Exporter(object):
         self._offline = offline
         self._scope = scope
         self._version = int(time.time())
+        Resource.clear_cache()
         
         # first run other export plugins
         self._run_export_plugins()
@@ -298,7 +288,7 @@ class Exporter(object):
             conn.close()
         
         else:
-            LOGGER.info("Offline mode, so not deploying")
+            LOGGER.info("Offline mode, so not sending configuration to the server")
 
     def commit_resources(self, version, json_data):
         """

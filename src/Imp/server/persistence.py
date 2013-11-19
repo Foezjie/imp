@@ -362,7 +362,6 @@ class DataStore(object):
         objects = []
         
         for _key, did in self.store.iterator(prefix = lookup_key):
-            print(did)
             value = self.store.get(did)
             if value is not None:
                 objects.append(pickle.loads(value))

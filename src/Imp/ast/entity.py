@@ -136,6 +136,16 @@ class Entity(Type, QList):
                     return True
         return False
     
+    def get_all_parent_names(self):
+        """
+            Get a set with all parents of this entity
+        """
+        parents = [str(x) for x in self.parent_entities]
+        for entity in self.parent_entities:
+            parents.extend(entity.get_all_parent_names())
+        
+        return parents
+    
     def get_all_attribute_names(self):
         """
             Return a list of all attribute names, including parents

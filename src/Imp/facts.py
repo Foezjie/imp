@@ -17,16 +17,20 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
-from .local import LocalIO
-from .remote import RemoteIO
-from Imp.execute.util import memoize
+from Imp.config import Config
+from Imp.export import Exporter
+from Imp.execute.util import Unknown
 
-@memoize
-def get_io(remote = None):
+from urllib import request
+
+def get_fact(res, fact_name):
     """
-        Get an IO instance.
+        Get the fact with the given name from the database
     """
-    if remote is not None:
-        return RemoteIO(remote)
-    else:
-        return LocalIO()
+    cfg = Config.get()
+    url = cfg["config"]["server"] + "/fact/%s?id=%s" % (fact_name,  Exporter.get_id(res))
+    try:
+        with request.urlopen(url) as f:
+            return f.read().decode('utf-8')
+    except:
+        return Unknown(source = res)

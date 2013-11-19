@@ -44,3 +44,6 @@ class RemoteIO(object):
             return result
             
         return call
+    
+    def close(self):
+        self._gw.exit()

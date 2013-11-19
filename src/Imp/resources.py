@@ -94,6 +94,31 @@ class Resource(object):
     A managed resource on a system
     """
     __create_cache = {}
+    
+    @classmethod
+    def clear_cache(cls):
+        """
+        Clear the cache of created resources
+        """
+    
+    @classmethod
+    def convert_requires(cls):
+        """
+        Convert all requires
+        """
+        for res in cls.__create_cache.values():
+            # replace requires with the correct resources
+            new_requires = set()
+            for require in res.requires:
+                if not isinstance(require, Id):
+                    o = cls.get_resource(require)
+                    if o is None:
+                        print(res, res.requires)
+                        raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, res))
+    
+                    new_requires.add(o.id)
+
+            res.requires = new_requires
 
     @classmethod
     def get_resource(cls, model_object):
@@ -170,8 +195,9 @@ class Resource(object):
                 raise AttributeError("Attribute %s does not exist on entity of type %s" % (field, entity_name))
 
         obj.requires = model_object.requires
-        cls.__create_cache[model_object] = obj
         obj.model = model_object
+        
+        cls.__create_cache[model_object] = obj
         return obj
         
     @classmethod
@@ -181,6 +207,9 @@ class Resource(object):
         """
         obj_id = Id.parse_id(obj_map["id"])
         cls, _options = resource.get_class(obj_id.entity_type)
+        
+        if cls is None:
+            raise TypeError("No resource class registered for entity %s" % obj_id.entity_type)
         
         obj = cls(obj_id)
         

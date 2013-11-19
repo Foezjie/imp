@@ -101,6 +101,12 @@ class DynamicProxy(object):
         """
         return type(self._get_instance())
     
+    def entity(self):
+        """
+            Return the IMP entity of the proxied instance
+        """
+        return self._get_instance().__class__.__entity__
+    
     def is_unknown(self):
         """
             Return true if this value is unknown and cannot be determined

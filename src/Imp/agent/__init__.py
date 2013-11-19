@@ -248,7 +248,7 @@ class Agent(object):
         message bus for changes.
     """
     def __init__(self, config, simulate, hostnames = None, offline = False, 
-                 deploy = True, remote = False):
+                 deploy = True, remote = None):
         self._config = config
         self.offline = offline
         self.deploy = deploy
@@ -329,12 +329,10 @@ class Agent(object):
         """
         LOGGER.error("Received an error %s" % message)
         
-    def update(self, data):
+    def update(self, res_obj):
         """
             Process an update
         """
-        res_obj = Resource.deserialize(data)
-
         for req in res_obj.requires:
             self._dm.add_dependency(res_obj, req.version, req.resource_str())
             
@@ -345,14 +343,12 @@ class Agent(object):
         """
             Get status 
         """
-        res_id = Id.parse_id(res)
-            
         try:
-            provider = Commander.get_provider(self, res_id)
+            provider = Commander.get_provider(self, res.id)
         except Exception:
-            LOGGER.error("Unable to find a handler for %s" % res_id)
+            LOGGER.error("Unable to find a handler for %s" % res.id)
             
-        return provider.facts(res_id)
+        return provider.facts(res)
     
     def _mq_send(self, routing_key, operation, body):
         body["operation"] = operation
@@ -408,10 +404,11 @@ class Agent(object):
             resource_id = Id.parse_id(message["id"])
             
             try:
+                resource = Resource.deserialize(message["resource"])
                 provider = Commander.get_provider(self, resource_id)
                 
                 try:
-                    result = provider.facts(resource_id)
+                    result = provider.facts(resource)
                     response = {"operation" : "FACTS_REPLY", "subject" : str(resource_id), "facts" : result}
                     self._mq_send("control", "FACTS_REPLY", response)
                     
@@ -582,7 +579,6 @@ class Agent(object):
             else:
                 data = res.read()
                 return data
-        
                
     def resource_updated(self, resource, reload_requires = False):
         """
@@ -599,3 +595,8 @@ class Agent(object):
             # send out the resource update
             self._mq_send("control", "UPDATED", {"id" : str(resource.id), "version" : resource.id.version, "reload" : reload})
             
+    def close(self):
+        """
+            Cleanup
+        """
+        Commander.close()

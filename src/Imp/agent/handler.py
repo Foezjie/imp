@@ -27,8 +27,13 @@ class Commander(object):
     """
         This class handles commands 
     """
-    __command_functions = defaultdict(list)
-    __handlers = {}
+    __command_functions = defaultdict(dict)
+    __handlers = []
+    
+    @classmethod
+    def close(cls):
+        for h in cls.__handlers:
+            h.close()
     
     @classmethod
     def get_provider(cls, agent, resource_id):
@@ -36,21 +41,26 @@ class Commander(object):
             Return a provider to handle the given resource
         """
         resource_type = resource_id.entity_type
-        io = get_io(resource_id.agent_name, agent.remote)
+        io = get_io(agent.remote)
         
         if resource_type in cls.__command_functions:
-            for _simulator, hndlr in cls.__command_functions[resource_type]:
+            for hndlr in cls.__command_functions[resource_type].values():
                 if hndlr.is_available(io):
-                    return hndlr(agent, io)
-                
+                    h = hndlr(agent, io)
+                    cls.__handlers.append(h)
+                    return h
+        
         raise Exception("No resource handler registered for resource of type %s" % resource_type)
         
     @classmethod        
-    def add_provider(cls, resource, simulate, provider):
+    def add_provider(cls, resource, name, provider):
         """
             Register a new provider
         """
-        cls.__command_functions[resource].append((simulate, provider))
+        if resource in cls.__command_functions and name in cls.__command_functions[resource]:
+            del cls.__command_functions[resource][name]
+            
+        cls.__command_functions[resource][name] = provider
         
     @classmethod
     def sources(cls):
@@ -59,7 +69,7 @@ class Commander(object):
         """
         sources = {}
         for providers in cls.__command_functions.values():
-            for _, provider in providers:
+            for provider in providers.values():
                 file_name = inspect.getsourcefile(provider)
     
                 source_code = ""
@@ -80,15 +90,15 @@ class provider(object):
     """
         A decorator that registers a new implementation 
     """
-    def __init__(self, resource_type, simulate = False):
+    def __init__(self, resource_type, name):
         self._resource_type = resource_type
-        self._simulate = simulate
+        self._name = name
     
     def __call__(self, function):
         """
             The wrapping
         """
-        Commander.add_provider(self._resource_type, self._simulate, function)
+        Commander.add_provider(self._resource_type, self._name, function)
         return function
   
     
@@ -100,9 +110,12 @@ class ResourceHandler(object):
         self._agent = agent
         
         if io is None:
-            self._io = get_io(self._agent._hostnames, self._agent.remote)
+            self._io = get_io(self._agent.remote)
         else:
             self._io = io
+            
+    def close(self):
+        self._io.close()
     
     @classmethod
     def is_available(self, io):
