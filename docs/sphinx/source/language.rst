@@ -7,17 +7,17 @@
         query Test[bla=lala]
         interface as a list
         ...
-.
+
 
 Language reference
 ******************
-    
+
 This chapter provides a reference for the IMP modeling language. It is
 a declarative language to model the configuration of an infrastructure
 using concepts from object oriented modeling. Because IMP has a declarative
 language the execution order is determined by the language runtime.
-    
- 
+
+
 Literal values and variables
 ============================
 
@@ -48,7 +48,7 @@ Assigning literal values to variables::
     # next assignment will return an error because var1 is read-only after it was
     # assigned the value 1
     var1 = "test"
-   
+
 
 Constraining literal types
 ==========================
@@ -58,7 +58,7 @@ configuration files or after transformations such as templates.  These
 parameters often have particular formats or only a small range of valid values.
 Examples of such values are tcp port numbers or a MAC address of an Ethernet
 interface.
-        
+
 A typedef statement creates a new literal type which is based on one of the
 basic types with an additional constraint. A typedef statement starts with the
 ``typedef`` keyword, followed by a named that identifies the type. This name
@@ -70,20 +70,20 @@ demarcated with slashes.
 
 .. 1) ensure that we are complete 2) move to a section?
 
-IMP expressions can use logical operators such as greater than, 
+IMP expressions can use logical operators such as greater than,
 smaller than, equality and inclusions together with logical operators. The
 keyword ``self`` refers to the value that is assigned to
 a variable of the constrained type.
-        
+
 Constraining the range of valid values of a literal type::
 
    typedef tcp_port as number matching self &gt; 0 and self &lt; 65565
    typedef mac_addr as string matching /^([0-9a-fA-F]{2})(:[0-9a-fA-F]{2}){5}$/
 
-    
+
 Enumerations
 ============
-        
+
 Enumerations are a special case of constrained literal types. An
 enumeration provides a specific list of value values for a type. It also
 organizes the possible values in a tree where the parent-child relation
@@ -92,14 +92,14 @@ expression using the ``is`` operator.
 
 The enumeration is defined in the module where the root element
 of the value tree is defined. Other values can be added to the tree
-from other modules. A statement that add values under an other value 
+from other modules. A statement that add values under an other value
 starts with the ``enum`` keyword followed by the name
 of the enumeration type. Next are the keywords ``with parent``
 to define the value to add valid values under. In case of the root node
-the parent value is the keyword ``root``. After the 
+the parent value is the keyword ``root``. After the
 parent value the keyword ``as`` is added followed by the
 list of valid values. This values are literal values such as strings.
-        
+
 An enumeration to define an operating system taxonomy::
 
    # define an enumeration of operating systems
@@ -109,7 +109,7 @@ An enumeration to define an operating system taxonomy::
 
 Transformations: string interpolation, templates and plugins
 ============================================================
-        
+
 At the lowest level of abstraction the configuration of an
 infrastructure often consists of configuration files or attributes that
 are set to certain values. These configuration files and  attribute
@@ -118,8 +118,8 @@ available in the entire configuration model. In IMP there are three
 mechanism available to perform such transformation: string
 interpolation, templates and plugins. In the next subsection each of
 these mechanisms are explained.
-    
-        
+
+
 String interpolation
 ====================
 
@@ -159,14 +159,14 @@ The result of the template is returned by the template
 function.
 
 Using a template to transform variables to a configuration file::
-                
+
    hostname = "wwwserv1.example.com"
    admin = "joe@example.com"
-                
+
    motd_content = template("motd/message.tmpl")
 
 The template used in example ...::
-                
+
    Welcome to {{ hostname }}
 
    This machine is maintainted by {{ admin }}
@@ -177,47 +177,47 @@ Plugins
 The most powerful transformation mechanism is a plugins which
 provide an interface to write transformation in Python. Plugins are
 exposed in the IMP language as function calls, such as the template
-function call. A template accepts parameters and returns a value 
+function call. A template accepts parameters and returns a value
 that it computed out of the variables.
 
 IMP has a list of built-in plugins that are accissible without
 providing a namespace. Each module that is included can also provide
-plugins. These plugins are accissible within the namespace of the 
+plugins. These plugins are accissible within the namespace of the
 module. Each of the IMP native plugins and the plugins provided by
 modules are also registerd as filters in the Jinja2 template engine.
 Additionaly plugins can also be called from within expressions such
-as those used for constraining literal types. The validation 
-exression will in that case be reduced to a transformation of the 
+as those used for constraining literal types. The validation
+exression will in that case be reduced to a transformation of the
 value that needs to be validated to a boolean value.
 
-see :ref:`chap-IMP-Plugins` for a detailed guide to developing plugins.
+.. see :ref:`chap-IMP-Plugins` for a detailed guide to developing plugins.
 
 
 Entities
-========    
+========
 
-Domain concepts can be modeled using Entities. Entities are 
-defined with the keyword ``entity`` followed by a name 
-that starts with an uppercase character. The other characters of the 
-name may contains upper and lower case characters, numbers, a dash and 
-an underscore. With a colon the body of the definition of an entity is 
-started. In this body the attributes of the entity are defined. The 
+Domain concepts can be modeled using Entities. Entities are
+defined with the keyword ``entity`` followed by a name
+that starts with an uppercase character. The other characters of the
+name may contains upper and lower case characters, numbers, a dash and
+an underscore. With a colon the body of the definition of an entity is
+started. In this body the attributes of the entity are defined. The
 body ends with the keyword ``end``.
 
-Entity attributes are used to add properties to an entity that 
-are represented by literal values. Properties of entities that 
-represent a relation to an instance of an entity should be represented 
-using relations which are explained further on. On each line of the 
-body of an entity definition a literal attribute can be defined. The 
-definition consists of the literal type, which is either ``string`` , ``number`` or ``bool`` 
-and the name of the attribute. Optionally a default value can be 
+Entity attributes are used to add properties to an entity that
+are represented by literal values. Properties of entities that
+represent a relation to an instance of an entity should be represented
+using relations which are explained further on. On each line of the
+body of an entity definition a literal attribute can be defined. The
+definition consists of the literal type, which is either ``string`` , ``number`` or ``bool``
+and the name of the attribute. Optionally a default value can be
 added.
 
-Entites can inherit from multiple other entities, thus multiple 
-inheritance. Inheritance implies that an entity inherits attributes and 
-relations from parent entities. Inheritance also introduces a 
-"is-a" relationship. It is however not possible to override 
-or rename attributes. Entities that do not explicitly inherit from an 
+Entites can inherit from multiple other entities, thus multiple
+inheritance. Inheritance implies that an entity inherits attributes and
+relations from parent entities. Inheritance also introduces a
+"is-a" relationship. It is however not possible to override
+or rename attributes. Entities that do not explicitly inherit from an
 other entity inherit from ``std::Entity``
 
 Instances of an entity are created with a constructor statement.
@@ -237,7 +237,7 @@ by the constructor with the default values set. Both mechanisms have
 the same semantics. The default value is used for an attribute when an
 instance of an entity is created and no value is provided in the
 constructor for the attributes with default values.
-        
+
 Defining entities in a configuration model::
 
    entity File:
@@ -256,7 +256,7 @@ Defining entities in a configuration model::
    typedef PublicFile as File(mode = 0644)
 
 Relations
-=========        
+=========
 IMP makes from the relations between entities a first class
 language construct. Literal value properties are modeled as attributes,
 properties that have an other entity as type are modeled as a relation
@@ -265,18 +265,18 @@ the relation together with the multiplicity of each relation end. Each
 end of the relation is named and is maintained as a double binding by
 the IMP runtime.
 
-<xref linkend="example-relation" /> shows the definition of a 
+<xref linkend="example-relation" /> shows the definition of a
 relation. Relations do not start with a specific keyword such as most
-other statements. Each side of a relation is defined an each side of 
-the ``--`` keyword. Each side is the definition of the 
+other statements. Each side of a relation is defined an each side of
+the ``--`` keyword. Each side is the definition of the
 property of the entity on the other side. Such a definition consists
 of the name of the entity, the name of the property and a multiplicity
-which is listed between square brackets. This multiplicity is either 
+which is listed between square brackets. This multiplicity is either
 a single integer value or a range which is separated by a colon. If the
 upper bound is infinite the value is left out. Relation multiplicities
 are enforced by the runtime. If they are violated a compilation error
 is issued.
-       
+
 Relations also add properties to entities. Relation can be set in
 the constructor or using a specific set statement. Properties of a
 relations with a multiplicity higher than one, can hold multiple
@@ -285,10 +285,10 @@ assigned to a property that is a list, this value is added to the list.
 When this value is also a list the items in the list are added to the
 property. This behavior is caused by the fact that variables and
 properties are read-only and in the case of a list, append only.
-        
+
 Defining relations between entities in the domain model::
 
-   # Each config file belongs to one service. 
+   # Each config file belongs to one service.
    # Each service can have one or more config files
    ConfigFile configfile [1:] -- [1] Service service
 
@@ -299,7 +299,7 @@ Defining relations between entities in the domain model::
 
 Implementations
 ===============
-        
+
 Entities define a domain model that is used to express a
 configuration in. For each entity one or more implementation can be
 defined. When an instance of an entity is constructed, the runtime
@@ -343,7 +343,7 @@ implementation that needs to be included.
       Defining implementations and connecting them to entities
    """
    implementation file1:
-      
+
    end
 
    implement File using file1
@@ -363,18 +363,18 @@ query function can be used to lookup instances of an entity. A query is
 always expressed in function of the properties of an entity. The
 properties that can be used in a query have to have an index defined
 over them.
-   
+
 An index is defined with a statement that starts with the
 ``index`` keyword, followed by the entity the properties
 that need to be indexed belongs to. Next, between parenthesis a list of
-properties that belong to that index is listed. Every combination of 
+properties that belong to that index is listed. Every combination of
 properties in an index should always be unique.
 
 A query on a type is performed by specifying the entity type and
 between square brackets the query on an index. A query should always
-specify values for alle properties in an index, so only one value 
+specify values for alle properties in an index, so only one value
 will be returned.
-        
+
 .. code-block:: guess
 
    """
@@ -386,10 +386,10 @@ will be returned.
    end
 
    index File(path)
-   
+
    # search for a file
    file_1 = File[path = "/etc/motd"]
-   
+
 
 Expressions
 ===========
@@ -397,4 +397,4 @@ Expressions
 
 Scoping
 =======
-        
+
