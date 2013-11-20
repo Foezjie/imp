@@ -69,14 +69,13 @@ Here we will create a directory ``quickstart`` with a basic configuration file.
    cat > .imp <<EOF
    [config]
    lib-dir = libs
-   export = imp-agent
+   export =
    EOF
    mkdir libs
    touch main.cf
 
-The configuration file defines that re-usable modules are stored in ``libs``
-and when the configuration model is compiled, the imp-agent export plug-in needs
-to be called.
+The configuration file defines that re-usable modules are stored in ``libs``. The empty export
+options indicates that only the built-in deployment subsystem should be used.
 
 The IMP compiler looks for a file called ``main.cf`` to start the compilation from.
 The last line, creates an empty file.
