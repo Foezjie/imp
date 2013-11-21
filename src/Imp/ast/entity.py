@@ -209,6 +209,7 @@ class Entity(Type, QList):
         """
         cls_type = self.get_class_type()
         instance = cls_type()
+        instance.__scope__ = local_scope
         
         self.add_instance(constructor_id, instance)
         

@@ -131,7 +131,7 @@ class EntityType(object, metaclass=EntityTypeMeta):
     """ 
         Base class for entities in the configuration specification
     """
-    __slots__ = ["_attributes", "_childeren"]
+    __slots__ = ["_attributes", "_childeren", "__scope__"]
     
     def __init__(self):
         self._attributes = {}
@@ -167,7 +167,7 @@ class EntityType(object, metaclass=EntityTypeMeta):
             self.__class__.__definition__.update_index(self, name, value)
             return object.__setattr__(self, name, value)
         
-        elif name == "__statement__":
+        elif name == "__statement__" or name == "__scope__":
             return object.__setattr__(self, name, value)
         
         else:
