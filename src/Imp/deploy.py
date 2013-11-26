@@ -54,8 +54,8 @@ def deploy(config, root_scope, remote = None, dry_run = True, ip_address = None)
     json_data = export.run(root_scope, offline = True)
     files = export.get_offline_files()
     
-    if remote is not None and ip_address is not None:
-        remote = ip_address
+    if remote is not None:
+        ip_address = remote
     
     agent = Agent(config, False, hostname, offline = True, deploy = not dry_run, remote = ip_address)
     agent._offline_files = files
