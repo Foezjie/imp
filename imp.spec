@@ -1,5 +1,6 @@
 Name:           python-imp
-Version:        0.10.6
+Version:        0.10.7
+
 Release:        1%{?dist}
 Summary:        Infrastructure management platform
 
@@ -28,6 +29,7 @@ Requires:       python3-tornado
 Requires:       python3-dateutil
 Requires:       python3-execnet
 Requires:       python3-plyvel
+#Requires:       python3-networkx
 
 Requires(pre):  shadow-utils
 

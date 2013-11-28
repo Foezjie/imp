@@ -117,10 +117,11 @@ def list_modules(**kwargs):
     pass
     # TODO
 
-@command("export", help = "Export the configuration", requires = ["compile"])
+@command("export", help = "Export the configuration", requires = ["compile"],
+         arguments = (("-g", "Dump the dependency graph", "store_true", "depgraph"),))
 def export(options, config, compile):
     from Imp.export import Exporter
-    export = Exporter(config)
+    export = Exporter(config, options)
     export.run(compile)
 
 @command("deploy", help = "Deploy the configuration model on the current machine", 

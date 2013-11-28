@@ -113,7 +113,6 @@ class Resource(object):
                 if not isinstance(require, Id):
                     o = cls.get_resource(require)
                     if o is None:
-                        print(res, res.requires)
                         raise Exception("Dependency %s of resource %s is not converted to a valid resource. Unable to create a deployment model." % (require, res))
     
                     new_requires.add(o.id)
@@ -150,7 +149,6 @@ class Resource(object):
             try:
                 # TODO cleanup this hack
                 if isinstance(agent_value, list):
-                    print(model_object, agent_value)
                     agent_value = agent_value[0]
                 
                 agent_value = getattr(agent_value, el)

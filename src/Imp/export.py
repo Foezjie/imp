@@ -93,8 +93,9 @@ class Exporter(object):
         cls.__dep_manager.append(function)
                                  
         
-    def __init__(self, config):
+    def __init__(self, config, options = None):
         self.config = config
+        self.options = options
         
         self._resources = {}
         self._resource_to_host = {}
@@ -162,7 +163,26 @@ class Exporter(object):
             fnc(scope, self._resources)
             
         # TODO: check for cycles
+        
+    def _validate_graph(self):
+        """
+            Validate the graph and if requested by the user, dump it
+        """
+        if self.options and self.options.depgraph:
+            dot = "digraph G {\n"
+            for res in self._resources.values():
+                res_id = str(res.id)
+                dot += '\t"%s";\n' % (res_id)
                 
+                for req in res.requires:
+                    dot += '\t"%s" -> "%s";\n' % (res_id, str(req))
+                    
+            dot += "}\n"
+            
+            with open("dependencies.dot", "wb+") as fd:
+                fd.write(dot.encode())
+                
+        
     def run(self, scope, offline = False):
         """
         Run the export functions
@@ -192,6 +212,9 @@ class Exporter(object):
             hosts = sorted(list(self._unknown_hosts))
             for host in hosts:
                 LOGGER.info(" - %s" % host)
+                
+        # validate the dependency graph
+        self._validate_graph()
 
         json_data = self.resources_to_json()
         self.deploy_code(self._version)
