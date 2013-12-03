@@ -274,19 +274,6 @@ Append the public key be appending it to /root/.ssh/authorized_keys on vm2. You
 can achieve this by pasting the copied key content between quotes and appending
 it to that file, as shown on line 1.
 
-The IMP remote deploy command takes the name of the remote host. This name
-should match the name in the configuration model and is used to access the
-remote host. Because the names of the virtual machines are not configured in DNS
-we need to configure and alias in the ssh configuration.
-
-Add the following to /root/.ssh/authorized_keys
-
-.. code-block:: sh
-
-    Host vm2
-        Hostname 172.16.1.4
-
-
 vm2 preparation
 ---------------
 
@@ -334,12 +321,14 @@ Deploy the configuration model
 ------------------------------
 
 Deploy the new configuration model by invoking a local deploy on vm1 and a
-remote deploy on vm2.
+remote deploy on vm2. Because the vm2 name that is used in the configuration model does not resolve
+to an IP address we provide this address directly with the -i parameter.
 
 .. code-block:: sh
 
     imp deploy
-    imp deploy -r vm2
+    imp deploy -r vm2 -i 172.16.1.4
+
 
 
 Create your own modules
@@ -501,7 +490,7 @@ configuration.
 .. code-block:: sh
 
     imp deploy
-    imp deploy -r vm2
+    imp deploy -r vm2 -i 172.16.1.4"
 
 Deploy a file
 -------------
@@ -514,13 +503,13 @@ the day file on each of the virtual machines.
     :linenos:
 
     implementation stackMotd:
-        std::File(host = webserver, path = “/etc/motd”, owner = “root”,
-            group = “root”, group = “root”, mode = 644,
-            content = template(“lamp/motd.tmpl”))
+        std::File(host = webserver, path = "/etc/motd", owner = "root",
+            group = "root", group = "root", mode = 644,
+            content = template("lamp/motd.tmpl"))
 
-        std::File(host = mysqlserver, path = “/etc/motd”, owner = “root”,
-            group = “root”, group = “root”, mode = 644,
-            content = template(“lamp/motd.tmpl”))
+        std::File(host = mysqlserver, path = "/etc/motd", owner = "root",
+            group = "root", group = "root", mode = 644,
+            content = template("lamp/motd.tmpl"))
     end
 
     implement DrupalStack using stackMotd
