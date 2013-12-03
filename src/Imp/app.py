@@ -29,6 +29,7 @@ from Imp.server import ImpServer
 from Imp.agent import Agent
 from Imp.bootstrap import bootstrap as bootstrap_call
 from Imp.config import Config
+from Imp.stats import Stats
 
 LOGGER = logging.getLogger()
 
@@ -118,7 +119,8 @@ def list_modules(**kwargs):
     # TODO
 
 @command("export", help = "Export the configuration", requires = ["compile"],
-         arguments = (("-g", "Dump the dependency graph", "store_true", "depgraph"),))
+         arguments = (("-g", "Dump the dependency graph", "store_true", "depgraph"),
+                      ("-j", "Do not submit to the server but only store the json that would have been submitted in the supplied file", "json")))
 def export(options, config, compile):
     from Imp.export import Exporter
     export = Exporter(config, options)
@@ -164,6 +166,7 @@ def app():
     parser.add_argument("-d", "--debug", dest = "debug", action = "store_true",
                         help="Enable debug logging")
     parser.add_argument("-c", "--config", dest = "config_file", help="Use this config file")
+    parser.add_argument("-s", "--stats", dest = "stats", action = "store_true", help = "Dump all stats to the stats.json file after running")
     
     subcommands = parser.add_subparsers()
     
@@ -205,6 +208,10 @@ def app():
         return
     
     Commander.run(options.command, options, config)
+    
+    if options.stats:
+        # dump stats
+        Stats.dump()
 
 if __name__ == "__main__":
     app()

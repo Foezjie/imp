@@ -20,6 +20,7 @@
 from Imp.ast.variables import Variable
 from Imp.ast.constraint.query import QList
 from Imp.execute.util import Unset, Unknown
+from Imp.stats import Stats
 
 class Attribute(object):
     """
@@ -85,6 +86,7 @@ class Attribute(object):
 
         value.validate(self.validate)
         instance._attributes[self.name] = value
+        Stats.get("set attribute").increment()
     
 class RelationAttribute(Attribute):
     """ 
@@ -139,4 +141,5 @@ class RelationAttribute(Attribute):
 
         # set the other side on value
         if double:
+            Stats.get("set relation").increment()
             self.end.set_attribute(value.value, Variable(instance), False)

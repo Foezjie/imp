@@ -22,6 +22,7 @@
 from Imp.execute.util import EntityTypeMeta
 from Imp.ast.constraint.query import QList
 from Imp.ast.type import Type
+from Imp import stats
 
 class Entity(Type, QList):
     """
@@ -213,6 +214,7 @@ class Entity(Type, QList):
         
         self.add_instance(constructor_id, instance)
         
+        stats.Stats.get("construct").increment()
         return instance
     
     def get_class_type(self):
@@ -371,9 +373,10 @@ class Implementation(object):
         high level roles that do not have any arguments, or they can be used
         to create mixin like aspects.
     """
-    def __init__(self, name):
+    def __init__(self, name, entity = None):
         self.statements = []
         self.name = name
+        self.entity = entity
         
     def __repr__(self):
         return "Implementation(name = %s)" % self.name

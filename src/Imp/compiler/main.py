@@ -242,6 +242,7 @@ class Compiler(object):
         
         requires_rel = DefineRelation([Reference("Entity", ["std"]), "requires", [0, None], False], 
                                       [Reference("Entity", ["std"]), "provides", [0, None], False])
+        requires_rel.requires = ">"
         requires_rel.namespace = Namespace("std", self.__root_ns)
         
         statements.append(entity)

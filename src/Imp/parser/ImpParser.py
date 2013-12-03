@@ -1,4 +1,4 @@
-# $ANTLR 3.4.1-SNAPSHOT Imp.g 2013-07-03 15:48:44
+# $ANTLR 3.4.1-SNAPSHOT Imp.g 2013-12-03 11:46:21
 
 import sys
 from Imp.antlr3 import *
@@ -209,48 +209,48 @@ class ImpParser(Parser):
             transition = self.DFA9_transition
             )
 
-        self.dfa20 = self.DFA20(
-            self, 20,
-            eot = self.DFA20_eot,
-            eof = self.DFA20_eof,
-            min = self.DFA20_min,
-            max = self.DFA20_max,
-            accept = self.DFA20_accept,
-            special = self.DFA20_special,
-            transition = self.DFA20_transition
+        self.dfa21 = self.DFA21(
+            self, 21,
+            eot = self.DFA21_eot,
+            eof = self.DFA21_eof,
+            min = self.DFA21_min,
+            max = self.DFA21_max,
+            accept = self.DFA21_accept,
+            special = self.DFA21_special,
+            transition = self.DFA21_transition
             )
 
-        self.dfa27 = self.DFA27(
-            self, 27,
-            eot = self.DFA27_eot,
-            eof = self.DFA27_eof,
-            min = self.DFA27_min,
-            max = self.DFA27_max,
-            accept = self.DFA27_accept,
-            special = self.DFA27_special,
-            transition = self.DFA27_transition
+        self.dfa28 = self.DFA28(
+            self, 28,
+            eot = self.DFA28_eot,
+            eof = self.DFA28_eof,
+            min = self.DFA28_min,
+            max = self.DFA28_max,
+            accept = self.DFA28_accept,
+            special = self.DFA28_special,
+            transition = self.DFA28_transition
             )
 
-        self.dfa38 = self.DFA38(
-            self, 38,
-            eot = self.DFA38_eot,
-            eof = self.DFA38_eof,
-            min = self.DFA38_min,
-            max = self.DFA38_max,
-            accept = self.DFA38_accept,
-            special = self.DFA38_special,
-            transition = self.DFA38_transition
+        self.dfa39 = self.DFA39(
+            self, 39,
+            eot = self.DFA39_eot,
+            eof = self.DFA39_eof,
+            min = self.DFA39_min,
+            max = self.DFA39_max,
+            accept = self.DFA39_accept,
+            special = self.DFA39_special,
+            transition = self.DFA39_transition
             )
 
-        self.dfa40 = self.DFA40(
-            self, 40,
-            eot = self.DFA40_eot,
-            eof = self.DFA40_eof,
-            min = self.DFA40_min,
-            max = self.DFA40_max,
-            accept = self.DFA40_accept,
-            special = self.DFA40_special,
-            transition = self.DFA40_transition
+        self.dfa41 = self.DFA41(
+            self, 41,
+            eot = self.DFA41_eot,
+            eof = self.DFA41_eof,
+            min = self.DFA41_min,
+            max = self.DFA41_max,
+            accept = self.DFA41_accept,
+            special = self.DFA41_special,
+            transition = self.DFA41_transition
             )
 
 
@@ -346,7 +346,7 @@ class ImpParser(Parser):
 
 
                 # AST Rewrite
-                # elements: top_statement, ML_STRING, def_statement
+                # elements: top_statement, def_statement, ML_STRING
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -1002,7 +1002,7 @@ class ImpParser(Parser):
 
 
                     # AST Rewrite
-                    # elements: class_ref, implementation, variable, ID
+                    # elements: ID, implementation, variable, class_ref
                     # token labels: 
                     # rule labels: retval
                     # token list labels: 
@@ -1548,7 +1548,7 @@ class ImpParser(Parser):
 
 
                 # AST Rewrite
-                # elements: implementation, constructor
+                # elements: constructor, implementation
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -1790,7 +1790,7 @@ class ImpParser(Parser):
 
 
                 # AST Rewrite
-                # elements: method_call, ID, lambda_ctor, function_call
+                # elements: lambda_ctor, method_call, ID, function_call
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -1879,7 +1879,7 @@ class ImpParser(Parser):
 
 
     # $ANTLR start "implementation_def"
-    # Imp.g:95:1: implementation_def : 'implementation' ID implementation -> ^( DEF_IMPLEMENTATION ID implementation ) ;
+    # Imp.g:95:1: implementation_def : 'implementation' ID ( 'for' class_ref )? implementation -> ^( DEF_IMPLEMENTATION ID implementation ( class_ref )? ) ;
     def implementation_def(self, ):
         retval = self.implementation_def_return()
         retval.start = self.input.LT(1)
@@ -1889,17 +1889,22 @@ class ImpParser(Parser):
 
         string_literal52 = None
         ID53 = None
-        implementation54 = None
+        string_literal54 = None
+        class_ref55 = None
+        implementation56 = None
 
         string_literal52_tree = None
         ID53_tree = None
+        string_literal54_tree = None
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
+        stream_73 = RewriteRuleTokenStream(self._adaptor, "token 73")
         stream_75 = RewriteRuleTokenStream(self._adaptor, "token 75")
         stream_implementation = RewriteRuleSubtreeStream(self._adaptor, "rule implementation")
+        stream_class_ref = RewriteRuleSubtreeStream(self._adaptor, "rule class_ref")
         try:
             try:
-                # Imp.g:96:2: ( 'implementation' ID implementation -> ^( DEF_IMPLEMENTATION ID implementation ) )
-                # Imp.g:96:4: 'implementation' ID implementation
+                # Imp.g:96:2: ( 'implementation' ID ( 'for' class_ref )? implementation -> ^( DEF_IMPLEMENTATION ID implementation ( class_ref )? ) )
+                # Imp.g:96:4: 'implementation' ID ( 'for' class_ref )? implementation
                 pass 
                 string_literal52 = self.match(self.input, 75, self.FOLLOW_75_in_implementation_def579) 
                 if self._state.backtracking == 0:
@@ -1911,16 +1916,41 @@ class ImpParser(Parser):
                     stream_ID.add(ID53)
 
 
-                self._state.following.append(self.FOLLOW_implementation_in_implementation_def583)
-                implementation54 = self.implementation()
+                # Imp.g:96:24: ( 'for' class_ref )?
+                alt10 = 2
+                LA10_0 = self.input.LA(1)
+
+                if (LA10_0 == 73) :
+                    alt10 = 1
+                if alt10 == 1:
+                    # Imp.g:96:25: 'for' class_ref
+                    pass 
+                    string_literal54 = self.match(self.input, 73, self.FOLLOW_73_in_implementation_def584) 
+                    if self._state.backtracking == 0:
+                        stream_73.add(string_literal54)
+
+
+                    self._state.following.append(self.FOLLOW_class_ref_in_implementation_def586)
+                    class_ref55 = self.class_ref()
+
+                    self._state.following.pop()
+                    if self._state.backtracking == 0:
+                        stream_class_ref.add(class_ref55.tree)
+
+
+
+
+
+                self._state.following.append(self.FOLLOW_implementation_in_implementation_def590)
+                implementation56 = self.implementation()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_implementation.add(implementation54.tree)
+                    stream_implementation.add(implementation56.tree)
 
 
                 # AST Rewrite
-                # elements: ID, implementation
+                # elements: ID, class_ref, implementation
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -1935,8 +1965,8 @@ class ImpParser(Parser):
 
 
                     root_0 = self._adaptor.nil()
-                    # 96:39: -> ^( DEF_IMPLEMENTATION ID implementation )
-                    # Imp.g:96:42: ^( DEF_IMPLEMENTATION ID implementation )
+                    # 96:58: -> ^( DEF_IMPLEMENTATION ID implementation ( class_ref )? )
+                    # Imp.g:96:61: ^( DEF_IMPLEMENTATION ID implementation ( class_ref )? )
                     root_1 = self._adaptor.nil()
                     root_1 = self._adaptor.becomeRoot(
                     self._adaptor.createFromType(DEF_IMPLEMENTATION, "DEF_IMPLEMENTATION")
@@ -1947,6 +1977,13 @@ class ImpParser(Parser):
                     )
 
                     self._adaptor.addChild(root_1, stream_implementation.nextTree())
+
+                    # Imp.g:96:100: ( class_ref )?
+                    if stream_class_ref.hasNext():
+                        self._adaptor.addChild(root_1, stream_class_ref.nextTree())
+
+
+                    stream_class_ref.reset();
 
                     self._adaptor.addChild(root_0, root_1)
 
@@ -1998,19 +2035,19 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        string_literal55 = None
         string_literal57 = None
-        char_literal59 = None
-        string_literal61 = None
-        class_ref56 = None
-        ns_ref58 = None
+        string_literal59 = None
+        char_literal61 = None
+        string_literal63 = None
+        class_ref58 = None
         ns_ref60 = None
-        expression62 = None
+        ns_ref62 = None
+        expression64 = None
 
-        string_literal55_tree = None
         string_literal57_tree = None
-        char_literal59_tree = None
-        string_literal61_tree = None
+        string_literal59_tree = None
+        char_literal61_tree = None
+        string_literal63_tree = None
         stream_53 = RewriteRuleTokenStream(self._adaptor, "token 53")
         stream_86 = RewriteRuleTokenStream(self._adaptor, "token 86")
         stream_74 = RewriteRuleTokenStream(self._adaptor, "token 74")
@@ -2023,89 +2060,89 @@ class ImpParser(Parser):
                 # Imp.g:101:2: ( 'implement' class_ref 'using' ns_ref ( ',' ns_ref )* ( 'when' expression )? -> ^( DEF_IMPLEMENT class_ref ^( LIST ( ns_ref )+ ) ( expression )? ) )
                 # Imp.g:101:4: 'implement' class_ref 'using' ns_ref ( ',' ns_ref )* ( 'when' expression )?
                 pass 
-                string_literal55 = self.match(self.input, 74, self.FOLLOW_74_in_implement_def605) 
+                string_literal57 = self.match(self.input, 74, self.FOLLOW_74_in_implement_def615) 
                 if self._state.backtracking == 0:
-                    stream_74.add(string_literal55)
+                    stream_74.add(string_literal57)
 
 
-                self._state.following.append(self.FOLLOW_class_ref_in_implement_def607)
-                class_ref56 = self.class_ref()
+                self._state.following.append(self.FOLLOW_class_ref_in_implement_def617)
+                class_ref58 = self.class_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_class_ref.add(class_ref56.tree)
+                    stream_class_ref.add(class_ref58.tree)
 
 
-                string_literal57 = self.match(self.input, 86, self.FOLLOW_86_in_implement_def609) 
+                string_literal59 = self.match(self.input, 86, self.FOLLOW_86_in_implement_def619) 
                 if self._state.backtracking == 0:
-                    stream_86.add(string_literal57)
+                    stream_86.add(string_literal59)
 
 
-                self._state.following.append(self.FOLLOW_ns_ref_in_implement_def611)
-                ns_ref58 = self.ns_ref()
+                self._state.following.append(self.FOLLOW_ns_ref_in_implement_def621)
+                ns_ref60 = self.ns_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_ns_ref.add(ns_ref58.tree)
+                    stream_ns_ref.add(ns_ref60.tree)
 
 
                 # Imp.g:101:41: ( ',' ns_ref )*
-                while True: #loop10
-                    alt10 = 2
-                    LA10_0 = self.input.LA(1)
+                while True: #loop11
+                    alt11 = 2
+                    LA11_0 = self.input.LA(1)
 
-                    if (LA10_0 == 53) :
-                        alt10 = 1
+                    if (LA11_0 == 53) :
+                        alt11 = 1
 
 
-                    if alt10 == 1:
+                    if alt11 == 1:
                         # Imp.g:101:42: ',' ns_ref
                         pass 
-                        char_literal59 = self.match(self.input, 53, self.FOLLOW_53_in_implement_def614) 
+                        char_literal61 = self.match(self.input, 53, self.FOLLOW_53_in_implement_def624) 
                         if self._state.backtracking == 0:
-                            stream_53.add(char_literal59)
+                            stream_53.add(char_literal61)
 
 
-                        self._state.following.append(self.FOLLOW_ns_ref_in_implement_def616)
-                        ns_ref60 = self.ns_ref()
+                        self._state.following.append(self.FOLLOW_ns_ref_in_implement_def626)
+                        ns_ref62 = self.ns_ref()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_ns_ref.add(ns_ref60.tree)
+                            stream_ns_ref.add(ns_ref62.tree)
 
 
 
                     else:
-                        break #loop10
+                        break #loop11
 
 
                 # Imp.g:101:55: ( 'when' expression )?
-                alt11 = 2
-                LA11_0 = self.input.LA(1)
+                alt12 = 2
+                LA12_0 = self.input.LA(1)
 
-                if (LA11_0 == 87) :
-                    alt11 = 1
-                if alt11 == 1:
+                if (LA12_0 == 87) :
+                    alt12 = 1
+                if alt12 == 1:
                     # Imp.g:101:56: 'when' expression
                     pass 
-                    string_literal61 = self.match(self.input, 87, self.FOLLOW_87_in_implement_def621) 
+                    string_literal63 = self.match(self.input, 87, self.FOLLOW_87_in_implement_def631) 
                     if self._state.backtracking == 0:
-                        stream_87.add(string_literal61)
+                        stream_87.add(string_literal63)
 
 
-                    self._state.following.append(self.FOLLOW_expression_in_implement_def623)
-                    expression62 = self.expression()
+                    self._state.following.append(self.FOLLOW_expression_in_implement_def633)
+                    expression64 = self.expression()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_expression.add(expression62.tree)
+                        stream_expression.add(expression64.tree)
 
 
 
 
 
                 # AST Rewrite
-                # elements: ns_ref, expression, class_ref
+                # elements: expression, class_ref, ns_ref
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -2204,14 +2241,14 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal63 = None
-        ML_STRING64 = None
-        string_literal66 = None
-        statement65 = None
+        char_literal65 = None
+        ML_STRING66 = None
+        string_literal68 = None
+        statement67 = None
 
-        char_literal63_tree = None
-        ML_STRING64_tree = None
-        string_literal66_tree = None
+        char_literal65_tree = None
+        ML_STRING66_tree = None
+        string_literal68_tree = None
         stream_57 = RewriteRuleTokenStream(self._adaptor, "token 57")
         stream_70 = RewriteRuleTokenStream(self._adaptor, "token 70")
         stream_ML_STRING = RewriteRuleTokenStream(self._adaptor, "token ML_STRING")
@@ -2221,56 +2258,56 @@ class ImpParser(Parser):
                 # Imp.g:105:2: ( ':' ( ML_STRING )? ( statement )* 'end' -> ^( LIST ( statement )* ) )
                 # Imp.g:105:4: ':' ( ML_STRING )? ( statement )* 'end'
                 pass 
-                char_literal63 = self.match(self.input, 57, self.FOLLOW_57_in_implementation655) 
+                char_literal65 = self.match(self.input, 57, self.FOLLOW_57_in_implementation665) 
                 if self._state.backtracking == 0:
-                    stream_57.add(char_literal63)
+                    stream_57.add(char_literal65)
 
 
                 # Imp.g:105:8: ( ML_STRING )?
-                alt12 = 2
-                LA12_0 = self.input.LA(1)
+                alt13 = 2
+                LA13_0 = self.input.LA(1)
 
-                if (LA12_0 == ML_STRING) :
-                    alt12 = 1
-                if alt12 == 1:
+                if (LA13_0 == ML_STRING) :
+                    alt13 = 1
+                if alt13 == 1:
                     # Imp.g:105:8: ML_STRING
                     pass 
-                    ML_STRING64 = self.match(self.input, ML_STRING, self.FOLLOW_ML_STRING_in_implementation657) 
+                    ML_STRING66 = self.match(self.input, ML_STRING, self.FOLLOW_ML_STRING_in_implementation667) 
                     if self._state.backtracking == 0:
-                        stream_ML_STRING.add(ML_STRING64)
+                        stream_ML_STRING.add(ML_STRING66)
 
 
 
 
 
                 # Imp.g:105:19: ( statement )*
-                while True: #loop13
-                    alt13 = 2
-                    LA13_0 = self.input.LA(1)
+                while True: #loop14
+                    alt14 = 2
+                    LA14_0 = self.input.LA(1)
 
-                    if (LA13_0 == CLASS_ID or LA13_0 == ENUM_KEY or LA13_0 == ID or LA13_0 == 73 or LA13_0 == 77) :
-                        alt13 = 1
+                    if (LA14_0 == CLASS_ID or LA14_0 == ENUM_KEY or LA14_0 == ID or LA14_0 == 73 or LA14_0 == 77) :
+                        alt14 = 1
 
 
-                    if alt13 == 1:
+                    if alt14 == 1:
                         # Imp.g:105:19: statement
                         pass 
-                        self._state.following.append(self.FOLLOW_statement_in_implementation660)
-                        statement65 = self.statement()
+                        self._state.following.append(self.FOLLOW_statement_in_implementation670)
+                        statement67 = self.statement()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_statement.add(statement65.tree)
+                            stream_statement.add(statement67.tree)
 
 
 
                     else:
-                        break #loop13
+                        break #loop14
 
 
-                string_literal66 = self.match(self.input, 70, self.FOLLOW_70_in_implementation663) 
+                string_literal68 = self.match(self.input, 70, self.FOLLOW_70_in_implementation673) 
                 if self._state.backtracking == 0:
-                    stream_70.add(string_literal66)
+                    stream_70.add(string_literal68)
 
 
                 # AST Rewrite
@@ -2353,7 +2390,7 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        top_statement67 = None
+        top_statement69 = None
 
         stream_top_statement = RewriteRuleSubtreeStream(self._adaptor, "rule top_statement")
         try:
@@ -2361,12 +2398,12 @@ class ImpParser(Parser):
                 # Imp.g:109:2: ( top_statement -> ^( STATEMENT top_statement ) )
                 # Imp.g:109:4: top_statement
                 pass 
-                self._state.following.append(self.FOLLOW_top_statement_in_statement683)
-                top_statement67 = self.top_statement()
+                self._state.following.append(self.FOLLOW_top_statement_in_statement693)
+                top_statement69 = self.top_statement()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_top_statement.add(top_statement67.tree)
+                    stream_top_statement.add(top_statement69.tree)
 
 
                 # AST Rewrite
@@ -2444,12 +2481,12 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        ID68 = None
-        char_literal69 = None
-        operand70 = None
+        ID70 = None
+        char_literal71 = None
+        operand72 = None
 
-        ID68_tree = None
-        char_literal69_tree = None
+        ID70_tree = None
+        char_literal71_tree = None
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
         stream_62 = RewriteRuleTokenStream(self._adaptor, "token 62")
         stream_operand = RewriteRuleSubtreeStream(self._adaptor, "rule operand")
@@ -2458,26 +2495,26 @@ class ImpParser(Parser):
                 # Imp.g:113:2: ( ID '=' operand -> ^( ASSIGN ID operand ) )
                 # Imp.g:113:4: ID '=' operand
                 pass 
-                ID68 = self.match(self.input, ID, self.FOLLOW_ID_in_parameter703) 
+                ID70 = self.match(self.input, ID, self.FOLLOW_ID_in_parameter713) 
                 if self._state.backtracking == 0:
-                    stream_ID.add(ID68)
+                    stream_ID.add(ID70)
 
 
-                char_literal69 = self.match(self.input, 62, self.FOLLOW_62_in_parameter705) 
+                char_literal71 = self.match(self.input, 62, self.FOLLOW_62_in_parameter715) 
                 if self._state.backtracking == 0:
-                    stream_62.add(char_literal69)
+                    stream_62.add(char_literal71)
 
 
-                self._state.following.append(self.FOLLOW_operand_in_parameter707)
-                operand70 = self.operand()
+                self._state.following.append(self.FOLLOW_operand_in_parameter717)
+                operand72 = self.operand()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_operand.add(operand70.tree)
+                    stream_operand.add(operand72.tree)
 
 
                 # AST Rewrite
-                # elements: ID, operand
+                # elements: operand, ID
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -2555,13 +2592,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal72 = None
         char_literal74 = None
-        class_ref71 = None
-        param_list73 = None
+        char_literal76 = None
+        class_ref73 = None
+        param_list75 = None
 
-        char_literal72_tree = None
         char_literal74_tree = None
+        char_literal76_tree = None
         stream_51 = RewriteRuleTokenStream(self._adaptor, "token 51")
         stream_52 = RewriteRuleTokenStream(self._adaptor, "token 52")
         stream_class_ref = RewriteRuleSubtreeStream(self._adaptor, "rule class_ref")
@@ -2571,46 +2608,46 @@ class ImpParser(Parser):
                 # Imp.g:117:2: ( class_ref '(' ( param_list )? ')' -> ^( CONSTRUCT class_ref ( param_list )? ) )
                 # Imp.g:117:4: class_ref '(' ( param_list )? ')'
                 pass 
-                self._state.following.append(self.FOLLOW_class_ref_in_constructor728)
-                class_ref71 = self.class_ref()
+                self._state.following.append(self.FOLLOW_class_ref_in_constructor738)
+                class_ref73 = self.class_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_class_ref.add(class_ref71.tree)
+                    stream_class_ref.add(class_ref73.tree)
 
 
-                char_literal72 = self.match(self.input, 51, self.FOLLOW_51_in_constructor730) 
+                char_literal74 = self.match(self.input, 51, self.FOLLOW_51_in_constructor740) 
                 if self._state.backtracking == 0:
-                    stream_51.add(char_literal72)
+                    stream_51.add(char_literal74)
 
 
                 # Imp.g:117:18: ( param_list )?
-                alt14 = 2
-                LA14_0 = self.input.LA(1)
+                alt15 = 2
+                LA15_0 = self.input.LA(1)
 
-                if (LA14_0 == ID) :
-                    alt14 = 1
-                if alt14 == 1:
+                if (LA15_0 == ID) :
+                    alt15 = 1
+                if alt15 == 1:
                     # Imp.g:117:18: param_list
                     pass 
-                    self._state.following.append(self.FOLLOW_param_list_in_constructor732)
-                    param_list73 = self.param_list()
+                    self._state.following.append(self.FOLLOW_param_list_in_constructor742)
+                    param_list75 = self.param_list()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_param_list.add(param_list73.tree)
+                        stream_param_list.add(param_list75.tree)
 
 
 
 
 
-                char_literal74 = self.match(self.input, 52, self.FOLLOW_52_in_constructor735) 
+                char_literal76 = self.match(self.input, 52, self.FOLLOW_52_in_constructor745) 
                 if self._state.backtracking == 0:
-                    stream_52.add(char_literal74)
+                    stream_52.add(char_literal76)
 
 
                 # AST Rewrite
-                # elements: class_ref, param_list
+                # elements: param_list, class_ref
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -2691,13 +2728,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal76 = None
         char_literal78 = None
-        parameter75 = None
+        char_literal80 = None
         parameter77 = None
+        parameter79 = None
 
-        char_literal76_tree = None
         char_literal78_tree = None
+        char_literal80_tree = None
         stream_53 = RewriteRuleTokenStream(self._adaptor, "token 53")
         stream_parameter = RewriteRuleSubtreeStream(self._adaptor, "rule parameter")
         try:
@@ -2705,61 +2742,61 @@ class ImpParser(Parser):
                 # Imp.g:121:2: ( parameter ( ',' parameter )* ( ',' )? -> ^( LIST ( parameter )+ ) )
                 # Imp.g:121:4: parameter ( ',' parameter )* ( ',' )?
                 pass 
-                self._state.following.append(self.FOLLOW_parameter_in_param_list760)
-                parameter75 = self.parameter()
+                self._state.following.append(self.FOLLOW_parameter_in_param_list770)
+                parameter77 = self.parameter()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_parameter.add(parameter75.tree)
+                    stream_parameter.add(parameter77.tree)
 
 
                 # Imp.g:121:14: ( ',' parameter )*
-                while True: #loop15
-                    alt15 = 2
-                    LA15_0 = self.input.LA(1)
+                while True: #loop16
+                    alt16 = 2
+                    LA16_0 = self.input.LA(1)
 
-                    if (LA15_0 == 53) :
-                        LA15_1 = self.input.LA(2)
+                    if (LA16_0 == 53) :
+                        LA16_1 = self.input.LA(2)
 
-                        if (LA15_1 == ID) :
-                            alt15 = 1
-
-
+                        if (LA16_1 == ID) :
+                            alt16 = 1
 
 
-                    if alt15 == 1:
+
+
+                    if alt16 == 1:
                         # Imp.g:121:15: ',' parameter
                         pass 
-                        char_literal76 = self.match(self.input, 53, self.FOLLOW_53_in_param_list763) 
+                        char_literal78 = self.match(self.input, 53, self.FOLLOW_53_in_param_list773) 
                         if self._state.backtracking == 0:
-                            stream_53.add(char_literal76)
+                            stream_53.add(char_literal78)
 
 
-                        self._state.following.append(self.FOLLOW_parameter_in_param_list765)
-                        parameter77 = self.parameter()
+                        self._state.following.append(self.FOLLOW_parameter_in_param_list775)
+                        parameter79 = self.parameter()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_parameter.add(parameter77.tree)
+                            stream_parameter.add(parameter79.tree)
 
 
 
                     else:
-                        break #loop15
+                        break #loop16
 
 
                 # Imp.g:121:31: ( ',' )?
-                alt16 = 2
-                LA16_0 = self.input.LA(1)
+                alt17 = 2
+                LA17_0 = self.input.LA(1)
 
-                if (LA16_0 == 53) :
-                    alt16 = 1
-                if alt16 == 1:
+                if (LA17_0 == 53) :
+                    alt17 = 1
+                if alt17 == 1:
                     # Imp.g:121:31: ','
                     pass 
-                    char_literal78 = self.match(self.input, 53, self.FOLLOW_53_in_param_list769) 
+                    char_literal80 = self.match(self.input, 53, self.FOLLOW_53_in_param_list779) 
                     if self._state.backtracking == 0:
-                        stream_53.add(char_literal78)
+                        stream_53.add(char_literal80)
 
 
 
@@ -2848,26 +2885,26 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        string_literal79 = None
-        ID80 = None
         string_literal81 = None
+        ID82 = None
         string_literal83 = None
-        REGEX84 = None
-        string_literal86 = None
-        CLASS_ID87 = None
+        string_literal85 = None
+        REGEX86 = None
         string_literal88 = None
-        ns_ref82 = None
-        expression85 = None
-        constructor89 = None
+        CLASS_ID89 = None
+        string_literal90 = None
+        ns_ref84 = None
+        expression87 = None
+        constructor91 = None
 
-        string_literal79_tree = None
-        ID80_tree = None
         string_literal81_tree = None
+        ID82_tree = None
         string_literal83_tree = None
-        REGEX84_tree = None
-        string_literal86_tree = None
-        CLASS_ID87_tree = None
+        string_literal85_tree = None
+        REGEX86_tree = None
         string_literal88_tree = None
+        CLASS_ID89_tree = None
+        string_literal90_tree = None
         stream_69 = RewriteRuleTokenStream(self._adaptor, "token 69")
         stream_REGEX = RewriteRuleTokenStream(self._adaptor, "token REGEX")
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
@@ -2880,22 +2917,22 @@ class ImpParser(Parser):
         try:
             try:
                 # Imp.g:125:2: ( 'typedef' ID 'as' ns_ref 'matching' ( REGEX | expression ) -> ^( DEF_TYPE ID ns_ref ( expression )? ( REGEX )? ) | 'typedef' CLASS_ID 'as' constructor -> ^( DEF_DEFAULT CLASS_ID constructor ) )
-                alt18 = 2
-                LA18_0 = self.input.LA(1)
+                alt19 = 2
+                LA19_0 = self.input.LA(1)
 
-                if (LA18_0 == 85) :
-                    LA18_1 = self.input.LA(2)
+                if (LA19_0 == 85) :
+                    LA19_1 = self.input.LA(2)
 
-                    if (LA18_1 == ID) :
-                        alt18 = 1
-                    elif (LA18_1 == CLASS_ID) :
-                        alt18 = 2
+                    if (LA19_1 == ID) :
+                        alt19 = 1
+                    elif (LA19_1 == CLASS_ID) :
+                        alt19 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 18, 1, self.input)
+                        nvae = NoViableAltException("", 19, 1, self.input)
 
                         raise nvae
 
@@ -2905,100 +2942,100 @@ class ImpParser(Parser):
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 18, 0, self.input)
+                    nvae = NoViableAltException("", 19, 0, self.input)
 
                     raise nvae
 
 
-                if alt18 == 1:
+                if alt19 == 1:
                     # Imp.g:125:4: 'typedef' ID 'as' ns_ref 'matching' ( REGEX | expression )
                     pass 
-                    string_literal79 = self.match(self.input, 85, self.FOLLOW_85_in_typedef790) 
+                    string_literal81 = self.match(self.input, 85, self.FOLLOW_85_in_typedef800) 
                     if self._state.backtracking == 0:
-                        stream_85.add(string_literal79)
+                        stream_85.add(string_literal81)
 
 
-                    ID80 = self.match(self.input, ID, self.FOLLOW_ID_in_typedef792) 
+                    ID82 = self.match(self.input, ID, self.FOLLOW_ID_in_typedef802) 
                     if self._state.backtracking == 0:
-                        stream_ID.add(ID80)
+                        stream_ID.add(ID82)
 
 
-                    string_literal81 = self.match(self.input, 69, self.FOLLOW_69_in_typedef794) 
+                    string_literal83 = self.match(self.input, 69, self.FOLLOW_69_in_typedef804) 
                     if self._state.backtracking == 0:
-                        stream_69.add(string_literal81)
+                        stream_69.add(string_literal83)
 
 
-                    self._state.following.append(self.FOLLOW_ns_ref_in_typedef796)
-                    ns_ref82 = self.ns_ref()
+                    self._state.following.append(self.FOLLOW_ns_ref_in_typedef806)
+                    ns_ref84 = self.ns_ref()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_ns_ref.add(ns_ref82.tree)
+                        stream_ns_ref.add(ns_ref84.tree)
 
 
-                    string_literal83 = self.match(self.input, 80, self.FOLLOW_80_in_typedef798) 
+                    string_literal85 = self.match(self.input, 80, self.FOLLOW_80_in_typedef808) 
                     if self._state.backtracking == 0:
-                        stream_80.add(string_literal83)
+                        stream_80.add(string_literal85)
 
 
                     # Imp.g:125:40: ( REGEX | expression )
-                    alt17 = 2
-                    LA17_0 = self.input.LA(1)
+                    alt18 = 2
+                    LA18_0 = self.input.LA(1)
 
-                    if (LA17_0 == REGEX) :
-                        LA17_1 = self.input.LA(2)
+                    if (LA18_0 == REGEX) :
+                        LA18_1 = self.input.LA(2)
 
-                        if (LA17_1 == EOF or LA17_1 == CLASS_ID or LA17_1 == ENUM_KEY or LA17_1 == ID or LA17_1 == ML_STRING or LA17_1 == 71 or (73 <= LA17_1 <= 75) or (77 <= LA17_1 <= 78) or LA17_1 == 85) :
-                            alt17 = 1
-                        elif (LA17_1 == 50 or LA17_1 == 59 or LA17_1 == 61 or (63 <= LA17_1 <= 65) or LA17_1 == 76 or LA17_1 == 79) :
-                            alt17 = 2
+                        if (LA18_1 == EOF or LA18_1 == CLASS_ID or LA18_1 == ENUM_KEY or LA18_1 == ID or LA18_1 == ML_STRING or LA18_1 == 71 or (73 <= LA18_1 <= 75) or (77 <= LA18_1 <= 78) or LA18_1 == 85) :
+                            alt18 = 1
+                        elif (LA18_1 == 50 or LA18_1 == 59 or LA18_1 == 61 or (63 <= LA18_1 <= 65) or LA18_1 == 76 or LA18_1 == 79) :
+                            alt18 = 2
                         else:
                             if self._state.backtracking > 0:
                                 raise BacktrackingFailed
 
 
-                            nvae = NoViableAltException("", 17, 1, self.input)
+                            nvae = NoViableAltException("", 18, 1, self.input)
 
                             raise nvae
 
 
-                    elif (LA17_0 == CLASS_ID or (FALSE <= LA17_0 <= FLOAT) or LA17_0 == ID or LA17_0 == INT or LA17_0 == ML_STRING or (STRING <= LA17_0 <= TRUE) or LA17_0 == 51) :
-                        alt17 = 2
+                    elif (LA18_0 == CLASS_ID or (FALSE <= LA18_0 <= FLOAT) or LA18_0 == ID or LA18_0 == INT or LA18_0 == ML_STRING or (STRING <= LA18_0 <= TRUE) or LA18_0 == 51) :
+                        alt18 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 17, 0, self.input)
+                        nvae = NoViableAltException("", 18, 0, self.input)
 
                         raise nvae
 
 
-                    if alt17 == 1:
+                    if alt18 == 1:
                         # Imp.g:125:41: REGEX
                         pass 
-                        REGEX84 = self.match(self.input, REGEX, self.FOLLOW_REGEX_in_typedef801) 
+                        REGEX86 = self.match(self.input, REGEX, self.FOLLOW_REGEX_in_typedef811) 
                         if self._state.backtracking == 0:
-                            stream_REGEX.add(REGEX84)
+                            stream_REGEX.add(REGEX86)
 
 
 
-                    elif alt17 == 2:
+                    elif alt18 == 2:
                         # Imp.g:125:49: expression
                         pass 
-                        self._state.following.append(self.FOLLOW_expression_in_typedef805)
-                        expression85 = self.expression()
+                        self._state.following.append(self.FOLLOW_expression_in_typedef815)
+                        expression87 = self.expression()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_expression.add(expression85.tree)
+                            stream_expression.add(expression87.tree)
 
 
 
 
 
                     # AST Rewrite
-                    # elements: ns_ref, ID, REGEX, expression
+                    # elements: expression, ns_ref, REGEX, ID
                     # token labels: 
                     # rule labels: retval
                     # token list labels: 
@@ -3052,30 +3089,30 @@ class ImpParser(Parser):
 
 
 
-                elif alt18 == 2:
+                elif alt19 == 2:
                     # Imp.g:126:4: 'typedef' CLASS_ID 'as' constructor
                     pass 
-                    string_literal86 = self.match(self.input, 85, self.FOLLOW_85_in_typedef827) 
+                    string_literal88 = self.match(self.input, 85, self.FOLLOW_85_in_typedef837) 
                     if self._state.backtracking == 0:
-                        stream_85.add(string_literal86)
+                        stream_85.add(string_literal88)
 
 
-                    CLASS_ID87 = self.match(self.input, CLASS_ID, self.FOLLOW_CLASS_ID_in_typedef829) 
+                    CLASS_ID89 = self.match(self.input, CLASS_ID, self.FOLLOW_CLASS_ID_in_typedef839) 
                     if self._state.backtracking == 0:
-                        stream_CLASS_ID.add(CLASS_ID87)
+                        stream_CLASS_ID.add(CLASS_ID89)
 
 
-                    string_literal88 = self.match(self.input, 69, self.FOLLOW_69_in_typedef831) 
+                    string_literal90 = self.match(self.input, 69, self.FOLLOW_69_in_typedef841) 
                     if self._state.backtracking == 0:
-                        stream_69.add(string_literal88)
+                        stream_69.add(string_literal90)
 
 
-                    self._state.following.append(self.FOLLOW_constructor_in_typedef833)
-                    constructor89 = self.constructor()
+                    self._state.following.append(self.FOLLOW_constructor_in_typedef843)
+                    constructor91 = self.constructor()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_constructor.add(constructor89.tree)
+                        stream_constructor.add(constructor91.tree)
 
 
                     # AST Rewrite
@@ -3156,82 +3193,82 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        INT90 = None
-        INT91 = None
-        char_literal92 = None
+        INT92 = None
         INT93 = None
         char_literal94 = None
         INT95 = None
         char_literal96 = None
         INT97 = None
+        char_literal98 = None
+        INT99 = None
 
-        INT90_tree = None
-        INT91_tree = None
-        char_literal92_tree = None
+        INT92_tree = None
         INT93_tree = None
         char_literal94_tree = None
         INT95_tree = None
         char_literal96_tree = None
         INT97_tree = None
+        char_literal98_tree = None
+        INT99_tree = None
         stream_INT = RewriteRuleTokenStream(self._adaptor, "token INT")
         stream_57 = RewriteRuleTokenStream(self._adaptor, "token 57")
 
         try:
             try:
                 # Imp.g:130:2: ( ( INT )=> INT -> ^( MULT INT ) | ( INT ':' )=> INT ':' -> ^( MULT INT NONE ) | ( INT ':' INT )=> INT ':' INT -> ^( MULT INT INT ) | ( ':' INT )=> ':' INT -> ^( MULT NONE INT ) )
-                alt19 = 4
-                LA19_0 = self.input.LA(1)
+                alt20 = 4
+                LA20_0 = self.input.LA(1)
 
-                if (LA19_0 == INT) :
-                    LA19_1 = self.input.LA(2)
+                if (LA20_0 == INT) :
+                    LA20_1 = self.input.LA(2)
 
-                    if (LA19_1 == 57) :
-                        LA19_3 = self.input.LA(3)
+                    if (LA20_1 == 57) :
+                        LA20_3 = self.input.LA(3)
 
-                        if (LA19_3 == INT) and (self.synpred6_Imp()):
-                            alt19 = 3
-                        elif (LA19_3 == 67) and (self.synpred5_Imp()):
-                            alt19 = 2
+                        if (LA20_3 == INT) and (self.synpred6_Imp()):
+                            alt20 = 3
+                        elif (LA20_3 == 67) and (self.synpred5_Imp()):
+                            alt20 = 2
                         else:
                             if self._state.backtracking > 0:
                                 raise BacktrackingFailed
 
 
-                            nvae = NoViableAltException("", 19, 3, self.input)
+                            nvae = NoViableAltException("", 20, 3, self.input)
 
                             raise nvae
 
 
-                    elif (LA19_1 == 67) and (self.synpred4_Imp()):
-                        alt19 = 1
+                    elif (LA20_1 == 67) and (self.synpred4_Imp()):
+                        alt20 = 1
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 19, 1, self.input)
+                        nvae = NoViableAltException("", 20, 1, self.input)
 
                         raise nvae
 
 
-                elif (LA19_0 == 57) and (self.synpred7_Imp()):
-                    alt19 = 4
+                elif (LA20_0 == 57) and (self.synpred7_Imp()):
+                    alt20 = 4
                 else:
                     if self._state.backtracking > 0:
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 19, 0, self.input)
+                    nvae = NoViableAltException("", 20, 0, self.input)
 
                     raise nvae
 
 
-                if alt19 == 1:
+                if alt20 == 1:
                     # Imp.g:130:4: ( INT )=> INT
                     pass 
-                    INT90 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body861) 
+                    INT92 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body871) 
                     if self._state.backtracking == 0:
-                        stream_INT.add(INT90)
+                        stream_INT.add(INT92)
 
 
                     # AST Rewrite
@@ -3271,17 +3308,17 @@ class ImpParser(Parser):
 
 
 
-                elif alt19 == 2:
+                elif alt20 == 2:
                     # Imp.g:131:4: ( INT ':' )=> INT ':'
                     pass 
-                    INT91 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body882) 
+                    INT93 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body892) 
                     if self._state.backtracking == 0:
-                        stream_INT.add(INT91)
+                        stream_INT.add(INT93)
 
 
-                    char_literal92 = self.match(self.input, 57, self.FOLLOW_57_in_multiplicity_body884) 
+                    char_literal94 = self.match(self.input, 57, self.FOLLOW_57_in_multiplicity_body894) 
                     if self._state.backtracking == 0:
-                        stream_57.add(char_literal92)
+                        stream_57.add(char_literal94)
 
 
                     # AST Rewrite
@@ -3325,22 +3362,22 @@ class ImpParser(Parser):
 
 
 
-                elif alt19 == 3:
+                elif alt20 == 3:
                     # Imp.g:132:4: ( INT ':' INT )=> INT ':' INT
                     pass 
-                    INT93 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body909) 
-                    if self._state.backtracking == 0:
-                        stream_INT.add(INT93)
-
-
-                    char_literal94 = self.match(self.input, 57, self.FOLLOW_57_in_multiplicity_body911) 
-                    if self._state.backtracking == 0:
-                        stream_57.add(char_literal94)
-
-
-                    INT95 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body913) 
+                    INT95 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body919) 
                     if self._state.backtracking == 0:
                         stream_INT.add(INT95)
+
+
+                    char_literal96 = self.match(self.input, 57, self.FOLLOW_57_in_multiplicity_body921) 
+                    if self._state.backtracking == 0:
+                        stream_57.add(char_literal96)
+
+
+                    INT97 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body923) 
+                    if self._state.backtracking == 0:
+                        stream_INT.add(INT97)
 
 
                     # AST Rewrite
@@ -3384,17 +3421,17 @@ class ImpParser(Parser):
 
 
 
-                elif alt19 == 4:
+                elif alt20 == 4:
                     # Imp.g:133:4: ( ':' INT )=> ':' INT
                     pass 
-                    char_literal96 = self.match(self.input, 57, self.FOLLOW_57_in_multiplicity_body936) 
+                    char_literal98 = self.match(self.input, 57, self.FOLLOW_57_in_multiplicity_body946) 
                     if self._state.backtracking == 0:
-                        stream_57.add(char_literal96)
+                        stream_57.add(char_literal98)
 
 
-                    INT97 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body938) 
+                    INT99 = self.match(self.input, INT, self.FOLLOW_INT_in_multiplicity_body948) 
                     if self._state.backtracking == 0:
-                        stream_INT.add(INT97)
+                        stream_INT.add(INT99)
 
 
                     # AST Rewrite
@@ -3477,12 +3514,12 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal98 = None
         char_literal100 = None
-        multiplicity_body99 = None
+        char_literal102 = None
+        multiplicity_body101 = None
 
-        char_literal98_tree = None
         char_literal100_tree = None
+        char_literal102_tree = None
         stream_67 = RewriteRuleTokenStream(self._adaptor, "token 67")
         stream_66 = RewriteRuleTokenStream(self._adaptor, "token 66")
         stream_multiplicity_body = RewriteRuleSubtreeStream(self._adaptor, "rule multiplicity_body")
@@ -3491,22 +3528,22 @@ class ImpParser(Parser):
                 # Imp.g:138:2: ( '[' multiplicity_body ']' -> multiplicity_body )
                 # Imp.g:138:4: '[' multiplicity_body ']'
                 pass 
-                char_literal98 = self.match(self.input, 66, self.FOLLOW_66_in_multiplicity960) 
+                char_literal100 = self.match(self.input, 66, self.FOLLOW_66_in_multiplicity970) 
                 if self._state.backtracking == 0:
-                    stream_66.add(char_literal98)
+                    stream_66.add(char_literal100)
 
 
-                self._state.following.append(self.FOLLOW_multiplicity_body_in_multiplicity962)
-                multiplicity_body99 = self.multiplicity_body()
+                self._state.following.append(self.FOLLOW_multiplicity_body_in_multiplicity972)
+                multiplicity_body101 = self.multiplicity_body()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_multiplicity_body.add(multiplicity_body99.tree)
+                    stream_multiplicity_body.add(multiplicity_body101.tree)
 
 
-                char_literal100 = self.match(self.input, 67, self.FOLLOW_67_in_multiplicity964) 
+                char_literal102 = self.match(self.input, 67, self.FOLLOW_67_in_multiplicity974) 
                 if self._state.backtracking == 0:
-                    stream_67.add(char_literal100)
+                    stream_67.add(char_literal102)
 
 
                 # AST Rewrite
@@ -3576,10 +3613,10 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        ID102 = None
-        class_ref101 = None
+        ID104 = None
+        class_ref103 = None
 
-        ID102_tree = None
+        ID104_tree = None
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
         stream_class_ref = RewriteRuleSubtreeStream(self._adaptor, "rule class_ref")
         try:
@@ -3587,21 +3624,21 @@ class ImpParser(Parser):
                 # Imp.g:142:2: ( class_ref ID -> class_ref ID )
                 # Imp.g:142:4: class_ref ID
                 pass 
-                self._state.following.append(self.FOLLOW_class_ref_in_relation_end979)
-                class_ref101 = self.class_ref()
+                self._state.following.append(self.FOLLOW_class_ref_in_relation_end989)
+                class_ref103 = self.class_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_class_ref.add(class_ref101.tree)
+                    stream_class_ref.add(class_ref103.tree)
 
 
-                ID102 = self.match(self.input, ID, self.FOLLOW_ID_in_relation_end981) 
+                ID104 = self.match(self.input, ID, self.FOLLOW_ID_in_relation_end991) 
                 if self._state.backtracking == 0:
-                    stream_ID.add(ID102)
+                    stream_ID.add(ID104)
 
 
                 # AST Rewrite
-                # elements: class_ref, ID
+                # elements: ID, class_ref
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -3671,9 +3708,9 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        set103 = None
+        set105 = None
 
-        set103_tree = None
+        set105_tree = None
 
         try:
             try:
@@ -3683,12 +3720,12 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                set103 = self.input.LT(1)
+                set105 = self.input.LT(1)
 
                 if (54 <= self.input.LA(1) <= 55) or self.input.LA(1) == 60:
                     self.input.consume()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set103))
+                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set105))
 
                     self._state.errorRecovery = False
 
@@ -3748,7 +3785,7 @@ class ImpParser(Parser):
         left_m = None
         right_m = None
         right_end = None
-        relation_link104 = None
+        relation_link106 = None
 
         stream_multiplicity = RewriteRuleSubtreeStream(self._adaptor, "rule multiplicity")
         stream_relation_link = RewriteRuleSubtreeStream(self._adaptor, "rule relation_link")
@@ -3761,7 +3798,7 @@ class ImpParser(Parser):
                 # Imp.g:150:4: (left_end= relation_end left_m= multiplicity )
                 # Imp.g:150:5: left_end= relation_end left_m= multiplicity
                 pass 
-                self._state.following.append(self.FOLLOW_relation_end_in_relation1022)
+                self._state.following.append(self.FOLLOW_relation_end_in_relation1032)
                 left_end = self.relation_end()
 
                 self._state.following.pop()
@@ -3769,7 +3806,7 @@ class ImpParser(Parser):
                     stream_relation_end.add(left_end.tree)
 
 
-                self._state.following.append(self.FOLLOW_multiplicity_in_relation1026)
+                self._state.following.append(self.FOLLOW_multiplicity_in_relation1036)
                 left_m = self.multiplicity()
 
                 self._state.following.pop()
@@ -3780,18 +3817,18 @@ class ImpParser(Parser):
 
 
 
-                self._state.following.append(self.FOLLOW_relation_link_in_relation1029)
-                relation_link104 = self.relation_link()
+                self._state.following.append(self.FOLLOW_relation_link_in_relation1039)
+                relation_link106 = self.relation_link()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_relation_link.add(relation_link104.tree)
+                    stream_relation_link.add(relation_link106.tree)
 
 
                 # Imp.g:150:62: (right_m= multiplicity right_end= relation_end )
                 # Imp.g:150:63: right_m= multiplicity right_end= relation_end
                 pass 
-                self._state.following.append(self.FOLLOW_multiplicity_in_relation1034)
+                self._state.following.append(self.FOLLOW_multiplicity_in_relation1044)
                 right_m = self.multiplicity()
 
                 self._state.following.pop()
@@ -3799,7 +3836,7 @@ class ImpParser(Parser):
                     stream_multiplicity.add(right_m.tree)
 
 
-                self._state.following.append(self.FOLLOW_relation_end_in_relation1038)
+                self._state.following.append(self.FOLLOW_relation_end_in_relation1048)
                 right_end = self.relation_end()
 
                 self._state.following.pop()
@@ -3811,7 +3848,7 @@ class ImpParser(Parser):
 
 
                 # AST Rewrite
-                # elements: right_end, left_end, right_m, left_m, relation_link
+                # elements: left_m, right_end, right_m, relation_link, left_end
                 # token labels: 
                 # rule labels: retval, right_end, left_m, right_m, left_end
                 # token list labels: 
@@ -3929,151 +3966,151 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal112 = None
         char_literal114 = None
-        constant105 = None
-        list_def106 = None
-        index_lookup107 = None
-        function_call108 = None
-        class_ref109 = None
-        variable110 = None
-        method_call111 = None
-        expression113 = None
+        char_literal116 = None
+        constant107 = None
+        list_def108 = None
+        index_lookup109 = None
+        function_call110 = None
+        class_ref111 = None
+        variable112 = None
+        method_call113 = None
+        expression115 = None
 
-        char_literal112_tree = None
         char_literal114_tree = None
+        char_literal116_tree = None
         stream_91 = RewriteRuleTokenStream(self._adaptor, "token 91")
         stream_89 = RewriteRuleTokenStream(self._adaptor, "token 89")
         stream_expression = RewriteRuleSubtreeStream(self._adaptor, "rule expression")
         try:
             try:
                 # Imp.g:155:2: ( constant | list_def | index_lookup | ( ns_ref '(' )=> function_call | class_ref | variable | method_call | ( '{' )=> '{' expression '}' -> ^( EXPRESSION expression ) )
-                alt20 = 8
-                alt20 = self.dfa20.predict(self.input)
-                if alt20 == 1:
+                alt21 = 8
+                alt21 = self.dfa21.predict(self.input)
+                if alt21 == 1:
                     # Imp.g:155:4: constant
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_constant_in_operand1081)
-                    constant105 = self.constant()
+                    self._state.following.append(self.FOLLOW_constant_in_operand1091)
+                    constant107 = self.constant()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, constant105.tree)
+                        self._adaptor.addChild(root_0, constant107.tree)
 
 
 
-                elif alt20 == 2:
+                elif alt21 == 2:
                     # Imp.g:156:4: list_def
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_list_def_in_operand1086)
-                    list_def106 = self.list_def()
+                    self._state.following.append(self.FOLLOW_list_def_in_operand1096)
+                    list_def108 = self.list_def()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, list_def106.tree)
+                        self._adaptor.addChild(root_0, list_def108.tree)
 
 
 
-                elif alt20 == 3:
+                elif alt21 == 3:
                     # Imp.g:157:4: index_lookup
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_index_lookup_in_operand1091)
-                    index_lookup107 = self.index_lookup()
+                    self._state.following.append(self.FOLLOW_index_lookup_in_operand1101)
+                    index_lookup109 = self.index_lookup()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, index_lookup107.tree)
+                        self._adaptor.addChild(root_0, index_lookup109.tree)
 
 
 
-                elif alt20 == 4:
+                elif alt21 == 4:
                     # Imp.g:158:4: ( ns_ref '(' )=> function_call
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_function_call_in_operand1104)
-                    function_call108 = self.function_call()
+                    self._state.following.append(self.FOLLOW_function_call_in_operand1114)
+                    function_call110 = self.function_call()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, function_call108.tree)
+                        self._adaptor.addChild(root_0, function_call110.tree)
 
 
 
-                elif alt20 == 5:
+                elif alt21 == 5:
                     # Imp.g:159:4: class_ref
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_class_ref_in_operand1109)
-                    class_ref109 = self.class_ref()
+                    self._state.following.append(self.FOLLOW_class_ref_in_operand1119)
+                    class_ref111 = self.class_ref()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, class_ref109.tree)
+                        self._adaptor.addChild(root_0, class_ref111.tree)
 
 
 
-                elif alt20 == 6:
+                elif alt21 == 6:
                     # Imp.g:160:4: variable
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_variable_in_operand1114)
-                    variable110 = self.variable()
+                    self._state.following.append(self.FOLLOW_variable_in_operand1124)
+                    variable112 = self.variable()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, variable110.tree)
+                        self._adaptor.addChild(root_0, variable112.tree)
 
 
 
-                elif alt20 == 7:
+                elif alt21 == 7:
                     # Imp.g:161:4: method_call
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_method_call_in_operand1119)
-                    method_call111 = self.method_call()
+                    self._state.following.append(self.FOLLOW_method_call_in_operand1129)
+                    method_call113 = self.method_call()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, method_call111.tree)
+                        self._adaptor.addChild(root_0, method_call113.tree)
 
 
 
-                elif alt20 == 8:
+                elif alt21 == 8:
                     # Imp.g:162:4: ( '{' )=> '{' expression '}'
                     pass 
-                    char_literal112 = self.match(self.input, 89, self.FOLLOW_89_in_operand1130) 
+                    char_literal114 = self.match(self.input, 89, self.FOLLOW_89_in_operand1140) 
                     if self._state.backtracking == 0:
-                        stream_89.add(char_literal112)
+                        stream_89.add(char_literal114)
 
 
-                    self._state.following.append(self.FOLLOW_expression_in_operand1132)
-                    expression113 = self.expression()
+                    self._state.following.append(self.FOLLOW_expression_in_operand1142)
+                    expression115 = self.expression()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_expression.add(expression113.tree)
+                        stream_expression.add(expression115.tree)
 
 
-                    char_literal114 = self.match(self.input, 91, self.FOLLOW_91_in_operand1134) 
+                    char_literal116 = self.match(self.input, 91, self.FOLLOW_91_in_operand1144) 
                     if self._state.backtracking == 0:
-                        stream_91.add(char_literal114)
+                        stream_91.add(char_literal116)
 
 
                     # AST Rewrite
@@ -4150,9 +4187,9 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        set115 = None
+        set117 = None
 
-        set115_tree = None
+        set117_tree = None
 
         try:
             try:
@@ -4162,12 +4199,12 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                set115 = self.input.LT(1)
+                set117 = self.input.LT(1)
 
                 if (FALSE <= self.input.LA(1) <= FLOAT) or self.input.LA(1) == INT or self.input.LA(1) == ML_STRING or self.input.LA(1) == REGEX or (STRING <= self.input.LA(1) <= TRUE):
                     self.input.consume()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set115))
+                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set117))
 
                     self._state.errorRecovery = False
 
@@ -4223,17 +4260,17 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal116 = None
         char_literal118 = None
         char_literal120 = None
-        char_literal121 = None
-        operand117 = None
+        char_literal122 = None
+        char_literal123 = None
         operand119 = None
+        operand121 = None
 
-        char_literal116_tree = None
         char_literal118_tree = None
         char_literal120_tree = None
-        char_literal121_tree = None
+        char_literal122_tree = None
+        char_literal123_tree = None
         stream_67 = RewriteRuleTokenStream(self._adaptor, "token 67")
         stream_66 = RewriteRuleTokenStream(self._adaptor, "token 66")
         stream_53 = RewriteRuleTokenStream(self._adaptor, "token 53")
@@ -4243,74 +4280,74 @@ class ImpParser(Parser):
                 # Imp.g:171:2: ( '[' operand ( ',' operand )* ( ',' )? ']' -> ^( LIST ( operand )+ ) )
                 # Imp.g:171:4: '[' operand ( ',' operand )* ( ',' )? ']'
                 pass 
-                char_literal116 = self.match(self.input, 66, self.FOLLOW_66_in_list_def1200) 
+                char_literal118 = self.match(self.input, 66, self.FOLLOW_66_in_list_def1210) 
                 if self._state.backtracking == 0:
-                    stream_66.add(char_literal116)
+                    stream_66.add(char_literal118)
 
 
-                self._state.following.append(self.FOLLOW_operand_in_list_def1202)
-                operand117 = self.operand()
+                self._state.following.append(self.FOLLOW_operand_in_list_def1212)
+                operand119 = self.operand()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_operand.add(operand117.tree)
+                    stream_operand.add(operand119.tree)
 
 
                 # Imp.g:171:16: ( ',' operand )*
-                while True: #loop21
-                    alt21 = 2
-                    LA21_0 = self.input.LA(1)
+                while True: #loop22
+                    alt22 = 2
+                    LA22_0 = self.input.LA(1)
 
-                    if (LA21_0 == 53) :
-                        LA21_1 = self.input.LA(2)
+                    if (LA22_0 == 53) :
+                        LA22_1 = self.input.LA(2)
 
-                        if (LA21_1 == CLASS_ID or (FALSE <= LA21_1 <= FLOAT) or LA21_1 == ID or LA21_1 == INT or LA21_1 == ML_STRING or LA21_1 == REGEX or (STRING <= LA21_1 <= TRUE) or LA21_1 == 66 or LA21_1 == 89) :
-                            alt21 = 1
-
-
+                        if (LA22_1 == CLASS_ID or (FALSE <= LA22_1 <= FLOAT) or LA22_1 == ID or LA22_1 == INT or LA22_1 == ML_STRING or LA22_1 == REGEX or (STRING <= LA22_1 <= TRUE) or LA22_1 == 66 or LA22_1 == 89) :
+                            alt22 = 1
 
 
-                    if alt21 == 1:
+
+
+                    if alt22 == 1:
                         # Imp.g:171:17: ',' operand
                         pass 
-                        char_literal118 = self.match(self.input, 53, self.FOLLOW_53_in_list_def1205) 
+                        char_literal120 = self.match(self.input, 53, self.FOLLOW_53_in_list_def1215) 
                         if self._state.backtracking == 0:
-                            stream_53.add(char_literal118)
+                            stream_53.add(char_literal120)
 
 
-                        self._state.following.append(self.FOLLOW_operand_in_list_def1207)
-                        operand119 = self.operand()
+                        self._state.following.append(self.FOLLOW_operand_in_list_def1217)
+                        operand121 = self.operand()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_operand.add(operand119.tree)
+                            stream_operand.add(operand121.tree)
 
 
 
                     else:
-                        break #loop21
+                        break #loop22
 
 
                 # Imp.g:171:31: ( ',' )?
-                alt22 = 2
-                LA22_0 = self.input.LA(1)
+                alt23 = 2
+                LA23_0 = self.input.LA(1)
 
-                if (LA22_0 == 53) :
-                    alt22 = 1
-                if alt22 == 1:
+                if (LA23_0 == 53) :
+                    alt23 = 1
+                if alt23 == 1:
                     # Imp.g:171:31: ','
                     pass 
-                    char_literal120 = self.match(self.input, 53, self.FOLLOW_53_in_list_def1211) 
+                    char_literal122 = self.match(self.input, 53, self.FOLLOW_53_in_list_def1221) 
                     if self._state.backtracking == 0:
-                        stream_53.add(char_literal120)
+                        stream_53.add(char_literal122)
 
 
 
 
 
-                char_literal121 = self.match(self.input, 67, self.FOLLOW_67_in_list_def1214) 
+                char_literal123 = self.match(self.input, 67, self.FOLLOW_67_in_list_def1224) 
                 if self._state.backtracking == 0:
-                    stream_67.add(char_literal121)
+                    stream_67.add(char_literal123)
 
 
                 # AST Rewrite
@@ -4396,7 +4433,7 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        param_list122 = None
+        param_list124 = None
 
 
         try:
@@ -4407,12 +4444,12 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                self._state.following.append(self.FOLLOW_param_list_in_index_arg1235)
-                param_list122 = self.param_list()
+                self._state.following.append(self.FOLLOW_param_list_in_index_arg1245)
+                param_list124 = self.param_list()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    self._adaptor.addChild(root_0, param_list122.tree)
+                    self._adaptor.addChild(root_0, param_list124.tree)
 
 
 
@@ -4456,13 +4493,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal124 = None
         char_literal126 = None
-        class_ref123 = None
-        index_arg125 = None
+        char_literal128 = None
+        class_ref125 = None
+        index_arg127 = None
 
-        char_literal124_tree = None
         char_literal126_tree = None
+        char_literal128_tree = None
         stream_67 = RewriteRuleTokenStream(self._adaptor, "token 67")
         stream_66 = RewriteRuleTokenStream(self._adaptor, "token 66")
         stream_class_ref = RewriteRuleSubtreeStream(self._adaptor, "rule class_ref")
@@ -4472,34 +4509,34 @@ class ImpParser(Parser):
                 # Imp.g:180:2: ( class_ref '[' index_arg ']' -> ^( HASH class_ref index_arg ) )
                 # Imp.g:180:4: class_ref '[' index_arg ']'
                 pass 
-                self._state.following.append(self.FOLLOW_class_ref_in_index_lookup1248)
-                class_ref123 = self.class_ref()
+                self._state.following.append(self.FOLLOW_class_ref_in_index_lookup1258)
+                class_ref125 = self.class_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_class_ref.add(class_ref123.tree)
+                    stream_class_ref.add(class_ref125.tree)
 
 
-                char_literal124 = self.match(self.input, 66, self.FOLLOW_66_in_index_lookup1250) 
+                char_literal126 = self.match(self.input, 66, self.FOLLOW_66_in_index_lookup1260) 
                 if self._state.backtracking == 0:
-                    stream_66.add(char_literal124)
+                    stream_66.add(char_literal126)
 
 
-                self._state.following.append(self.FOLLOW_index_arg_in_index_lookup1252)
-                index_arg125 = self.index_arg()
+                self._state.following.append(self.FOLLOW_index_arg_in_index_lookup1262)
+                index_arg127 = self.index_arg()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_index_arg.add(index_arg125.tree)
+                    stream_index_arg.add(index_arg127.tree)
 
 
-                char_literal126 = self.match(self.input, 67, self.FOLLOW_67_in_index_lookup1254) 
+                char_literal128 = self.match(self.input, 67, self.FOLLOW_67_in_index_lookup1264) 
                 if self._state.backtracking == 0:
-                    stream_67.add(char_literal126)
+                    stream_67.add(char_literal128)
 
 
                 # AST Rewrite
-                # elements: class_ref, index_arg
+                # elements: index_arg, class_ref
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -4575,24 +4612,24 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        string_literal127 = None
-        CLASS_ID128 = None
         string_literal129 = None
-        char_literal131 = None
+        CLASS_ID130 = None
+        string_literal131 = None
         char_literal133 = None
-        ML_STRING134 = None
-        string_literal136 = None
-        class_ref130 = None
+        char_literal135 = None
+        ML_STRING136 = None
+        string_literal138 = None
         class_ref132 = None
-        entity_body135 = None
+        class_ref134 = None
+        entity_body137 = None
 
-        string_literal127_tree = None
-        CLASS_ID128_tree = None
         string_literal129_tree = None
-        char_literal131_tree = None
+        CLASS_ID130_tree = None
+        string_literal131_tree = None
         char_literal133_tree = None
-        ML_STRING134_tree = None
-        string_literal136_tree = None
+        char_literal135_tree = None
+        ML_STRING136_tree = None
+        string_literal138_tree = None
         stream_57 = RewriteRuleTokenStream(self._adaptor, "token 57")
         stream_70 = RewriteRuleTokenStream(self._adaptor, "token 70")
         stream_53 = RewriteRuleTokenStream(self._adaptor, "token 53")
@@ -4610,66 +4647,66 @@ class ImpParser(Parser):
                 # Imp.g:184:4: ( 'entity' CLASS_ID ( 'extends' class_ref ( ',' class_ref )* )? )
                 # Imp.g:184:5: 'entity' CLASS_ID ( 'extends' class_ref ( ',' class_ref )* )?
                 pass 
-                string_literal127 = self.match(self.input, 71, self.FOLLOW_71_in_entity_def1276) 
+                string_literal129 = self.match(self.input, 71, self.FOLLOW_71_in_entity_def1286) 
                 if self._state.backtracking == 0:
-                    stream_71.add(string_literal127)
+                    stream_71.add(string_literal129)
 
 
-                CLASS_ID128 = self.match(self.input, CLASS_ID, self.FOLLOW_CLASS_ID_in_entity_def1278) 
+                CLASS_ID130 = self.match(self.input, CLASS_ID, self.FOLLOW_CLASS_ID_in_entity_def1288) 
                 if self._state.backtracking == 0:
-                    stream_CLASS_ID.add(CLASS_ID128)
+                    stream_CLASS_ID.add(CLASS_ID130)
 
 
                 # Imp.g:184:23: ( 'extends' class_ref ( ',' class_ref )* )?
-                alt24 = 2
-                LA24_0 = self.input.LA(1)
+                alt25 = 2
+                LA25_0 = self.input.LA(1)
 
-                if (LA24_0 == 72) :
-                    alt24 = 1
-                if alt24 == 1:
+                if (LA25_0 == 72) :
+                    alt25 = 1
+                if alt25 == 1:
                     # Imp.g:184:24: 'extends' class_ref ( ',' class_ref )*
                     pass 
-                    string_literal129 = self.match(self.input, 72, self.FOLLOW_72_in_entity_def1281) 
+                    string_literal131 = self.match(self.input, 72, self.FOLLOW_72_in_entity_def1291) 
                     if self._state.backtracking == 0:
-                        stream_72.add(string_literal129)
+                        stream_72.add(string_literal131)
 
 
-                    self._state.following.append(self.FOLLOW_class_ref_in_entity_def1283)
-                    class_ref130 = self.class_ref()
+                    self._state.following.append(self.FOLLOW_class_ref_in_entity_def1293)
+                    class_ref132 = self.class_ref()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_class_ref.add(class_ref130.tree)
+                        stream_class_ref.add(class_ref132.tree)
 
 
                     # Imp.g:184:44: ( ',' class_ref )*
-                    while True: #loop23
-                        alt23 = 2
-                        LA23_0 = self.input.LA(1)
+                    while True: #loop24
+                        alt24 = 2
+                        LA24_0 = self.input.LA(1)
 
-                        if (LA23_0 == 53) :
-                            alt23 = 1
+                        if (LA24_0 == 53) :
+                            alt24 = 1
 
 
-                        if alt23 == 1:
+                        if alt24 == 1:
                             # Imp.g:184:45: ',' class_ref
                             pass 
-                            char_literal131 = self.match(self.input, 53, self.FOLLOW_53_in_entity_def1286) 
+                            char_literal133 = self.match(self.input, 53, self.FOLLOW_53_in_entity_def1296) 
                             if self._state.backtracking == 0:
-                                stream_53.add(char_literal131)
+                                stream_53.add(char_literal133)
 
 
-                            self._state.following.append(self.FOLLOW_class_ref_in_entity_def1288)
-                            class_ref132 = self.class_ref()
+                            self._state.following.append(self.FOLLOW_class_ref_in_entity_def1298)
+                            class_ref134 = self.class_ref()
 
                             self._state.following.pop()
                             if self._state.backtracking == 0:
-                                stream_class_ref.add(class_ref132.tree)
+                                stream_class_ref.add(class_ref134.tree)
 
 
 
                         else:
-                            break #loop23
+                            break #loop24
 
 
 
@@ -4678,60 +4715,60 @@ class ImpParser(Parser):
 
 
 
-                char_literal133 = self.match(self.input, 57, self.FOLLOW_57_in_entity_def1295) 
+                char_literal135 = self.match(self.input, 57, self.FOLLOW_57_in_entity_def1305) 
                 if self._state.backtracking == 0:
-                    stream_57.add(char_literal133)
+                    stream_57.add(char_literal135)
 
 
                 # Imp.g:184:68: ( ML_STRING )?
-                alt25 = 2
-                LA25_0 = self.input.LA(1)
+                alt26 = 2
+                LA26_0 = self.input.LA(1)
 
-                if (LA25_0 == ML_STRING) :
-                    alt25 = 1
-                if alt25 == 1:
+                if (LA26_0 == ML_STRING) :
+                    alt26 = 1
+                if alt26 == 1:
                     # Imp.g:184:68: ML_STRING
                     pass 
-                    ML_STRING134 = self.match(self.input, ML_STRING, self.FOLLOW_ML_STRING_in_entity_def1297) 
+                    ML_STRING136 = self.match(self.input, ML_STRING, self.FOLLOW_ML_STRING_in_entity_def1307) 
                     if self._state.backtracking == 0:
-                        stream_ML_STRING.add(ML_STRING134)
+                        stream_ML_STRING.add(ML_STRING136)
 
 
 
 
 
                 # Imp.g:184:79: ( entity_body )*
-                while True: #loop26
-                    alt26 = 2
-                    LA26_0 = self.input.LA(1)
+                while True: #loop27
+                    alt27 = 2
+                    LA27_0 = self.input.LA(1)
 
-                    if (LA26_0 == CLASS_ID or LA26_0 == ID) :
-                        alt26 = 1
+                    if (LA27_0 == CLASS_ID or LA27_0 == ID) :
+                        alt27 = 1
 
 
-                    if alt26 == 1:
+                    if alt27 == 1:
                         # Imp.g:184:80: entity_body
                         pass 
-                        self._state.following.append(self.FOLLOW_entity_body_in_entity_def1301)
-                        entity_body135 = self.entity_body()
+                        self._state.following.append(self.FOLLOW_entity_body_in_entity_def1311)
+                        entity_body137 = self.entity_body()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_entity_body.add(entity_body135.tree)
+                            stream_entity_body.add(entity_body137.tree)
 
 
 
                     else:
-                        break #loop26
+                        break #loop27
 
 
-                string_literal136 = self.match(self.input, 70, self.FOLLOW_70_in_entity_def1305) 
+                string_literal138 = self.match(self.input, 70, self.FOLLOW_70_in_entity_def1315) 
                 if self._state.backtracking == 0:
-                    stream_70.add(string_literal136)
+                    stream_70.add(string_literal138)
 
 
                 # AST Rewrite
-                # elements: ML_STRING, entity_body, CLASS_ID, class_ref
+                # elements: ML_STRING, entity_body, class_ref, CLASS_ID
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -4846,42 +4883,42 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        ns_ref137 = None
-        class_ref138 = None
+        ns_ref139 = None
+        class_ref140 = None
 
 
         try:
             try:
                 # Imp.g:189:2: ( ns_ref | class_ref )
-                alt27 = 2
-                alt27 = self.dfa27.predict(self.input)
-                if alt27 == 1:
+                alt28 = 2
+                alt28 = self.dfa28.predict(self.input)
+                if alt28 == 1:
                     # Imp.g:189:4: ns_ref
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_ns_ref_in_type1347)
-                    ns_ref137 = self.ns_ref()
+                    self._state.following.append(self.FOLLOW_ns_ref_in_type1357)
+                    ns_ref139 = self.ns_ref()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, ns_ref137.tree)
+                        self._adaptor.addChild(root_0, ns_ref139.tree)
 
 
 
-                elif alt27 == 2:
+                elif alt28 == 2:
                     # Imp.g:189:13: class_ref
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_class_ref_in_type1351)
-                    class_ref138 = self.class_ref()
+                    self._state.following.append(self.FOLLOW_class_ref_in_type1361)
+                    class_ref140 = self.class_ref()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, class_ref138.tree)
+                        self._adaptor.addChild(root_0, class_ref140.tree)
 
 
 
@@ -4924,13 +4961,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        ID140 = None
-        char_literal141 = None
-        type139 = None
-        constant142 = None
+        ID142 = None
+        char_literal143 = None
+        type141 = None
+        constant144 = None
 
-        ID140_tree = None
-        char_literal141_tree = None
+        ID142_tree = None
+        char_literal143_tree = None
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
         stream_62 = RewriteRuleTokenStream(self._adaptor, "token 62")
         stream_constant = RewriteRuleSubtreeStream(self._adaptor, "rule constant")
@@ -4940,46 +4977,46 @@ class ImpParser(Parser):
                 # Imp.g:193:2: ( type ID ( '=' constant )? -> ^( STATEMENT type ID ( constant )? ) )
                 # Imp.g:193:4: type ID ( '=' constant )?
                 pass 
-                self._state.following.append(self.FOLLOW_type_in_entity_body1362)
-                type139 = self.type()
+                self._state.following.append(self.FOLLOW_type_in_entity_body1372)
+                type141 = self.type()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_type.add(type139.tree)
+                    stream_type.add(type141.tree)
 
 
-                ID140 = self.match(self.input, ID, self.FOLLOW_ID_in_entity_body1364) 
+                ID142 = self.match(self.input, ID, self.FOLLOW_ID_in_entity_body1374) 
                 if self._state.backtracking == 0:
-                    stream_ID.add(ID140)
+                    stream_ID.add(ID142)
 
 
                 # Imp.g:193:12: ( '=' constant )?
-                alt28 = 2
-                LA28_0 = self.input.LA(1)
+                alt29 = 2
+                LA29_0 = self.input.LA(1)
 
-                if (LA28_0 == 62) :
-                    alt28 = 1
-                if alt28 == 1:
+                if (LA29_0 == 62) :
+                    alt29 = 1
+                if alt29 == 1:
                     # Imp.g:193:13: '=' constant
                     pass 
-                    char_literal141 = self.match(self.input, 62, self.FOLLOW_62_in_entity_body1367) 
+                    char_literal143 = self.match(self.input, 62, self.FOLLOW_62_in_entity_body1377) 
                     if self._state.backtracking == 0:
-                        stream_62.add(char_literal141)
+                        stream_62.add(char_literal143)
 
 
-                    self._state.following.append(self.FOLLOW_constant_in_entity_body1369)
-                    constant142 = self.constant()
+                    self._state.following.append(self.FOLLOW_constant_in_entity_body1379)
+                    constant144 = self.constant()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_constant.add(constant142.tree)
+                        stream_constant.add(constant144.tree)
 
 
 
 
 
                 # AST Rewrite
-                # elements: type, constant, ID
+                # elements: constant, ID, type
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -5064,13 +5101,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        ID143 = None
-        string_literal144 = None
         ID145 = None
+        string_literal146 = None
+        ID147 = None
 
-        ID143_tree = None
-        string_literal144_tree = None
         ID145_tree = None
+        string_literal146_tree = None
+        ID147_tree = None
         stream_58 = RewriteRuleTokenStream(self._adaptor, "token 58")
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
 
@@ -5079,36 +5116,36 @@ class ImpParser(Parser):
                 # Imp.g:197:2: ( ID ( '::' ID )* -> ^( REF ( ID )+ ) )
                 # Imp.g:197:4: ID ( '::' ID )*
                 pass 
-                ID143 = self.match(self.input, ID, self.FOLLOW_ID_in_ns_ref1396) 
+                ID145 = self.match(self.input, ID, self.FOLLOW_ID_in_ns_ref1406) 
                 if self._state.backtracking == 0:
-                    stream_ID.add(ID143)
+                    stream_ID.add(ID145)
 
 
                 # Imp.g:197:7: ( '::' ID )*
-                while True: #loop29
-                    alt29 = 2
-                    LA29_0 = self.input.LA(1)
+                while True: #loop30
+                    alt30 = 2
+                    LA30_0 = self.input.LA(1)
 
-                    if (LA29_0 == 58) :
-                        alt29 = 1
+                    if (LA30_0 == 58) :
+                        alt30 = 1
 
 
-                    if alt29 == 1:
+                    if alt30 == 1:
                         # Imp.g:197:8: '::' ID
                         pass 
-                        string_literal144 = self.match(self.input, 58, self.FOLLOW_58_in_ns_ref1399) 
+                        string_literal146 = self.match(self.input, 58, self.FOLLOW_58_in_ns_ref1409) 
                         if self._state.backtracking == 0:
-                            stream_58.add(string_literal144)
+                            stream_58.add(string_literal146)
 
 
-                        ID145 = self.match(self.input, ID, self.FOLLOW_ID_in_ns_ref1401) 
+                        ID147 = self.match(self.input, ID, self.FOLLOW_ID_in_ns_ref1411) 
                         if self._state.backtracking == 0:
-                            stream_ID.add(ID145)
+                            stream_ID.add(ID147)
 
 
 
                     else:
-                        break #loop29
+                        break #loop30
 
 
                 # AST Rewrite
@@ -5196,13 +5233,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        string_literal146 = None
-        CLASS_ID147 = None
+        string_literal148 = None
+        CLASS_ID149 = None
         ns = None
         list_ns = None
 
-        string_literal146_tree = None
-        CLASS_ID147_tree = None
+        string_literal148_tree = None
+        CLASS_ID149_tree = None
         ns_tree = None
         stream_58 = RewriteRuleTokenStream(self._adaptor, "token 58")
         stream_ID = RewriteRuleTokenStream(self._adaptor, "token ID")
@@ -5214,18 +5251,18 @@ class ImpParser(Parser):
                 # Imp.g:201:7: (ns+= ID '::' )* CLASS_ID
                 pass 
                 # Imp.g:201:7: (ns+= ID '::' )*
-                while True: #loop30
-                    alt30 = 2
-                    LA30_0 = self.input.LA(1)
+                while True: #loop31
+                    alt31 = 2
+                    LA31_0 = self.input.LA(1)
 
-                    if (LA30_0 == ID) :
-                        alt30 = 1
+                    if (LA31_0 == ID) :
+                        alt31 = 1
 
 
-                    if alt30 == 1:
+                    if alt31 == 1:
                         # Imp.g:201:8: ns+= ID '::'
                         pass 
-                        ns = self.match(self.input, ID, self.FOLLOW_ID_in_class_ref1430) 
+                        ns = self.match(self.input, ID, self.FOLLOW_ID_in_class_ref1440) 
                         if self._state.backtracking == 0:
                             stream_ID.add(ns)
 
@@ -5234,19 +5271,19 @@ class ImpParser(Parser):
                         list_ns.append(ns)
 
 
-                        string_literal146 = self.match(self.input, 58, self.FOLLOW_58_in_class_ref1432) 
+                        string_literal148 = self.match(self.input, 58, self.FOLLOW_58_in_class_ref1442) 
                         if self._state.backtracking == 0:
-                            stream_58.add(string_literal146)
+                            stream_58.add(string_literal148)
 
 
 
                     else:
-                        break #loop30
+                        break #loop31
 
 
-                CLASS_ID147 = self.match(self.input, CLASS_ID, self.FOLLOW_CLASS_ID_in_class_ref1436) 
+                CLASS_ID149 = self.match(self.input, CLASS_ID, self.FOLLOW_CLASS_ID_in_class_ref1446) 
                 if self._state.backtracking == 0:
-                    stream_CLASS_ID.add(CLASS_ID147)
+                    stream_CLASS_ID.add(CLASS_ID149)
 
 
                 # AST Rewrite
@@ -5343,16 +5380,16 @@ class ImpParser(Parser):
         root_0 = None
 
         var = None
-        string_literal148 = None
-        char_literal149 = None
+        string_literal150 = None
+        char_literal151 = None
         ns = None
         attr = None
         list_ns = None
         list_attr = None
 
         var_tree = None
-        string_literal148_tree = None
-        char_literal149_tree = None
+        string_literal150_tree = None
+        char_literal151_tree = None
         ns_tree = None
         attr_tree = None
         stream_58 = RewriteRuleTokenStream(self._adaptor, "token 58")
@@ -5365,23 +5402,23 @@ class ImpParser(Parser):
                 # Imp.g:205:4: (ns+= ID '::' )* var= ID ( '.' attr+= ID )*
                 pass 
                 # Imp.g:205:4: (ns+= ID '::' )*
-                while True: #loop31
-                    alt31 = 2
-                    LA31_0 = self.input.LA(1)
+                while True: #loop32
+                    alt32 = 2
+                    LA32_0 = self.input.LA(1)
 
-                    if (LA31_0 == ID) :
-                        LA31_1 = self.input.LA(2)
+                    if (LA32_0 == ID) :
+                        LA32_1 = self.input.LA(2)
 
-                        if (LA31_1 == 58) :
-                            alt31 = 1
-
-
+                        if (LA32_1 == 58) :
+                            alt32 = 1
 
 
-                    if alt31 == 1:
+
+
+                    if alt32 == 1:
                         # Imp.g:205:5: ns+= ID '::'
                         pass 
-                        ns = self.match(self.input, ID, self.FOLLOW_ID_in_variable1470) 
+                        ns = self.match(self.input, ID, self.FOLLOW_ID_in_variable1480) 
                         if self._state.backtracking == 0:
                             stream_ID.add(ns)
 
@@ -5390,39 +5427,39 @@ class ImpParser(Parser):
                         list_ns.append(ns)
 
 
-                        string_literal148 = self.match(self.input, 58, self.FOLLOW_58_in_variable1472) 
+                        string_literal150 = self.match(self.input, 58, self.FOLLOW_58_in_variable1482) 
                         if self._state.backtracking == 0:
-                            stream_58.add(string_literal148)
+                            stream_58.add(string_literal150)
 
 
 
                     else:
-                        break #loop31
+                        break #loop32
 
 
-                var = self.match(self.input, ID, self.FOLLOW_ID_in_variable1478) 
+                var = self.match(self.input, ID, self.FOLLOW_ID_in_variable1488) 
                 if self._state.backtracking == 0:
                     stream_ID.add(var)
 
 
                 # Imp.g:205:26: ( '.' attr+= ID )*
-                while True: #loop32
-                    alt32 = 2
-                    LA32_0 = self.input.LA(1)
+                while True: #loop33
+                    alt33 = 2
+                    LA33_0 = self.input.LA(1)
 
-                    if (LA32_0 == 56) :
-                        alt32 = 1
+                    if (LA33_0 == 56) :
+                        alt33 = 1
 
 
-                    if alt32 == 1:
+                    if alt33 == 1:
                         # Imp.g:205:27: '.' attr+= ID
                         pass 
-                        char_literal149 = self.match(self.input, 56, self.FOLLOW_56_in_variable1481) 
+                        char_literal151 = self.match(self.input, 56, self.FOLLOW_56_in_variable1491) 
                         if self._state.backtracking == 0:
-                            stream_56.add(char_literal149)
+                            stream_56.add(char_literal151)
 
 
-                        attr = self.match(self.input, ID, self.FOLLOW_ID_in_variable1485) 
+                        attr = self.match(self.input, ID, self.FOLLOW_ID_in_variable1495) 
                         if self._state.backtracking == 0:
                             stream_ID.add(attr)
 
@@ -5433,11 +5470,11 @@ class ImpParser(Parser):
 
 
                     else:
-                        break #loop32
+                        break #loop33
 
 
                 # AST Rewrite
-                # elements: attr, var, ns
+                # elements: ns, attr, var
                 # token labels: var
                 # rule labels: retval
                 # token list labels: ns, attr
@@ -5544,13 +5581,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal151 = None
         char_literal153 = None
-        operand150 = None
+        char_literal155 = None
         operand152 = None
+        operand154 = None
 
-        char_literal151_tree = None
         char_literal153_tree = None
+        char_literal155_tree = None
         stream_53 = RewriteRuleTokenStream(self._adaptor, "token 53")
         stream_operand = RewriteRuleSubtreeStream(self._adaptor, "rule operand")
         try:
@@ -5558,61 +5595,61 @@ class ImpParser(Parser):
                 # Imp.g:209:2: ( operand ( ',' operand )* ( ',' )? -> ^( LIST ( operand )+ ) )
                 # Imp.g:209:4: operand ( ',' operand )* ( ',' )?
                 pass 
-                self._state.following.append(self.FOLLOW_operand_in_arg_list1524)
-                operand150 = self.operand()
+                self._state.following.append(self.FOLLOW_operand_in_arg_list1534)
+                operand152 = self.operand()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_operand.add(operand150.tree)
+                    stream_operand.add(operand152.tree)
 
 
                 # Imp.g:209:12: ( ',' operand )*
-                while True: #loop33
-                    alt33 = 2
-                    LA33_0 = self.input.LA(1)
+                while True: #loop34
+                    alt34 = 2
+                    LA34_0 = self.input.LA(1)
 
-                    if (LA33_0 == 53) :
-                        LA33_1 = self.input.LA(2)
+                    if (LA34_0 == 53) :
+                        LA34_1 = self.input.LA(2)
 
-                        if (LA33_1 == CLASS_ID or (FALSE <= LA33_1 <= FLOAT) or LA33_1 == ID or LA33_1 == INT or LA33_1 == ML_STRING or LA33_1 == REGEX or (STRING <= LA33_1 <= TRUE) or LA33_1 == 66 or LA33_1 == 89) :
-                            alt33 = 1
-
-
+                        if (LA34_1 == CLASS_ID or (FALSE <= LA34_1 <= FLOAT) or LA34_1 == ID or LA34_1 == INT or LA34_1 == ML_STRING or LA34_1 == REGEX or (STRING <= LA34_1 <= TRUE) or LA34_1 == 66 or LA34_1 == 89) :
+                            alt34 = 1
 
 
-                    if alt33 == 1:
+
+
+                    if alt34 == 1:
                         # Imp.g:209:13: ',' operand
                         pass 
-                        char_literal151 = self.match(self.input, 53, self.FOLLOW_53_in_arg_list1527) 
+                        char_literal153 = self.match(self.input, 53, self.FOLLOW_53_in_arg_list1537) 
                         if self._state.backtracking == 0:
-                            stream_53.add(char_literal151)
+                            stream_53.add(char_literal153)
 
 
-                        self._state.following.append(self.FOLLOW_operand_in_arg_list1529)
-                        operand152 = self.operand()
+                        self._state.following.append(self.FOLLOW_operand_in_arg_list1539)
+                        operand154 = self.operand()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_operand.add(operand152.tree)
+                            stream_operand.add(operand154.tree)
 
 
 
                     else:
-                        break #loop33
+                        break #loop34
 
 
                 # Imp.g:209:27: ( ',' )?
-                alt34 = 2
-                LA34_0 = self.input.LA(1)
+                alt35 = 2
+                LA35_0 = self.input.LA(1)
 
-                if (LA34_0 == 53) :
-                    alt34 = 1
-                if alt34 == 1:
+                if (LA35_0 == 53) :
+                    alt35 = 1
+                if alt35 == 1:
                     # Imp.g:209:27: ','
                     pass 
-                    char_literal153 = self.match(self.input, 53, self.FOLLOW_53_in_arg_list1533) 
+                    char_literal155 = self.match(self.input, 53, self.FOLLOW_53_in_arg_list1543) 
                     if self._state.backtracking == 0:
-                        stream_53.add(char_literal153)
+                        stream_53.add(char_literal155)
 
 
 
@@ -5701,13 +5738,13 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal155 = None
         char_literal157 = None
-        ns_ref154 = None
-        call_arg156 = None
+        char_literal159 = None
+        ns_ref156 = None
+        call_arg158 = None
 
-        char_literal155_tree = None
         char_literal157_tree = None
+        char_literal159_tree = None
         stream_51 = RewriteRuleTokenStream(self._adaptor, "token 51")
         stream_52 = RewriteRuleTokenStream(self._adaptor, "token 52")
         stream_call_arg = RewriteRuleSubtreeStream(self._adaptor, "rule call_arg")
@@ -5717,42 +5754,42 @@ class ImpParser(Parser):
                 # Imp.g:213:2: ( ns_ref '(' ( call_arg )? ')' -> ^( CALL ns_ref ( call_arg )? ) )
                 # Imp.g:213:4: ns_ref '(' ( call_arg )? ')'
                 pass 
-                self._state.following.append(self.FOLLOW_ns_ref_in_function_call1555)
-                ns_ref154 = self.ns_ref()
+                self._state.following.append(self.FOLLOW_ns_ref_in_function_call1565)
+                ns_ref156 = self.ns_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_ns_ref.add(ns_ref154.tree)
+                    stream_ns_ref.add(ns_ref156.tree)
 
 
-                char_literal155 = self.match(self.input, 51, self.FOLLOW_51_in_function_call1557) 
+                char_literal157 = self.match(self.input, 51, self.FOLLOW_51_in_function_call1567) 
                 if self._state.backtracking == 0:
-                    stream_51.add(char_literal155)
+                    stream_51.add(char_literal157)
 
 
                 # Imp.g:213:15: ( call_arg )?
-                alt35 = 2
-                LA35_0 = self.input.LA(1)
+                alt36 = 2
+                LA36_0 = self.input.LA(1)
 
-                if (LA35_0 == CLASS_ID or (FALSE <= LA35_0 <= FLOAT) or LA35_0 == ID or LA35_0 == INT or LA35_0 == ML_STRING or LA35_0 == REGEX or (STRING <= LA35_0 <= TRUE) or LA35_0 == 66 or LA35_0 == 89) :
-                    alt35 = 1
-                if alt35 == 1:
+                if (LA36_0 == CLASS_ID or (FALSE <= LA36_0 <= FLOAT) or LA36_0 == ID or LA36_0 == INT or LA36_0 == ML_STRING or LA36_0 == REGEX or (STRING <= LA36_0 <= TRUE) or LA36_0 == 66 or LA36_0 == 89) :
+                    alt36 = 1
+                if alt36 == 1:
                     # Imp.g:213:15: call_arg
                     pass 
-                    self._state.following.append(self.FOLLOW_call_arg_in_function_call1559)
-                    call_arg156 = self.call_arg()
+                    self._state.following.append(self.FOLLOW_call_arg_in_function_call1569)
+                    call_arg158 = self.call_arg()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_call_arg.add(call_arg156.tree)
+                        stream_call_arg.add(call_arg158.tree)
 
 
 
 
 
-                char_literal157 = self.match(self.input, 52, self.FOLLOW_52_in_function_call1562) 
+                char_literal159 = self.match(self.input, 52, self.FOLLOW_52_in_function_call1572) 
                 if self._state.backtracking == 0:
-                    stream_52.add(char_literal157)
+                    stream_52.add(char_literal159)
 
 
                 # AST Rewrite
@@ -5837,7 +5874,7 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        arg_list158 = None
+        arg_list160 = None
 
 
         try:
@@ -5848,12 +5885,12 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                self._state.following.append(self.FOLLOW_arg_list_in_call_arg1590)
-                arg_list158 = self.arg_list()
+                self._state.following.append(self.FOLLOW_arg_list_in_call_arg1600)
+                arg_list160 = self.arg_list()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    self._adaptor.addChild(root_0, arg_list158.tree)
+                    self._adaptor.addChild(root_0, arg_list160.tree)
 
 
 
@@ -5897,15 +5934,15 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal159 = None
         char_literal161 = None
         char_literal163 = None
-        ns_ref160 = None
-        call_arg162 = None
+        char_literal165 = None
+        ns_ref162 = None
+        call_arg164 = None
 
-        char_literal159_tree = None
         char_literal161_tree = None
         char_literal163_tree = None
+        char_literal165_tree = None
         stream_51 = RewriteRuleTokenStream(self._adaptor, "token 51")
         stream_90 = RewriteRuleTokenStream(self._adaptor, "token 90")
         stream_52 = RewriteRuleTokenStream(self._adaptor, "token 52")
@@ -5916,63 +5953,63 @@ class ImpParser(Parser):
                 # Imp.g:223:2: ( '|' ns_ref ( '(' ( call_arg )? ')' )? -> ^( CALL ns_ref ( call_arg )? ) )
                 # Imp.g:223:4: '|' ns_ref ( '(' ( call_arg )? ')' )?
                 pass 
-                char_literal159 = self.match(self.input, 90, self.FOLLOW_90_in_method_pipe1601) 
+                char_literal161 = self.match(self.input, 90, self.FOLLOW_90_in_method_pipe1611) 
                 if self._state.backtracking == 0:
-                    stream_90.add(char_literal159)
+                    stream_90.add(char_literal161)
 
 
-                self._state.following.append(self.FOLLOW_ns_ref_in_method_pipe1603)
-                ns_ref160 = self.ns_ref()
+                self._state.following.append(self.FOLLOW_ns_ref_in_method_pipe1613)
+                ns_ref162 = self.ns_ref()
 
                 self._state.following.pop()
                 if self._state.backtracking == 0:
-                    stream_ns_ref.add(ns_ref160.tree)
+                    stream_ns_ref.add(ns_ref162.tree)
 
 
                 # Imp.g:223:15: ( '(' ( call_arg )? ')' )?
-                alt37 = 2
-                LA37_0 = self.input.LA(1)
+                alt38 = 2
+                LA38_0 = self.input.LA(1)
 
-                if (LA37_0 == 51) :
-                    alt37 = 1
-                if alt37 == 1:
+                if (LA38_0 == 51) :
+                    alt38 = 1
+                if alt38 == 1:
                     # Imp.g:223:16: '(' ( call_arg )? ')'
                     pass 
-                    char_literal161 = self.match(self.input, 51, self.FOLLOW_51_in_method_pipe1606) 
+                    char_literal163 = self.match(self.input, 51, self.FOLLOW_51_in_method_pipe1616) 
                     if self._state.backtracking == 0:
-                        stream_51.add(char_literal161)
+                        stream_51.add(char_literal163)
 
 
                     # Imp.g:223:20: ( call_arg )?
-                    alt36 = 2
-                    LA36_0 = self.input.LA(1)
+                    alt37 = 2
+                    LA37_0 = self.input.LA(1)
 
-                    if (LA36_0 == CLASS_ID or (FALSE <= LA36_0 <= FLOAT) or LA36_0 == ID or LA36_0 == INT or LA36_0 == ML_STRING or LA36_0 == REGEX or (STRING <= LA36_0 <= TRUE) or LA36_0 == 66 or LA36_0 == 89) :
-                        alt36 = 1
-                    if alt36 == 1:
+                    if (LA37_0 == CLASS_ID or (FALSE <= LA37_0 <= FLOAT) or LA37_0 == ID or LA37_0 == INT or LA37_0 == ML_STRING or LA37_0 == REGEX or (STRING <= LA37_0 <= TRUE) or LA37_0 == 66 or LA37_0 == 89) :
+                        alt37 = 1
+                    if alt37 == 1:
                         # Imp.g:223:20: call_arg
                         pass 
-                        self._state.following.append(self.FOLLOW_call_arg_in_method_pipe1608)
-                        call_arg162 = self.call_arg()
+                        self._state.following.append(self.FOLLOW_call_arg_in_method_pipe1618)
+                        call_arg164 = self.call_arg()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_call_arg.add(call_arg162.tree)
+                            stream_call_arg.add(call_arg164.tree)
 
 
 
 
 
-                    char_literal163 = self.match(self.input, 52, self.FOLLOW_52_in_method_pipe1611) 
+                    char_literal165 = self.match(self.input, 52, self.FOLLOW_52_in_method_pipe1621) 
                     if self._state.backtracking == 0:
-                        stream_52.add(char_literal163)
+                        stream_52.add(char_literal165)
 
 
 
 
 
                 # AST Rewrite
-                # elements: call_arg, ns_ref
+                # elements: ns_ref, call_arg
                 # token labels: 
                 # rule labels: retval
                 # token list labels: 
@@ -6055,7 +6092,7 @@ class ImpParser(Parser):
 
         cl = None
         var = None
-        method_pipe164 = None
+        method_pipe166 = None
 
         stream_method_pipe = RewriteRuleSubtreeStream(self._adaptor, "rule method_pipe")
         stream_class_ref = RewriteRuleSubtreeStream(self._adaptor, "rule class_ref")
@@ -6066,12 +6103,12 @@ class ImpParser(Parser):
                 # Imp.g:227:4: (cl= class_ref |var= variable ) ( method_pipe )+
                 pass 
                 # Imp.g:227:4: (cl= class_ref |var= variable )
-                alt38 = 2
-                alt38 = self.dfa38.predict(self.input)
-                if alt38 == 1:
+                alt39 = 2
+                alt39 = self.dfa39.predict(self.input)
+                if alt39 == 1:
                     # Imp.g:227:5: cl= class_ref
                     pass 
-                    self._state.following.append(self.FOLLOW_class_ref_in_method_call1640)
+                    self._state.following.append(self.FOLLOW_class_ref_in_method_call1650)
                     cl = self.class_ref()
 
                     self._state.following.pop()
@@ -6080,10 +6117,10 @@ class ImpParser(Parser):
 
 
 
-                elif alt38 == 2:
+                elif alt39 == 2:
                     # Imp.g:227:20: var= variable
                     pass 
-                    self._state.following.append(self.FOLLOW_variable_in_method_call1646)
+                    self._state.following.append(self.FOLLOW_variable_in_method_call1656)
                     var = self.variable()
 
                     self._state.following.pop()
@@ -6095,39 +6132,39 @@ class ImpParser(Parser):
 
 
                 # Imp.g:227:34: ( method_pipe )+
-                cnt39 = 0
-                while True: #loop39
-                    alt39 = 2
-                    LA39_0 = self.input.LA(1)
+                cnt40 = 0
+                while True: #loop40
+                    alt40 = 2
+                    LA40_0 = self.input.LA(1)
 
-                    if (LA39_0 == 90) :
-                        alt39 = 1
+                    if (LA40_0 == 90) :
+                        alt40 = 1
 
 
-                    if alt39 == 1:
+                    if alt40 == 1:
                         # Imp.g:227:35: method_pipe
                         pass 
-                        self._state.following.append(self.FOLLOW_method_pipe_in_method_call1650)
-                        method_pipe164 = self.method_pipe()
+                        self._state.following.append(self.FOLLOW_method_pipe_in_method_call1660)
+                        method_pipe166 = self.method_pipe()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_method_pipe.add(method_pipe164.tree)
+                            stream_method_pipe.add(method_pipe166.tree)
 
 
 
                     else:
-                        if cnt39 >= 1:
-                            break #loop39
+                        if cnt40 >= 1:
+                            break #loop40
 
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        eee = EarlyExitException(39, self.input)
+                        eee = EarlyExitException(40, self.input)
                         raise eee
 
-                    cnt39 += 1
+                    cnt40 += 1
 
 
                 # AST Rewrite
@@ -6237,9 +6274,9 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        string_literal165 = None
+        string_literal167 = None
 
-        string_literal165_tree = None
+        string_literal167_tree = None
 
         try:
             try:
@@ -6249,10 +6286,10 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                string_literal165 = self.match(self.input, 81, self.FOLLOW_81_in_un_op1680)
+                string_literal167 = self.match(self.input, 81, self.FOLLOW_81_in_un_op1690)
                 if self._state.backtracking == 0:
-                    string_literal165_tree = self._adaptor.createWithPayload(string_literal165)
-                    self._adaptor.addChild(root_0, string_literal165_tree)
+                    string_literal167_tree = self._adaptor.createWithPayload(string_literal167)
+                    self._adaptor.addChild(root_0, string_literal167_tree)
 
 
 
@@ -6297,9 +6334,9 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        set166 = None
+        set168 = None
 
-        set166_tree = None
+        set168_tree = None
 
         try:
             try:
@@ -6309,12 +6346,12 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                set166 = self.input.LT(1)
+                set168 = self.input.LT(1)
 
                 if self.input.LA(1) == 50 or self.input.LA(1) == 59 or self.input.LA(1) == 61 or (63 <= self.input.LA(1) <= 65) or self.input.LA(1) == 79:
                     self.input.consume()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set166))
+                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set168))
 
                     self._state.errorRecovery = False
 
@@ -6370,106 +6407,106 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        variable167 = None
-        function_call168 = None
-        method_call169 = None
-        index_lookup170 = None
-        constant171 = None
-        class_ref172 = None
+        variable169 = None
+        function_call170 = None
+        method_call171 = None
+        index_lookup172 = None
+        constant173 = None
+        class_ref174 = None
 
 
         try:
             try:
                 # Imp.g:239:2: ( variable | function_call | method_call | index_lookup | constant | class_ref )
-                alt40 = 6
-                alt40 = self.dfa40.predict(self.input)
-                if alt40 == 1:
+                alt41 = 6
+                alt41 = self.dfa41.predict(self.input)
+                if alt41 == 1:
                     # Imp.g:239:4: variable
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_variable_in_cmp_oper1728)
-                    variable167 = self.variable()
+                    self._state.following.append(self.FOLLOW_variable_in_cmp_oper1738)
+                    variable169 = self.variable()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, variable167.tree)
+                        self._adaptor.addChild(root_0, variable169.tree)
 
 
 
-                elif alt40 == 2:
+                elif alt41 == 2:
                     # Imp.g:239:15: function_call
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_function_call_in_cmp_oper1732)
-                    function_call168 = self.function_call()
+                    self._state.following.append(self.FOLLOW_function_call_in_cmp_oper1742)
+                    function_call170 = self.function_call()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, function_call168.tree)
+                        self._adaptor.addChild(root_0, function_call170.tree)
 
 
 
-                elif alt40 == 3:
+                elif alt41 == 3:
                     # Imp.g:239:31: method_call
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_method_call_in_cmp_oper1736)
-                    method_call169 = self.method_call()
+                    self._state.following.append(self.FOLLOW_method_call_in_cmp_oper1746)
+                    method_call171 = self.method_call()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, method_call169.tree)
+                        self._adaptor.addChild(root_0, method_call171.tree)
 
 
 
-                elif alt40 == 4:
+                elif alt41 == 4:
                     # Imp.g:239:45: index_lookup
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_index_lookup_in_cmp_oper1740)
-                    index_lookup170 = self.index_lookup()
+                    self._state.following.append(self.FOLLOW_index_lookup_in_cmp_oper1750)
+                    index_lookup172 = self.index_lookup()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, index_lookup170.tree)
+                        self._adaptor.addChild(root_0, index_lookup172.tree)
 
 
 
-                elif alt40 == 5:
+                elif alt41 == 5:
                     # Imp.g:239:60: constant
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_constant_in_cmp_oper1744)
-                    constant171 = self.constant()
+                    self._state.following.append(self.FOLLOW_constant_in_cmp_oper1754)
+                    constant173 = self.constant()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, constant171.tree)
+                        self._adaptor.addChild(root_0, constant173.tree)
 
 
 
-                elif alt40 == 6:
+                elif alt41 == 6:
                     # Imp.g:239:71: class_ref
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_class_ref_in_cmp_oper1748)
-                    class_ref172 = self.class_ref()
+                    self._state.following.append(self.FOLLOW_class_ref_in_cmp_oper1758)
+                    class_ref174 = self.class_ref()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, class_ref172.tree)
+                        self._adaptor.addChild(root_0, class_ref174.tree)
 
 
 
@@ -6512,14 +6549,14 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        string_literal174 = None
-        cmp_oper173 = None
-        in_oper175 = None
-        cmp_oper176 = None
-        cmp_op177 = None
+        string_literal176 = None
+        cmp_oper175 = None
+        in_oper177 = None
         cmp_oper178 = None
+        cmp_op179 = None
+        cmp_oper180 = None
 
-        string_literal174_tree = None
+        string_literal176_tree = None
         stream_76 = RewriteRuleTokenStream(self._adaptor, "token 76")
         stream_cmp_op = RewriteRuleSubtreeStream(self._adaptor, "rule cmp_op")
         stream_cmp_oper = RewriteRuleSubtreeStream(self._adaptor, "rule cmp_oper")
@@ -6527,55 +6564,55 @@ class ImpParser(Parser):
         try:
             try:
                 # Imp.g:243:2: ( ( cmp_oper 'in' )=> cmp_oper 'in' in_oper -> ^( OP 'in' cmp_oper in_oper ) | cmp_oper cmp_op cmp_oper -> ^( OP cmp_op ( cmp_oper )+ ) )
-                alt41 = 2
-                LA41 = self.input.LA(1)
-                if LA41 in {ID}:
-                    LA41_1 = self.input.LA(2)
+                alt42 = 2
+                LA42 = self.input.LA(1)
+                if LA42 in {ID}:
+                    LA42_1 = self.input.LA(2)
 
                     if (self.synpred10_Imp()) :
-                        alt41 = 1
+                        alt42 = 1
                     elif (True) :
-                        alt41 = 2
+                        alt42 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 41, 1, self.input)
+                        nvae = NoViableAltException("", 42, 1, self.input)
 
                         raise nvae
 
 
-                elif LA41 in {CLASS_ID}:
-                    LA41_2 = self.input.LA(2)
+                elif LA42 in {CLASS_ID}:
+                    LA42_2 = self.input.LA(2)
 
                     if (self.synpred10_Imp()) :
-                        alt41 = 1
+                        alt42 = 1
                     elif (True) :
-                        alt41 = 2
+                        alt42 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 41, 2, self.input)
+                        nvae = NoViableAltException("", 42, 2, self.input)
 
                         raise nvae
 
 
-                elif LA41 in {FALSE, FLOAT, INT, ML_STRING, REGEX, STRING, TRUE}:
-                    LA41_3 = self.input.LA(2)
+                elif LA42 in {FALSE, FLOAT, INT, ML_STRING, REGEX, STRING, TRUE}:
+                    LA42_3 = self.input.LA(2)
 
                     if (self.synpred10_Imp()) :
-                        alt41 = 1
+                        alt42 = 1
                     elif (True) :
-                        alt41 = 2
+                        alt42 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 41, 3, self.input)
+                        nvae = NoViableAltException("", 42, 3, self.input)
 
                         raise nvae
 
@@ -6585,33 +6622,33 @@ class ImpParser(Parser):
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 41, 0, self.input)
+                    nvae = NoViableAltException("", 42, 0, self.input)
 
                     raise nvae
 
 
-                if alt41 == 1:
+                if alt42 == 1:
                     # Imp.g:243:4: ( cmp_oper 'in' )=> cmp_oper 'in' in_oper
                     pass 
-                    self._state.following.append(self.FOLLOW_cmp_oper_in_cmp1769)
-                    cmp_oper173 = self.cmp_oper()
+                    self._state.following.append(self.FOLLOW_cmp_oper_in_cmp1779)
+                    cmp_oper175 = self.cmp_oper()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_cmp_oper.add(cmp_oper173.tree)
+                        stream_cmp_oper.add(cmp_oper175.tree)
 
 
-                    string_literal174 = self.match(self.input, 76, self.FOLLOW_76_in_cmp1771) 
+                    string_literal176 = self.match(self.input, 76, self.FOLLOW_76_in_cmp1781) 
                     if self._state.backtracking == 0:
-                        stream_76.add(string_literal174)
+                        stream_76.add(string_literal176)
 
 
-                    self._state.following.append(self.FOLLOW_in_oper_in_cmp1773)
-                    in_oper175 = self.in_oper()
+                    self._state.following.append(self.FOLLOW_in_oper_in_cmp1783)
+                    in_oper177 = self.in_oper()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_in_oper.add(in_oper175.tree)
+                        stream_in_oper.add(in_oper177.tree)
 
 
                     # AST Rewrite
@@ -6655,31 +6692,31 @@ class ImpParser(Parser):
 
 
 
-                elif alt41 == 2:
+                elif alt42 == 2:
                     # Imp.g:244:4: cmp_oper cmp_op cmp_oper
                     pass 
-                    self._state.following.append(self.FOLLOW_cmp_oper_in_cmp1790)
-                    cmp_oper176 = self.cmp_oper()
-
-                    self._state.following.pop()
-                    if self._state.backtracking == 0:
-                        stream_cmp_oper.add(cmp_oper176.tree)
-
-
-                    self._state.following.append(self.FOLLOW_cmp_op_in_cmp1792)
-                    cmp_op177 = self.cmp_op()
-
-                    self._state.following.pop()
-                    if self._state.backtracking == 0:
-                        stream_cmp_op.add(cmp_op177.tree)
-
-
-                    self._state.following.append(self.FOLLOW_cmp_oper_in_cmp1794)
+                    self._state.following.append(self.FOLLOW_cmp_oper_in_cmp1800)
                     cmp_oper178 = self.cmp_oper()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
                         stream_cmp_oper.add(cmp_oper178.tree)
+
+
+                    self._state.following.append(self.FOLLOW_cmp_op_in_cmp1802)
+                    cmp_op179 = self.cmp_op()
+
+                    self._state.following.pop()
+                    if self._state.backtracking == 0:
+                        stream_cmp_op.add(cmp_op179.tree)
+
+
+                    self._state.following.append(self.FOLLOW_cmp_oper_in_cmp1804)
+                    cmp_oper180 = self.cmp_oper()
+
+                    self._state.following.pop()
+                    if self._state.backtracking == 0:
+                        stream_cmp_oper.add(cmp_oper180.tree)
 
 
                     # AST Rewrite
@@ -6766,9 +6803,9 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        set179 = None
+        set181 = None
 
-        set179_tree = None
+        set181_tree = None
 
         try:
             try:
@@ -6778,12 +6815,12 @@ class ImpParser(Parser):
                 root_0 = self._adaptor.nil()
 
 
-                set179 = self.input.LT(1)
+                set181 = self.input.LT(1)
 
                 if self.input.LA(1) == 68 or self.input.LA(1) == 82:
                     self.input.consume()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set179))
+                        self._adaptor.addChild(root_0, self._adaptor.createWithPayload(set181))
 
                     self._state.errorRecovery = False
 
@@ -6839,57 +6876,57 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        list_def180 = None
-        variable181 = None
+        list_def182 = None
+        variable183 = None
 
 
         try:
             try:
                 # Imp.g:252:2: ( list_def | variable )
-                alt42 = 2
-                LA42_0 = self.input.LA(1)
+                alt43 = 2
+                LA43_0 = self.input.LA(1)
 
-                if (LA42_0 == 66) :
-                    alt42 = 1
-                elif (LA42_0 == ID) :
-                    alt42 = 2
+                if (LA43_0 == 66) :
+                    alt43 = 1
+                elif (LA43_0 == ID) :
+                    alt43 = 2
                 else:
                     if self._state.backtracking > 0:
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 42, 0, self.input)
+                    nvae = NoViableAltException("", 43, 0, self.input)
 
                     raise nvae
 
 
-                if alt42 == 1:
+                if alt43 == 1:
                     # Imp.g:252:4: list_def
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_list_def_in_in_oper1833)
-                    list_def180 = self.list_def()
+                    self._state.following.append(self.FOLLOW_list_def_in_in_oper1843)
+                    list_def182 = self.list_def()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, list_def180.tree)
+                        self._adaptor.addChild(root_0, list_def182.tree)
 
 
 
-                elif alt42 == 2:
+                elif alt43 == 2:
                     # Imp.g:252:15: variable
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_variable_in_in_oper1837)
-                    variable181 = self.variable()
+                    self._state.following.append(self.FOLLOW_variable_in_in_oper1847)
+                    variable183 = self.variable()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, variable181.tree)
+                        self._adaptor.addChild(root_0, variable183.tree)
 
 
 
@@ -6932,50 +6969,50 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        TRUE183 = None
-        FALSE184 = None
-        cmp182 = None
+        TRUE185 = None
+        FALSE186 = None
+        cmp184 = None
 
-        TRUE183_tree = None
-        FALSE184_tree = None
+        TRUE185_tree = None
+        FALSE186_tree = None
 
         try:
             try:
                 # Imp.g:256:2: ( cmp | TRUE | FALSE )
-                alt43 = 3
-                LA43 = self.input.LA(1)
-                if LA43 in {CLASS_ID, FLOAT, ID, INT, ML_STRING, REGEX, STRING}:
-                    alt43 = 1
-                elif LA43 in {TRUE}:
-                    LA43_2 = self.input.LA(2)
+                alt44 = 3
+                LA44 = self.input.LA(1)
+                if LA44 in {CLASS_ID, FLOAT, ID, INT, ML_STRING, REGEX, STRING}:
+                    alt44 = 1
+                elif LA44 in {TRUE}:
+                    LA44_2 = self.input.LA(2)
 
-                    if (LA43_2 == 50 or LA43_2 == 59 or LA43_2 == 61 or (63 <= LA43_2 <= 65) or LA43_2 == 76 or LA43_2 == 79) :
-                        alt43 = 1
-                    elif (LA43_2 == EOF or LA43_2 == CLASS_ID or LA43_2 == ENUM_KEY or LA43_2 == ID or LA43_2 == ML_STRING or LA43_2 == 52 or LA43_2 == 68 or LA43_2 == 71 or (73 <= LA43_2 <= 75) or (77 <= LA43_2 <= 78) or LA43_2 == 82 or LA43_2 == 85 or LA43_2 == 91) :
-                        alt43 = 2
+                    if (LA44_2 == 50 or LA44_2 == 59 or LA44_2 == 61 or (63 <= LA44_2 <= 65) or LA44_2 == 76 or LA44_2 == 79) :
+                        alt44 = 1
+                    elif (LA44_2 == EOF or LA44_2 == CLASS_ID or LA44_2 == ENUM_KEY or LA44_2 == ID or LA44_2 == ML_STRING or LA44_2 == 52 or LA44_2 == 68 or LA44_2 == 71 or (73 <= LA44_2 <= 75) or (77 <= LA44_2 <= 78) or LA44_2 == 82 or LA44_2 == 85 or LA44_2 == 91) :
+                        alt44 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 43, 2, self.input)
+                        nvae = NoViableAltException("", 44, 2, self.input)
 
                         raise nvae
 
 
-                elif LA43 in {FALSE}:
-                    LA43_3 = self.input.LA(2)
+                elif LA44 in {FALSE}:
+                    LA44_3 = self.input.LA(2)
 
-                    if (LA43_3 == 50 or LA43_3 == 59 or LA43_3 == 61 or (63 <= LA43_3 <= 65) or LA43_3 == 76 or LA43_3 == 79) :
-                        alt43 = 1
-                    elif (LA43_3 == EOF or LA43_3 == CLASS_ID or LA43_3 == ENUM_KEY or LA43_3 == ID or LA43_3 == ML_STRING or LA43_3 == 52 or LA43_3 == 68 or LA43_3 == 71 or (73 <= LA43_3 <= 75) or (77 <= LA43_3 <= 78) or LA43_3 == 82 or LA43_3 == 85 or LA43_3 == 91) :
-                        alt43 = 3
+                    if (LA44_3 == 50 or LA44_3 == 59 or LA44_3 == 61 or (63 <= LA44_3 <= 65) or LA44_3 == 76 or LA44_3 == 79) :
+                        alt44 = 1
+                    elif (LA44_3 == EOF or LA44_3 == CLASS_ID or LA44_3 == ENUM_KEY or LA44_3 == ID or LA44_3 == ML_STRING or LA44_3 == 52 or LA44_3 == 68 or LA44_3 == 71 or (73 <= LA44_3 <= 75) or (77 <= LA44_3 <= 78) or LA44_3 == 82 or LA44_3 == 85 or LA44_3 == 91) :
+                        alt44 = 3
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 43, 3, self.input)
+                        nvae = NoViableAltException("", 44, 3, self.input)
 
                         raise nvae
 
@@ -6985,50 +7022,50 @@ class ImpParser(Parser):
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 43, 0, self.input)
+                    nvae = NoViableAltException("", 44, 0, self.input)
 
                     raise nvae
 
 
-                if alt43 == 1:
+                if alt44 == 1:
                     # Imp.g:256:4: cmp
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_cmp_in_log_oper1850)
-                    cmp182 = self.cmp()
+                    self._state.following.append(self.FOLLOW_cmp_in_log_oper1860)
+                    cmp184 = self.cmp()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, cmp182.tree)
+                        self._adaptor.addChild(root_0, cmp184.tree)
 
 
 
-                elif alt43 == 2:
+                elif alt44 == 2:
                     # Imp.g:256:10: TRUE
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    TRUE183 = self.match(self.input, TRUE, self.FOLLOW_TRUE_in_log_oper1854)
+                    TRUE185 = self.match(self.input, TRUE, self.FOLLOW_TRUE_in_log_oper1864)
                     if self._state.backtracking == 0:
-                        TRUE183_tree = self._adaptor.createWithPayload(TRUE183)
-                        self._adaptor.addChild(root_0, TRUE183_tree)
+                        TRUE185_tree = self._adaptor.createWithPayload(TRUE185)
+                        self._adaptor.addChild(root_0, TRUE185_tree)
 
 
 
 
-                elif alt43 == 3:
+                elif alt44 == 3:
                     # Imp.g:256:17: FALSE
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    FALSE184 = self.match(self.input, FALSE, self.FOLLOW_FALSE_in_log_oper1858)
+                    FALSE186 = self.match(self.input, FALSE, self.FOLLOW_FALSE_in_log_oper1868)
                     if self._state.backtracking == 0:
-                        FALSE184_tree = self._adaptor.createWithPayload(FALSE184)
-                        self._adaptor.addChild(root_0, FALSE184_tree)
+                        FALSE186_tree = self._adaptor.createWithPayload(FALSE186)
+                        self._adaptor.addChild(root_0, FALSE186_tree)
 
 
 
@@ -7072,10 +7109,10 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        log_oper185 = None
-        log_op186 = None
-        log_expr187 = None
-        log_oper188 = None
+        log_oper187 = None
+        log_op188 = None
+        log_expr189 = None
+        log_oper190 = None
 
         stream_log_expr = RewriteRuleSubtreeStream(self._adaptor, "rule log_expr")
         stream_log_oper = RewriteRuleSubtreeStream(self._adaptor, "rule log_oper")
@@ -7083,89 +7120,89 @@ class ImpParser(Parser):
         try:
             try:
                 # Imp.g:261:2: ( ( log_oper log_op )=> log_oper log_op log_expr -> ^( OP log_op log_oper log_expr ) | log_oper )
-                alt44 = 2
-                LA44 = self.input.LA(1)
-                if LA44 in {ID}:
-                    LA44_1 = self.input.LA(2)
+                alt45 = 2
+                LA45 = self.input.LA(1)
+                if LA45 in {ID}:
+                    LA45_1 = self.input.LA(2)
 
                     if (self.synpred11_Imp()) :
-                        alt44 = 1
+                        alt45 = 1
                     elif (True) :
-                        alt44 = 2
+                        alt45 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 44, 1, self.input)
+                        nvae = NoViableAltException("", 45, 1, self.input)
 
                         raise nvae
 
 
-                elif LA44 in {CLASS_ID}:
-                    LA44_2 = self.input.LA(2)
+                elif LA45 in {CLASS_ID}:
+                    LA45_2 = self.input.LA(2)
 
                     if (self.synpred11_Imp()) :
-                        alt44 = 1
+                        alt45 = 1
                     elif (True) :
-                        alt44 = 2
+                        alt45 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 44, 2, self.input)
+                        nvae = NoViableAltException("", 45, 2, self.input)
 
                         raise nvae
 
 
-                elif LA44 in {TRUE}:
-                    LA44_3 = self.input.LA(2)
+                elif LA45 in {TRUE}:
+                    LA45_3 = self.input.LA(2)
 
                     if (self.synpred11_Imp()) :
-                        alt44 = 1
+                        alt45 = 1
                     elif (True) :
-                        alt44 = 2
+                        alt45 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 44, 3, self.input)
+                        nvae = NoViableAltException("", 45, 3, self.input)
 
                         raise nvae
 
 
-                elif LA44 in {FALSE}:
-                    LA44_4 = self.input.LA(2)
+                elif LA45 in {FALSE}:
+                    LA45_4 = self.input.LA(2)
 
                     if (self.synpred11_Imp()) :
-                        alt44 = 1
+                        alt45 = 1
                     elif (True) :
-                        alt44 = 2
+                        alt45 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 44, 4, self.input)
+                        nvae = NoViableAltException("", 45, 4, self.input)
 
                         raise nvae
 
 
-                elif LA44 in {FLOAT, INT, ML_STRING, REGEX, STRING}:
-                    LA44_5 = self.input.LA(2)
+                elif LA45 in {FLOAT, INT, ML_STRING, REGEX, STRING}:
+                    LA45_5 = self.input.LA(2)
 
                     if (self.synpred11_Imp()) :
-                        alt44 = 1
+                        alt45 = 1
                     elif (True) :
-                        alt44 = 2
+                        alt45 = 2
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 44, 5, self.input)
+                        nvae = NoViableAltException("", 45, 5, self.input)
 
                         raise nvae
 
@@ -7175,40 +7212,40 @@ class ImpParser(Parser):
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 44, 0, self.input)
+                    nvae = NoViableAltException("", 45, 0, self.input)
 
                     raise nvae
 
 
-                if alt44 == 1:
+                if alt45 == 1:
                     # Imp.g:261:4: ( log_oper log_op )=> log_oper log_op log_expr
                     pass 
-                    self._state.following.append(self.FOLLOW_log_oper_in_log_expr1879)
-                    log_oper185 = self.log_oper()
+                    self._state.following.append(self.FOLLOW_log_oper_in_log_expr1889)
+                    log_oper187 = self.log_oper()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_log_oper.add(log_oper185.tree)
+                        stream_log_oper.add(log_oper187.tree)
 
 
-                    self._state.following.append(self.FOLLOW_log_op_in_log_expr1881)
-                    log_op186 = self.log_op()
-
-                    self._state.following.pop()
-                    if self._state.backtracking == 0:
-                        stream_log_op.add(log_op186.tree)
-
-
-                    self._state.following.append(self.FOLLOW_log_expr_in_log_expr1883)
-                    log_expr187 = self.log_expr()
+                    self._state.following.append(self.FOLLOW_log_op_in_log_expr1891)
+                    log_op188 = self.log_op()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_log_expr.add(log_expr187.tree)
+                        stream_log_op.add(log_op188.tree)
+
+
+                    self._state.following.append(self.FOLLOW_log_expr_in_log_expr1893)
+                    log_expr189 = self.log_expr()
+
+                    self._state.following.pop()
+                    if self._state.backtracking == 0:
+                        stream_log_expr.add(log_expr189.tree)
 
 
                     # AST Rewrite
-                    # elements: log_oper, log_op, log_expr
+                    # elements: log_expr, log_oper, log_op
                     # token labels: 
                     # rule labels: retval
                     # token list labels: 
@@ -7246,18 +7283,18 @@ class ImpParser(Parser):
 
 
 
-                elif alt44 == 2:
+                elif alt45 == 2:
                     # Imp.g:262:4: log_oper
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_log_oper_in_log_expr1900)
-                    log_oper188 = self.log_oper()
+                    self._state.following.append(self.FOLLOW_log_oper_in_log_expr1910)
+                    log_oper190 = self.log_oper()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, log_oper188.tree)
+                        self._adaptor.addChild(root_0, log_oper190.tree)
 
 
 
@@ -7300,22 +7337,22 @@ class ImpParser(Parser):
 
         root_0 = None
 
-        char_literal189 = None
         char_literal191 = None
-        char_literal196 = None
+        char_literal193 = None
         char_literal198 = None
-        expression190 = None
-        log_op192 = None
-        expression193 = None
-        log_expr194 = None
-        log_op195 = None
-        expression197 = None
-        log_expr199 = None
+        char_literal200 = None
+        expression192 = None
+        log_op194 = None
+        expression195 = None
+        log_expr196 = None
+        log_op197 = None
+        expression199 = None
+        log_expr201 = None
 
-        char_literal189_tree = None
         char_literal191_tree = None
-        char_literal196_tree = None
+        char_literal193_tree = None
         char_literal198_tree = None
+        char_literal200_tree = None
         stream_51 = RewriteRuleTokenStream(self._adaptor, "token 51")
         stream_52 = RewriteRuleTokenStream(self._adaptor, "token 52")
         stream_expression = RewriteRuleSubtreeStream(self._adaptor, "rule expression")
@@ -7324,91 +7361,91 @@ class ImpParser(Parser):
         try:
             try:
                 # Imp.g:266:2: ( '(' expression ')' ( log_op expression )? -> ^( OP ( log_op )? ( expression )+ ) | ( log_expr log_op )=> log_expr log_op '(' expression ')' -> ^( OP log_op log_expr expression ) | log_expr )
-                alt46 = 3
-                LA46 = self.input.LA(1)
-                if LA46 in {51}:
-                    alt46 = 1
-                elif LA46 in {ID}:
-                    LA46_2 = self.input.LA(2)
+                alt47 = 3
+                LA47 = self.input.LA(1)
+                if LA47 in {51}:
+                    alt47 = 1
+                elif LA47 in {ID}:
+                    LA47_2 = self.input.LA(2)
 
                     if (self.synpred12_Imp()) :
-                        alt46 = 2
+                        alt47 = 2
                     elif (True) :
-                        alt46 = 3
+                        alt47 = 3
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 46, 2, self.input)
+                        nvae = NoViableAltException("", 47, 2, self.input)
 
                         raise nvae
 
 
-                elif LA46 in {CLASS_ID}:
-                    LA46_3 = self.input.LA(2)
+                elif LA47 in {CLASS_ID}:
+                    LA47_3 = self.input.LA(2)
 
                     if (self.synpred12_Imp()) :
-                        alt46 = 2
+                        alt47 = 2
                     elif (True) :
-                        alt46 = 3
+                        alt47 = 3
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 46, 3, self.input)
+                        nvae = NoViableAltException("", 47, 3, self.input)
 
                         raise nvae
 
 
-                elif LA46 in {TRUE}:
-                    LA46_4 = self.input.LA(2)
+                elif LA47 in {TRUE}:
+                    LA47_4 = self.input.LA(2)
 
                     if (self.synpred12_Imp()) :
-                        alt46 = 2
+                        alt47 = 2
                     elif (True) :
-                        alt46 = 3
+                        alt47 = 3
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 46, 4, self.input)
+                        nvae = NoViableAltException("", 47, 4, self.input)
 
                         raise nvae
 
 
-                elif LA46 in {FALSE}:
-                    LA46_5 = self.input.LA(2)
+                elif LA47 in {FALSE}:
+                    LA47_5 = self.input.LA(2)
 
                     if (self.synpred12_Imp()) :
-                        alt46 = 2
+                        alt47 = 2
                     elif (True) :
-                        alt46 = 3
+                        alt47 = 3
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 46, 5, self.input)
+                        nvae = NoViableAltException("", 47, 5, self.input)
 
                         raise nvae
 
 
-                elif LA46 in {FLOAT, INT, ML_STRING, REGEX, STRING}:
-                    LA46_6 = self.input.LA(2)
+                elif LA47 in {FLOAT, INT, ML_STRING, REGEX, STRING}:
+                    LA47_6 = self.input.LA(2)
 
                     if (self.synpred12_Imp()) :
-                        alt46 = 2
+                        alt47 = 2
                     elif (True) :
-                        alt46 = 3
+                        alt47 = 3
                     else:
                         if self._state.backtracking > 0:
                             raise BacktrackingFailed
 
 
-                        nvae = NoViableAltException("", 46, 6, self.input)
+                        nvae = NoViableAltException("", 47, 6, self.input)
 
                         raise nvae
 
@@ -7418,62 +7455,62 @@ class ImpParser(Parser):
                         raise BacktrackingFailed
 
 
-                    nvae = NoViableAltException("", 46, 0, self.input)
+                    nvae = NoViableAltException("", 47, 0, self.input)
 
                     raise nvae
 
 
-                if alt46 == 1:
+                if alt47 == 1:
                     # Imp.g:266:4: '(' expression ')' ( log_op expression )?
                     pass 
-                    char_literal189 = self.match(self.input, 51, self.FOLLOW_51_in_expression1912) 
+                    char_literal191 = self.match(self.input, 51, self.FOLLOW_51_in_expression1922) 
                     if self._state.backtracking == 0:
-                        stream_51.add(char_literal189)
+                        stream_51.add(char_literal191)
 
 
-                    self._state.following.append(self.FOLLOW_expression_in_expression1914)
-                    expression190 = self.expression()
+                    self._state.following.append(self.FOLLOW_expression_in_expression1924)
+                    expression192 = self.expression()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_expression.add(expression190.tree)
+                        stream_expression.add(expression192.tree)
 
 
-                    char_literal191 = self.match(self.input, 52, self.FOLLOW_52_in_expression1916) 
+                    char_literal193 = self.match(self.input, 52, self.FOLLOW_52_in_expression1926) 
                     if self._state.backtracking == 0:
-                        stream_52.add(char_literal191)
+                        stream_52.add(char_literal193)
 
 
                     # Imp.g:266:23: ( log_op expression )?
-                    alt45 = 2
-                    LA45_0 = self.input.LA(1)
+                    alt46 = 2
+                    LA46_0 = self.input.LA(1)
 
-                    if (LA45_0 == 68 or LA45_0 == 82) :
-                        alt45 = 1
-                    if alt45 == 1:
+                    if (LA46_0 == 68 or LA46_0 == 82) :
+                        alt46 = 1
+                    if alt46 == 1:
                         # Imp.g:266:24: log_op expression
                         pass 
-                        self._state.following.append(self.FOLLOW_log_op_in_expression1919)
-                        log_op192 = self.log_op()
+                        self._state.following.append(self.FOLLOW_log_op_in_expression1929)
+                        log_op194 = self.log_op()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_log_op.add(log_op192.tree)
+                            stream_log_op.add(log_op194.tree)
 
 
-                        self._state.following.append(self.FOLLOW_expression_in_expression1921)
-                        expression193 = self.expression()
+                        self._state.following.append(self.FOLLOW_expression_in_expression1931)
+                        expression195 = self.expression()
 
                         self._state.following.pop()
                         if self._state.backtracking == 0:
-                            stream_expression.add(expression193.tree)
+                            stream_expression.add(expression195.tree)
 
 
 
 
 
                     # AST Rewrite
-                    # elements: expression, log_op
+                    # elements: log_op, expression
                     # token labels: 
                     # rule labels: retval
                     # token list labels: 
@@ -7522,45 +7559,45 @@ class ImpParser(Parser):
 
 
 
-                elif alt46 == 2:
+                elif alt47 == 2:
                     # Imp.g:267:4: ( log_expr log_op )=> log_expr log_op '(' expression ')'
                     pass 
-                    self._state.following.append(self.FOLLOW_log_expr_in_expression1948)
-                    log_expr194 = self.log_expr()
+                    self._state.following.append(self.FOLLOW_log_expr_in_expression1958)
+                    log_expr196 = self.log_expr()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_log_expr.add(log_expr194.tree)
+                        stream_log_expr.add(log_expr196.tree)
 
 
-                    self._state.following.append(self.FOLLOW_log_op_in_expression1950)
-                    log_op195 = self.log_op()
-
-                    self._state.following.pop()
-                    if self._state.backtracking == 0:
-                        stream_log_op.add(log_op195.tree)
-
-
-                    char_literal196 = self.match(self.input, 51, self.FOLLOW_51_in_expression1952) 
-                    if self._state.backtracking == 0:
-                        stream_51.add(char_literal196)
-
-
-                    self._state.following.append(self.FOLLOW_expression_in_expression1954)
-                    expression197 = self.expression()
+                    self._state.following.append(self.FOLLOW_log_op_in_expression1960)
+                    log_op197 = self.log_op()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        stream_expression.add(expression197.tree)
+                        stream_log_op.add(log_op197.tree)
 
 
-                    char_literal198 = self.match(self.input, 52, self.FOLLOW_52_in_expression1956) 
+                    char_literal198 = self.match(self.input, 51, self.FOLLOW_51_in_expression1962) 
                     if self._state.backtracking == 0:
-                        stream_52.add(char_literal198)
+                        stream_51.add(char_literal198)
+
+
+                    self._state.following.append(self.FOLLOW_expression_in_expression1964)
+                    expression199 = self.expression()
+
+                    self._state.following.pop()
+                    if self._state.backtracking == 0:
+                        stream_expression.add(expression199.tree)
+
+
+                    char_literal200 = self.match(self.input, 52, self.FOLLOW_52_in_expression1966) 
+                    if self._state.backtracking == 0:
+                        stream_52.add(char_literal200)
 
 
                     # AST Rewrite
-                    # elements: log_expr, expression, log_op
+                    # elements: log_op, log_expr, expression
                     # token labels: 
                     # rule labels: retval
                     # token list labels: 
@@ -7598,18 +7635,18 @@ class ImpParser(Parser):
 
 
 
-                elif alt46 == 3:
+                elif alt47 == 3:
                     # Imp.g:268:4: log_expr
                     pass 
                     root_0 = self._adaptor.nil()
 
 
-                    self._state.following.append(self.FOLLOW_log_expr_in_expression1973)
-                    log_expr199 = self.log_expr()
+                    self._state.following.append(self.FOLLOW_log_expr_in_expression1983)
+                    log_expr201 = self.log_expr()
 
                     self._state.following.pop()
                     if self._state.backtracking == 0:
-                        self._adaptor.addChild(root_0, log_expr199.tree)
+                        self._adaptor.addChild(root_0, log_expr201.tree)
 
 
 
@@ -7703,7 +7740,7 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self.match(self.input, INT, self.FOLLOW_INT_in_synpred4_Imp856)
+        self.match(self.input, INT, self.FOLLOW_INT_in_synpred4_Imp866)
 
 
 
@@ -7720,10 +7757,10 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self.match(self.input, INT, self.FOLLOW_INT_in_synpred5_Imp875)
+        self.match(self.input, INT, self.FOLLOW_INT_in_synpred5_Imp885)
 
 
-        self.match(self.input, 57, self.FOLLOW_57_in_synpred5_Imp877)
+        self.match(self.input, 57, self.FOLLOW_57_in_synpred5_Imp887)
 
 
 
@@ -7740,13 +7777,13 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self.match(self.input, INT, self.FOLLOW_INT_in_synpred6_Imp900)
+        self.match(self.input, INT, self.FOLLOW_INT_in_synpred6_Imp910)
 
 
-        self.match(self.input, 57, self.FOLLOW_57_in_synpred6_Imp902)
+        self.match(self.input, 57, self.FOLLOW_57_in_synpred6_Imp912)
 
 
-        self.match(self.input, INT, self.FOLLOW_INT_in_synpred6_Imp904)
+        self.match(self.input, INT, self.FOLLOW_INT_in_synpred6_Imp914)
 
 
 
@@ -7763,10 +7800,10 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self.match(self.input, 57, self.FOLLOW_57_in_synpred7_Imp929)
+        self.match(self.input, 57, self.FOLLOW_57_in_synpred7_Imp939)
 
 
-        self.match(self.input, INT, self.FOLLOW_INT_in_synpred7_Imp931)
+        self.match(self.input, INT, self.FOLLOW_INT_in_synpred7_Imp941)
 
 
 
@@ -7783,13 +7820,13 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self._state.following.append(self.FOLLOW_ns_ref_in_synpred8_Imp1097)
+        self._state.following.append(self.FOLLOW_ns_ref_in_synpred8_Imp1107)
         self.ns_ref()
 
         self._state.following.pop()
 
 
-        self.match(self.input, 51, self.FOLLOW_51_in_synpred8_Imp1099)
+        self.match(self.input, 51, self.FOLLOW_51_in_synpred8_Imp1109)
 
 
 
@@ -7806,7 +7843,7 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self.match(self.input, 89, self.FOLLOW_89_in_synpred9_Imp1125)
+        self.match(self.input, 89, self.FOLLOW_89_in_synpred9_Imp1135)
 
 
 
@@ -7823,13 +7860,13 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self._state.following.append(self.FOLLOW_cmp_oper_in_synpred10_Imp1762)
+        self._state.following.append(self.FOLLOW_cmp_oper_in_synpred10_Imp1772)
         self.cmp_oper()
 
         self._state.following.pop()
 
 
-        self.match(self.input, 76, self.FOLLOW_76_in_synpred10_Imp1764)
+        self.match(self.input, 76, self.FOLLOW_76_in_synpred10_Imp1774)
 
 
 
@@ -7846,13 +7883,13 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self._state.following.append(self.FOLLOW_log_oper_in_synpred11_Imp1872)
+        self._state.following.append(self.FOLLOW_log_oper_in_synpred11_Imp1882)
         self.log_oper()
 
         self._state.following.pop()
 
 
-        self._state.following.append(self.FOLLOW_log_op_in_synpred11_Imp1874)
+        self._state.following.append(self.FOLLOW_log_op_in_synpred11_Imp1884)
         self.log_op()
 
         self._state.following.pop()
@@ -7872,13 +7909,13 @@ class ImpParser(Parser):
         root_0 = self._adaptor.nil()
 
 
-        self._state.following.append(self.FOLLOW_log_expr_in_synpred12_Imp1941)
+        self._state.following.append(self.FOLLOW_log_expr_in_synpred12_Imp1951)
         self.log_expr()
 
         self._state.following.pop()
 
 
-        self._state.following.append(self.FOLLOW_log_op_in_synpred12_Imp1943)
+        self._state.following.append(self.FOLLOW_log_op_in_synpred12_Imp1953)
         self.log_op()
 
         self._state.following.pop()
@@ -8387,35 +8424,35 @@ class ImpParser(Parser):
         pass
 
 
-    # lookup tables for DFA #20
+    # lookup tables for DFA #21
 
-    DFA20_eot = DFA.unpack(
+    DFA21_eot = DFA.unpack(
         "\17\uffff"
         )
 
-    DFA20_eof = DFA.unpack(
+    DFA21_eof = DFA.unpack(
         "\3\uffff\1\11\1\14\10\uffff\2\11"
         )
 
-    DFA20_min = DFA.unpack(
+    DFA21_min = DFA.unpack(
         "\1\10\2\uffff\2\10\1\uffff\1\10\1\uffff\1\34\4\uffff\2\10"
         )
 
-    DFA20_max = DFA.unpack(
+    DFA21_max = DFA.unpack(
         "\1\131\2\uffff\2\132\1\uffff\1\34\1\uffff\1\34\4\uffff\2\132"
         )
 
-    DFA20_accept = DFA.unpack(
+    DFA21_accept = DFA.unpack(
         "\1\uffff\1\1\1\2\2\uffff\1\10\1\uffff\1\4\1\uffff\1\6\1\7\1\3\1"
         "\5\2\uffff"
         )
 
-    DFA20_special = DFA.unpack(
-        "\1\1\2\uffff\1\2\11\uffff\1\0\1\uffff"
+    DFA21_special = DFA.unpack(
+        "\1\0\2\uffff\1\2\11\uffff\1\1\1\uffff"
         )
 
 
-    DFA20_transition = [
+    DFA21_transition = [
         DFA.unpack("\1\4\16\uffff\2\1\3\uffff\1\3\2\uffff\1\1\3\uffff\1\1"
         "\7\uffff\1\1\1\uffff\2\1\23\uffff\1\2\26\uffff\1\5"),
         DFA.unpack(""),
@@ -8442,9 +8479,9 @@ class ImpParser(Parser):
         "\2\11\6\uffff\1\11\4\uffff\1\12")
     ]
 
-    # class definition for DFA #20
+    # class definition for DFA #21
 
-    class DFA20(DFA):
+    class DFA21(DFA):
         pass
 
 
@@ -8459,86 +8496,86 @@ class ImpParser(Parser):
             _s = s
 
             if s == 0: 
-                LA20_13 = input.LA(1)
+                LA21_0 = input.LA(1)
 
                  
-                index20_13 = input.index()
+                index21_0 = input.index()
                 input.rewind()
 
                 s = -1
-                if (LA20_13 == 58):
-                    s = 6
+                if ((FALSE <= LA21_0 <= FLOAT) or LA21_0 == INT or LA21_0 == ML_STRING or LA21_0 == REGEX or (STRING <= LA21_0 <= TRUE)):
+                    s = 1
 
-                elif (LA20_13 == 51) and (self.synpred8_Imp()):
-                    s = 7
+                elif (LA21_0 == 66):
+                    s = 2
 
-                elif (LA20_13 == 56):
-                    s = 8
+                elif (LA21_0 == ID):
+                    s = 3
 
-                elif (LA20_13 == EOF or LA20_13 == CLASS_ID or LA20_13 == ENUM_KEY or LA20_13 == ID or LA20_13 == ML_STRING or (52 <= LA20_13 <= 53) or LA20_13 == 67 or (70 <= LA20_13 <= 71) or (73 <= LA20_13 <= 75) or (77 <= LA20_13 <= 78) or LA20_13 == 85):
-                    s = 9
+                elif (LA21_0 == CLASS_ID):
+                    s = 4
 
-                elif (LA20_13 == 90):
-                    s = 10
+                elif (LA21_0 == 89) and (self.synpred9_Imp()):
+                    s = 5
 
                  
-                input.seek(index20_13)
+                input.seek(index21_0)
 
                 if s >= 0:
                     return s
             elif s == 1: 
-                LA20_0 = input.LA(1)
+                LA21_13 = input.LA(1)
 
                  
-                index20_0 = input.index()
+                index21_13 = input.index()
                 input.rewind()
 
                 s = -1
-                if ((FALSE <= LA20_0 <= FLOAT) or LA20_0 == INT or LA20_0 == ML_STRING or LA20_0 == REGEX or (STRING <= LA20_0 <= TRUE)):
-                    s = 1
+                if (LA21_13 == 58):
+                    s = 6
 
-                elif (LA20_0 == 66):
-                    s = 2
+                elif (LA21_13 == 51) and (self.synpred8_Imp()):
+                    s = 7
 
-                elif (LA20_0 == ID):
-                    s = 3
+                elif (LA21_13 == 56):
+                    s = 8
 
-                elif (LA20_0 == CLASS_ID):
-                    s = 4
+                elif (LA21_13 == EOF or LA21_13 == CLASS_ID or LA21_13 == ENUM_KEY or LA21_13 == ID or LA21_13 == ML_STRING or (52 <= LA21_13 <= 53) or LA21_13 == 67 or (70 <= LA21_13 <= 71) or (73 <= LA21_13 <= 75) or (77 <= LA21_13 <= 78) or LA21_13 == 85):
+                    s = 9
 
-                elif (LA20_0 == 89) and (self.synpred9_Imp()):
-                    s = 5
+                elif (LA21_13 == 90):
+                    s = 10
 
                  
-                input.seek(index20_0)
+                input.seek(index21_13)
 
                 if s >= 0:
                     return s
             elif s == 2: 
-                LA20_3 = input.LA(1)
+                LA21_3 = input.LA(1)
 
                  
-                index20_3 = input.index()
+                index21_3 = input.index()
                 input.rewind()
 
                 s = -1
-                if (LA20_3 == 58):
+                if (LA21_3 == 58):
                     s = 6
 
-                elif (LA20_3 == 51) and (self.synpred8_Imp()):
+                elif (LA21_3 == 51) and (self.synpred8_Imp()):
                     s = 7
 
-                elif (LA20_3 == 56):
+                elif (LA21_3 == 56):
                     s = 8
 
-                elif (LA20_3 == EOF or LA20_3 == CLASS_ID or LA20_3 == ENUM_KEY or LA20_3 == ID or LA20_3 == ML_STRING or (52 <= LA20_3 <= 53) or LA20_3 == 67 or (70 <= LA20_3 <= 71) or (73 <= LA20_3 <= 75) or (77 <= LA20_3 <= 78) or LA20_3 == 85):
+                elif (LA21_3 == EOF or LA21_3 == CLASS_ID or LA21_3 == ENUM_KEY or LA21_3 == ID or LA21_3 == ML_STRING or (52 <= LA21_3 <= 53) or LA21_3 == 67 or (70 <= LA21_3 <= 71) or (73 <= LA21_3 <= 75) or (77 <= LA21_3 <= 78) or LA21_3 == 85):
                     s = 9
 
-                elif (LA20_3 == 90):
+                elif (LA21_3 == 90):
                     s = 10
 
                  
-                input.seek(index20_3)
+                input.seek(index21_3)
 
                 if s >= 0:
                     return s
@@ -8546,38 +8583,38 @@ class ImpParser(Parser):
             if self._state.backtracking > 0:
                 raise BacktrackingFailed
 
-            nvae = NoViableAltException(self_.getDescription(), 20, _s, input)
+            nvae = NoViableAltException(self_.getDescription(), 21, _s, input)
             self_.error(nvae)
             raise nvae
 
-    # lookup tables for DFA #27
+    # lookup tables for DFA #28
 
-    DFA27_eot = DFA.unpack(
+    DFA28_eot = DFA.unpack(
         "\6\uffff"
         )
 
-    DFA27_eof = DFA.unpack(
+    DFA28_eof = DFA.unpack(
         "\6\uffff"
         )
 
-    DFA27_min = DFA.unpack(
+    DFA28_min = DFA.unpack(
         "\1\10\1\34\1\uffff\1\10\1\uffff\1\34"
         )
 
-    DFA27_max = DFA.unpack(
+    DFA28_max = DFA.unpack(
         "\1\34\1\72\1\uffff\1\34\1\uffff\1\72"
         )
 
-    DFA27_accept = DFA.unpack(
+    DFA28_accept = DFA.unpack(
         "\2\uffff\1\2\1\uffff\1\1\1\uffff"
         )
 
-    DFA27_special = DFA.unpack(
+    DFA28_special = DFA.unpack(
         "\6\uffff"
         )
 
 
-    DFA27_transition = [
+    DFA28_transition = [
         DFA.unpack("\1\2\23\uffff\1\1"),
         DFA.unpack("\1\4\35\uffff\1\3"),
         DFA.unpack(""),
@@ -8586,40 +8623,40 @@ class ImpParser(Parser):
         DFA.unpack("\1\4\35\uffff\1\3")
     ]
 
-    # class definition for DFA #27
+    # class definition for DFA #28
 
-    class DFA27(DFA):
+    class DFA28(DFA):
         pass
 
 
-    # lookup tables for DFA #38
+    # lookup tables for DFA #39
 
-    DFA38_eot = DFA.unpack(
+    DFA39_eot = DFA.unpack(
         "\5\uffff"
         )
 
-    DFA38_eof = DFA.unpack(
+    DFA39_eof = DFA.unpack(
         "\5\uffff"
         )
 
-    DFA38_min = DFA.unpack(
+    DFA39_min = DFA.unpack(
         "\1\10\1\70\1\uffff\1\10\1\uffff"
         )
 
-    DFA38_max = DFA.unpack(
+    DFA39_max = DFA.unpack(
         "\1\34\1\132\1\uffff\1\34\1\uffff"
         )
 
-    DFA38_accept = DFA.unpack(
+    DFA39_accept = DFA.unpack(
         "\2\uffff\1\1\1\uffff\1\2"
         )
 
-    DFA38_special = DFA.unpack(
+    DFA39_special = DFA.unpack(
         "\5\uffff"
         )
 
 
-    DFA38_transition = [
+    DFA39_transition = [
         DFA.unpack("\1\2\23\uffff\1\1"),
         DFA.unpack("\1\4\1\uffff\1\3\37\uffff\1\4"),
         DFA.unpack(""),
@@ -8627,40 +8664,40 @@ class ImpParser(Parser):
         DFA.unpack("")
     ]
 
-    # class definition for DFA #38
+    # class definition for DFA #39
 
-    class DFA38(DFA):
+    class DFA39(DFA):
         pass
 
 
-    # lookup tables for DFA #40
+    # lookup tables for DFA #41
 
-    DFA40_eot = DFA.unpack(
+    DFA41_eot = DFA.unpack(
         "\15\uffff"
         )
 
-    DFA40_eof = DFA.unpack(
+    DFA41_eof = DFA.unpack(
         "\1\uffff\1\6\1\12\10\uffff\2\6"
         )
 
-    DFA40_min = DFA.unpack(
+    DFA41_min = DFA.unpack(
         "\3\10\1\uffff\1\10\1\34\5\uffff\2\10"
         )
 
-    DFA40_max = DFA.unpack(
+    DFA41_max = DFA.unpack(
         "\1\56\2\133\1\uffff\2\34\5\uffff\2\133"
         )
 
-    DFA40_accept = DFA.unpack(
+    DFA41_accept = DFA.unpack(
         "\3\uffff\1\5\2\uffff\1\1\1\2\1\3\1\4\1\6\2\uffff"
         )
 
-    DFA40_special = DFA.unpack(
+    DFA41_special = DFA.unpack(
         "\15\uffff"
         )
 
 
-    DFA40_transition = [
+    DFA41_transition = [
         DFA.unpack("\1\2\16\uffff\2\3\3\uffff\1\1\2\uffff\1\3\3\uffff\1\3"
         "\7\uffff\1\3\1\uffff\2\3"),
         DFA.unpack("\1\6\12\uffff\1\6\10\uffff\1\6\6\uffff\1\6\16\uffff"
@@ -8689,9 +8726,9 @@ class ImpParser(Parser):
         "\1\10\1\6")
     ]
 
-    # class definition for DFA #40
+    # class definition for DFA #41
 
-    class DFA40(DFA):
+    class DFA41(DFA):
         pass
 
 
@@ -8748,181 +8785,183 @@ class ImpParser(Parser):
     FOLLOW_method_call_in_lambda_func546 = frozenset([1])
     FOLLOW_lambda_ctor_in_lambda_func550 = frozenset([1])
     FOLLOW_75_in_implementation_def579 = frozenset([28])
-    FOLLOW_ID_in_implementation_def581 = frozenset([57])
-    FOLLOW_implementation_in_implementation_def583 = frozenset([1])
-    FOLLOW_74_in_implement_def605 = frozenset([8, 28])
-    FOLLOW_class_ref_in_implement_def607 = frozenset([86])
-    FOLLOW_86_in_implement_def609 = frozenset([28])
-    FOLLOW_ns_ref_in_implement_def611 = frozenset([1, 53, 87])
-    FOLLOW_53_in_implement_def614 = frozenset([28])
-    FOLLOW_ns_ref_in_implement_def616 = frozenset([1, 53, 87])
-    FOLLOW_87_in_implement_def621 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
-    FOLLOW_expression_in_implement_def623 = frozenset([1])
-    FOLLOW_57_in_implementation655 = frozenset([8, 19, 28, 35, 70, 73, 77])
-    FOLLOW_ML_STRING_in_implementation657 = frozenset([8, 19, 28, 70, 73, 77])
-    FOLLOW_statement_in_implementation660 = frozenset([8, 19, 28, 70, 73, 77])
-    FOLLOW_70_in_implementation663 = frozenset([1])
-    FOLLOW_top_statement_in_statement683 = frozenset([1])
-    FOLLOW_ID_in_parameter703 = frozenset([62])
-    FOLLOW_62_in_parameter705 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
-    FOLLOW_operand_in_parameter707 = frozenset([1])
-    FOLLOW_class_ref_in_constructor728 = frozenset([51])
-    FOLLOW_51_in_constructor730 = frozenset([28, 52])
-    FOLLOW_param_list_in_constructor732 = frozenset([52])
-    FOLLOW_52_in_constructor735 = frozenset([1])
-    FOLLOW_parameter_in_param_list760 = frozenset([1, 53])
-    FOLLOW_53_in_param_list763 = frozenset([28])
-    FOLLOW_parameter_in_param_list765 = frozenset([1, 53])
-    FOLLOW_53_in_param_list769 = frozenset([1])
-    FOLLOW_85_in_typedef790 = frozenset([28])
-    FOLLOW_ID_in_typedef792 = frozenset([69])
-    FOLLOW_69_in_typedef794 = frozenset([28])
-    FOLLOW_ns_ref_in_typedef796 = frozenset([80])
-    FOLLOW_80_in_typedef798 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
-    FOLLOW_REGEX_in_typedef801 = frozenset([1])
-    FOLLOW_expression_in_typedef805 = frozenset([1])
-    FOLLOW_85_in_typedef827 = frozenset([8])
-    FOLLOW_CLASS_ID_in_typedef829 = frozenset([69])
-    FOLLOW_69_in_typedef831 = frozenset([8, 28])
-    FOLLOW_constructor_in_typedef833 = frozenset([1])
-    FOLLOW_INT_in_multiplicity_body861 = frozenset([1])
-    FOLLOW_INT_in_multiplicity_body882 = frozenset([57])
-    FOLLOW_57_in_multiplicity_body884 = frozenset([1])
-    FOLLOW_INT_in_multiplicity_body909 = frozenset([57])
-    FOLLOW_57_in_multiplicity_body911 = frozenset([31])
-    FOLLOW_INT_in_multiplicity_body913 = frozenset([1])
-    FOLLOW_57_in_multiplicity_body936 = frozenset([31])
-    FOLLOW_INT_in_multiplicity_body938 = frozenset([1])
-    FOLLOW_66_in_multiplicity960 = frozenset([31, 57])
-    FOLLOW_multiplicity_body_in_multiplicity962 = frozenset([67])
-    FOLLOW_67_in_multiplicity964 = frozenset([1])
-    FOLLOW_class_ref_in_relation_end979 = frozenset([28])
-    FOLLOW_ID_in_relation_end981 = frozenset([1])
-    FOLLOW_relation_end_in_relation1022 = frozenset([66])
-    FOLLOW_multiplicity_in_relation1026 = frozenset([54, 55, 60])
-    FOLLOW_relation_link_in_relation1029 = frozenset([66])
-    FOLLOW_multiplicity_in_relation1034 = frozenset([8, 28])
-    FOLLOW_relation_end_in_relation1038 = frozenset([1])
-    FOLLOW_constant_in_operand1081 = frozenset([1])
-    FOLLOW_list_def_in_operand1086 = frozenset([1])
-    FOLLOW_index_lookup_in_operand1091 = frozenset([1])
-    FOLLOW_function_call_in_operand1104 = frozenset([1])
-    FOLLOW_class_ref_in_operand1109 = frozenset([1])
-    FOLLOW_variable_in_operand1114 = frozenset([1])
-    FOLLOW_method_call_in_operand1119 = frozenset([1])
-    FOLLOW_89_in_operand1130 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
-    FOLLOW_expression_in_operand1132 = frozenset([91])
-    FOLLOW_91_in_operand1134 = frozenset([1])
-    FOLLOW_66_in_list_def1200 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
-    FOLLOW_operand_in_list_def1202 = frozenset([53, 67])
-    FOLLOW_53_in_list_def1205 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
-    FOLLOW_operand_in_list_def1207 = frozenset([53, 67])
-    FOLLOW_53_in_list_def1211 = frozenset([67])
-    FOLLOW_67_in_list_def1214 = frozenset([1])
-    FOLLOW_param_list_in_index_arg1235 = frozenset([1])
-    FOLLOW_class_ref_in_index_lookup1248 = frozenset([66])
-    FOLLOW_66_in_index_lookup1250 = frozenset([28])
-    FOLLOW_index_arg_in_index_lookup1252 = frozenset([67])
-    FOLLOW_67_in_index_lookup1254 = frozenset([1])
-    FOLLOW_71_in_entity_def1276 = frozenset([8])
-    FOLLOW_CLASS_ID_in_entity_def1278 = frozenset([57, 72])
-    FOLLOW_72_in_entity_def1281 = frozenset([8, 28])
-    FOLLOW_class_ref_in_entity_def1283 = frozenset([53, 57])
-    FOLLOW_53_in_entity_def1286 = frozenset([8, 28])
-    FOLLOW_class_ref_in_entity_def1288 = frozenset([53, 57])
-    FOLLOW_57_in_entity_def1295 = frozenset([8, 28, 35, 70])
-    FOLLOW_ML_STRING_in_entity_def1297 = frozenset([8, 28, 70])
-    FOLLOW_entity_body_in_entity_def1301 = frozenset([8, 28, 70])
-    FOLLOW_70_in_entity_def1305 = frozenset([1])
-    FOLLOW_ns_ref_in_type1347 = frozenset([1])
-    FOLLOW_class_ref_in_type1351 = frozenset([1])
-    FOLLOW_type_in_entity_body1362 = frozenset([28])
-    FOLLOW_ID_in_entity_body1364 = frozenset([1, 62])
-    FOLLOW_62_in_entity_body1367 = frozenset([23, 24, 31, 35, 43, 45, 46])
-    FOLLOW_constant_in_entity_body1369 = frozenset([1])
-    FOLLOW_ID_in_ns_ref1396 = frozenset([1, 58])
-    FOLLOW_58_in_ns_ref1399 = frozenset([28])
-    FOLLOW_ID_in_ns_ref1401 = frozenset([1, 58])
-    FOLLOW_ID_in_class_ref1430 = frozenset([58])
-    FOLLOW_58_in_class_ref1432 = frozenset([8, 28])
-    FOLLOW_CLASS_ID_in_class_ref1436 = frozenset([1])
-    FOLLOW_ID_in_variable1470 = frozenset([58])
-    FOLLOW_58_in_variable1472 = frozenset([28])
-    FOLLOW_ID_in_variable1478 = frozenset([1, 56])
-    FOLLOW_56_in_variable1481 = frozenset([28])
-    FOLLOW_ID_in_variable1485 = frozenset([1, 56])
-    FOLLOW_operand_in_arg_list1524 = frozenset([1, 53])
-    FOLLOW_53_in_arg_list1527 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
-    FOLLOW_operand_in_arg_list1529 = frozenset([1, 53])
-    FOLLOW_53_in_arg_list1533 = frozenset([1])
-    FOLLOW_ns_ref_in_function_call1555 = frozenset([51])
-    FOLLOW_51_in_function_call1557 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 52, 66, 89])
-    FOLLOW_call_arg_in_function_call1559 = frozenset([52])
-    FOLLOW_52_in_function_call1562 = frozenset([1])
-    FOLLOW_arg_list_in_call_arg1590 = frozenset([1])
-    FOLLOW_90_in_method_pipe1601 = frozenset([28])
-    FOLLOW_ns_ref_in_method_pipe1603 = frozenset([1, 51])
-    FOLLOW_51_in_method_pipe1606 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 52, 66, 89])
-    FOLLOW_call_arg_in_method_pipe1608 = frozenset([52])
-    FOLLOW_52_in_method_pipe1611 = frozenset([1])
-    FOLLOW_class_ref_in_method_call1640 = frozenset([90])
-    FOLLOW_variable_in_method_call1646 = frozenset([90])
-    FOLLOW_method_pipe_in_method_call1650 = frozenset([1, 90])
-    FOLLOW_81_in_un_op1680 = frozenset([1])
-    FOLLOW_variable_in_cmp_oper1728 = frozenset([1])
-    FOLLOW_function_call_in_cmp_oper1732 = frozenset([1])
-    FOLLOW_method_call_in_cmp_oper1736 = frozenset([1])
-    FOLLOW_index_lookup_in_cmp_oper1740 = frozenset([1])
-    FOLLOW_constant_in_cmp_oper1744 = frozenset([1])
-    FOLLOW_class_ref_in_cmp_oper1748 = frozenset([1])
-    FOLLOW_cmp_oper_in_cmp1769 = frozenset([76])
-    FOLLOW_76_in_cmp1771 = frozenset([28, 66])
-    FOLLOW_in_oper_in_cmp1773 = frozenset([1])
-    FOLLOW_cmp_oper_in_cmp1790 = frozenset([50, 59, 61, 63, 64, 65, 79])
-    FOLLOW_cmp_op_in_cmp1792 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46])
-    FOLLOW_cmp_oper_in_cmp1794 = frozenset([1])
-    FOLLOW_list_def_in_in_oper1833 = frozenset([1])
-    FOLLOW_variable_in_in_oper1837 = frozenset([1])
-    FOLLOW_cmp_in_log_oper1850 = frozenset([1])
-    FOLLOW_TRUE_in_log_oper1854 = frozenset([1])
-    FOLLOW_FALSE_in_log_oper1858 = frozenset([1])
-    FOLLOW_log_oper_in_log_expr1879 = frozenset([68, 82])
-    FOLLOW_log_op_in_log_expr1881 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46])
-    FOLLOW_log_expr_in_log_expr1883 = frozenset([1])
-    FOLLOW_log_oper_in_log_expr1900 = frozenset([1])
-    FOLLOW_51_in_expression1912 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
-    FOLLOW_expression_in_expression1914 = frozenset([52])
-    FOLLOW_52_in_expression1916 = frozenset([1, 68, 82])
-    FOLLOW_log_op_in_expression1919 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
-    FOLLOW_expression_in_expression1921 = frozenset([1])
-    FOLLOW_log_expr_in_expression1948 = frozenset([68, 82])
-    FOLLOW_log_op_in_expression1950 = frozenset([51])
-    FOLLOW_51_in_expression1952 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
-    FOLLOW_expression_in_expression1954 = frozenset([52])
-    FOLLOW_52_in_expression1956 = frozenset([1])
-    FOLLOW_log_expr_in_expression1973 = frozenset([1])
+    FOLLOW_ID_in_implementation_def581 = frozenset([57, 73])
+    FOLLOW_73_in_implementation_def584 = frozenset([8, 28])
+    FOLLOW_class_ref_in_implementation_def586 = frozenset([57])
+    FOLLOW_implementation_in_implementation_def590 = frozenset([1])
+    FOLLOW_74_in_implement_def615 = frozenset([8, 28])
+    FOLLOW_class_ref_in_implement_def617 = frozenset([86])
+    FOLLOW_86_in_implement_def619 = frozenset([28])
+    FOLLOW_ns_ref_in_implement_def621 = frozenset([1, 53, 87])
+    FOLLOW_53_in_implement_def624 = frozenset([28])
+    FOLLOW_ns_ref_in_implement_def626 = frozenset([1, 53, 87])
+    FOLLOW_87_in_implement_def631 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
+    FOLLOW_expression_in_implement_def633 = frozenset([1])
+    FOLLOW_57_in_implementation665 = frozenset([8, 19, 28, 35, 70, 73, 77])
+    FOLLOW_ML_STRING_in_implementation667 = frozenset([8, 19, 28, 70, 73, 77])
+    FOLLOW_statement_in_implementation670 = frozenset([8, 19, 28, 70, 73, 77])
+    FOLLOW_70_in_implementation673 = frozenset([1])
+    FOLLOW_top_statement_in_statement693 = frozenset([1])
+    FOLLOW_ID_in_parameter713 = frozenset([62])
+    FOLLOW_62_in_parameter715 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
+    FOLLOW_operand_in_parameter717 = frozenset([1])
+    FOLLOW_class_ref_in_constructor738 = frozenset([51])
+    FOLLOW_51_in_constructor740 = frozenset([28, 52])
+    FOLLOW_param_list_in_constructor742 = frozenset([52])
+    FOLLOW_52_in_constructor745 = frozenset([1])
+    FOLLOW_parameter_in_param_list770 = frozenset([1, 53])
+    FOLLOW_53_in_param_list773 = frozenset([28])
+    FOLLOW_parameter_in_param_list775 = frozenset([1, 53])
+    FOLLOW_53_in_param_list779 = frozenset([1])
+    FOLLOW_85_in_typedef800 = frozenset([28])
+    FOLLOW_ID_in_typedef802 = frozenset([69])
+    FOLLOW_69_in_typedef804 = frozenset([28])
+    FOLLOW_ns_ref_in_typedef806 = frozenset([80])
+    FOLLOW_80_in_typedef808 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
+    FOLLOW_REGEX_in_typedef811 = frozenset([1])
+    FOLLOW_expression_in_typedef815 = frozenset([1])
+    FOLLOW_85_in_typedef837 = frozenset([8])
+    FOLLOW_CLASS_ID_in_typedef839 = frozenset([69])
+    FOLLOW_69_in_typedef841 = frozenset([8, 28])
+    FOLLOW_constructor_in_typedef843 = frozenset([1])
+    FOLLOW_INT_in_multiplicity_body871 = frozenset([1])
+    FOLLOW_INT_in_multiplicity_body892 = frozenset([57])
+    FOLLOW_57_in_multiplicity_body894 = frozenset([1])
+    FOLLOW_INT_in_multiplicity_body919 = frozenset([57])
+    FOLLOW_57_in_multiplicity_body921 = frozenset([31])
+    FOLLOW_INT_in_multiplicity_body923 = frozenset([1])
+    FOLLOW_57_in_multiplicity_body946 = frozenset([31])
+    FOLLOW_INT_in_multiplicity_body948 = frozenset([1])
+    FOLLOW_66_in_multiplicity970 = frozenset([31, 57])
+    FOLLOW_multiplicity_body_in_multiplicity972 = frozenset([67])
+    FOLLOW_67_in_multiplicity974 = frozenset([1])
+    FOLLOW_class_ref_in_relation_end989 = frozenset([28])
+    FOLLOW_ID_in_relation_end991 = frozenset([1])
+    FOLLOW_relation_end_in_relation1032 = frozenset([66])
+    FOLLOW_multiplicity_in_relation1036 = frozenset([54, 55, 60])
+    FOLLOW_relation_link_in_relation1039 = frozenset([66])
+    FOLLOW_multiplicity_in_relation1044 = frozenset([8, 28])
+    FOLLOW_relation_end_in_relation1048 = frozenset([1])
+    FOLLOW_constant_in_operand1091 = frozenset([1])
+    FOLLOW_list_def_in_operand1096 = frozenset([1])
+    FOLLOW_index_lookup_in_operand1101 = frozenset([1])
+    FOLLOW_function_call_in_operand1114 = frozenset([1])
+    FOLLOW_class_ref_in_operand1119 = frozenset([1])
+    FOLLOW_variable_in_operand1124 = frozenset([1])
+    FOLLOW_method_call_in_operand1129 = frozenset([1])
+    FOLLOW_89_in_operand1140 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
+    FOLLOW_expression_in_operand1142 = frozenset([91])
+    FOLLOW_91_in_operand1144 = frozenset([1])
+    FOLLOW_66_in_list_def1210 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
+    FOLLOW_operand_in_list_def1212 = frozenset([53, 67])
+    FOLLOW_53_in_list_def1215 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
+    FOLLOW_operand_in_list_def1217 = frozenset([53, 67])
+    FOLLOW_53_in_list_def1221 = frozenset([67])
+    FOLLOW_67_in_list_def1224 = frozenset([1])
+    FOLLOW_param_list_in_index_arg1245 = frozenset([1])
+    FOLLOW_class_ref_in_index_lookup1258 = frozenset([66])
+    FOLLOW_66_in_index_lookup1260 = frozenset([28])
+    FOLLOW_index_arg_in_index_lookup1262 = frozenset([67])
+    FOLLOW_67_in_index_lookup1264 = frozenset([1])
+    FOLLOW_71_in_entity_def1286 = frozenset([8])
+    FOLLOW_CLASS_ID_in_entity_def1288 = frozenset([57, 72])
+    FOLLOW_72_in_entity_def1291 = frozenset([8, 28])
+    FOLLOW_class_ref_in_entity_def1293 = frozenset([53, 57])
+    FOLLOW_53_in_entity_def1296 = frozenset([8, 28])
+    FOLLOW_class_ref_in_entity_def1298 = frozenset([53, 57])
+    FOLLOW_57_in_entity_def1305 = frozenset([8, 28, 35, 70])
+    FOLLOW_ML_STRING_in_entity_def1307 = frozenset([8, 28, 70])
+    FOLLOW_entity_body_in_entity_def1311 = frozenset([8, 28, 70])
+    FOLLOW_70_in_entity_def1315 = frozenset([1])
+    FOLLOW_ns_ref_in_type1357 = frozenset([1])
+    FOLLOW_class_ref_in_type1361 = frozenset([1])
+    FOLLOW_type_in_entity_body1372 = frozenset([28])
+    FOLLOW_ID_in_entity_body1374 = frozenset([1, 62])
+    FOLLOW_62_in_entity_body1377 = frozenset([23, 24, 31, 35, 43, 45, 46])
+    FOLLOW_constant_in_entity_body1379 = frozenset([1])
+    FOLLOW_ID_in_ns_ref1406 = frozenset([1, 58])
+    FOLLOW_58_in_ns_ref1409 = frozenset([28])
+    FOLLOW_ID_in_ns_ref1411 = frozenset([1, 58])
+    FOLLOW_ID_in_class_ref1440 = frozenset([58])
+    FOLLOW_58_in_class_ref1442 = frozenset([8, 28])
+    FOLLOW_CLASS_ID_in_class_ref1446 = frozenset([1])
+    FOLLOW_ID_in_variable1480 = frozenset([58])
+    FOLLOW_58_in_variable1482 = frozenset([28])
+    FOLLOW_ID_in_variable1488 = frozenset([1, 56])
+    FOLLOW_56_in_variable1491 = frozenset([28])
+    FOLLOW_ID_in_variable1495 = frozenset([1, 56])
+    FOLLOW_operand_in_arg_list1534 = frozenset([1, 53])
+    FOLLOW_53_in_arg_list1537 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 66, 89])
+    FOLLOW_operand_in_arg_list1539 = frozenset([1, 53])
+    FOLLOW_53_in_arg_list1543 = frozenset([1])
+    FOLLOW_ns_ref_in_function_call1565 = frozenset([51])
+    FOLLOW_51_in_function_call1567 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 52, 66, 89])
+    FOLLOW_call_arg_in_function_call1569 = frozenset([52])
+    FOLLOW_52_in_function_call1572 = frozenset([1])
+    FOLLOW_arg_list_in_call_arg1600 = frozenset([1])
+    FOLLOW_90_in_method_pipe1611 = frozenset([28])
+    FOLLOW_ns_ref_in_method_pipe1613 = frozenset([1, 51])
+    FOLLOW_51_in_method_pipe1616 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 52, 66, 89])
+    FOLLOW_call_arg_in_method_pipe1618 = frozenset([52])
+    FOLLOW_52_in_method_pipe1621 = frozenset([1])
+    FOLLOW_class_ref_in_method_call1650 = frozenset([90])
+    FOLLOW_variable_in_method_call1656 = frozenset([90])
+    FOLLOW_method_pipe_in_method_call1660 = frozenset([1, 90])
+    FOLLOW_81_in_un_op1690 = frozenset([1])
+    FOLLOW_variable_in_cmp_oper1738 = frozenset([1])
+    FOLLOW_function_call_in_cmp_oper1742 = frozenset([1])
+    FOLLOW_method_call_in_cmp_oper1746 = frozenset([1])
+    FOLLOW_index_lookup_in_cmp_oper1750 = frozenset([1])
+    FOLLOW_constant_in_cmp_oper1754 = frozenset([1])
+    FOLLOW_class_ref_in_cmp_oper1758 = frozenset([1])
+    FOLLOW_cmp_oper_in_cmp1779 = frozenset([76])
+    FOLLOW_76_in_cmp1781 = frozenset([28, 66])
+    FOLLOW_in_oper_in_cmp1783 = frozenset([1])
+    FOLLOW_cmp_oper_in_cmp1800 = frozenset([50, 59, 61, 63, 64, 65, 79])
+    FOLLOW_cmp_op_in_cmp1802 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46])
+    FOLLOW_cmp_oper_in_cmp1804 = frozenset([1])
+    FOLLOW_list_def_in_in_oper1843 = frozenset([1])
+    FOLLOW_variable_in_in_oper1847 = frozenset([1])
+    FOLLOW_cmp_in_log_oper1860 = frozenset([1])
+    FOLLOW_TRUE_in_log_oper1864 = frozenset([1])
+    FOLLOW_FALSE_in_log_oper1868 = frozenset([1])
+    FOLLOW_log_oper_in_log_expr1889 = frozenset([68, 82])
+    FOLLOW_log_op_in_log_expr1891 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46])
+    FOLLOW_log_expr_in_log_expr1893 = frozenset([1])
+    FOLLOW_log_oper_in_log_expr1910 = frozenset([1])
+    FOLLOW_51_in_expression1922 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
+    FOLLOW_expression_in_expression1924 = frozenset([52])
+    FOLLOW_52_in_expression1926 = frozenset([1, 68, 82])
+    FOLLOW_log_op_in_expression1929 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
+    FOLLOW_expression_in_expression1931 = frozenset([1])
+    FOLLOW_log_expr_in_expression1958 = frozenset([68, 82])
+    FOLLOW_log_op_in_expression1960 = frozenset([51])
+    FOLLOW_51_in_expression1962 = frozenset([8, 23, 24, 28, 31, 35, 43, 45, 46, 51])
+    FOLLOW_expression_in_expression1964 = frozenset([52])
+    FOLLOW_52_in_expression1966 = frozenset([1])
+    FOLLOW_log_expr_in_expression1983 = frozenset([1])
     FOLLOW_class_ref_in_synpred1_Imp284 = frozenset([51])
     FOLLOW_51_in_synpred1_Imp286 = frozenset([1])
     FOLLOW_73_in_synpred2_Imp326 = frozenset([1])
     FOLLOW_class_ref_in_synpred3_Imp387 = frozenset([51])
     FOLLOW_51_in_synpred3_Imp389 = frozenset([1])
-    FOLLOW_INT_in_synpred4_Imp856 = frozenset([1])
-    FOLLOW_INT_in_synpred5_Imp875 = frozenset([57])
-    FOLLOW_57_in_synpred5_Imp877 = frozenset([1])
-    FOLLOW_INT_in_synpred6_Imp900 = frozenset([57])
-    FOLLOW_57_in_synpred6_Imp902 = frozenset([31])
-    FOLLOW_INT_in_synpred6_Imp904 = frozenset([1])
-    FOLLOW_57_in_synpred7_Imp929 = frozenset([31])
-    FOLLOW_INT_in_synpred7_Imp931 = frozenset([1])
-    FOLLOW_ns_ref_in_synpred8_Imp1097 = frozenset([51])
-    FOLLOW_51_in_synpred8_Imp1099 = frozenset([1])
-    FOLLOW_89_in_synpred9_Imp1125 = frozenset([1])
-    FOLLOW_cmp_oper_in_synpred10_Imp1762 = frozenset([76])
-    FOLLOW_76_in_synpred10_Imp1764 = frozenset([1])
-    FOLLOW_log_oper_in_synpred11_Imp1872 = frozenset([68, 82])
-    FOLLOW_log_op_in_synpred11_Imp1874 = frozenset([1])
-    FOLLOW_log_expr_in_synpred12_Imp1941 = frozenset([68, 82])
-    FOLLOW_log_op_in_synpred12_Imp1943 = frozenset([1])
+    FOLLOW_INT_in_synpred4_Imp866 = frozenset([1])
+    FOLLOW_INT_in_synpred5_Imp885 = frozenset([57])
+    FOLLOW_57_in_synpred5_Imp887 = frozenset([1])
+    FOLLOW_INT_in_synpred6_Imp910 = frozenset([57])
+    FOLLOW_57_in_synpred6_Imp912 = frozenset([31])
+    FOLLOW_INT_in_synpred6_Imp914 = frozenset([1])
+    FOLLOW_57_in_synpred7_Imp939 = frozenset([31])
+    FOLLOW_INT_in_synpred7_Imp941 = frozenset([1])
+    FOLLOW_ns_ref_in_synpred8_Imp1107 = frozenset([51])
+    FOLLOW_51_in_synpred8_Imp1109 = frozenset([1])
+    FOLLOW_89_in_synpred9_Imp1135 = frozenset([1])
+    FOLLOW_cmp_oper_in_synpred10_Imp1772 = frozenset([76])
+    FOLLOW_76_in_synpred10_Imp1774 = frozenset([1])
+    FOLLOW_log_oper_in_synpred11_Imp1882 = frozenset([68, 82])
+    FOLLOW_log_op_in_synpred11_Imp1884 = frozenset([1])
+    FOLLOW_log_expr_in_synpred12_Imp1951 = frozenset([68, 82])
+    FOLLOW_log_op_in_synpred12_Imp1953 = frozenset([1])
 
 
 

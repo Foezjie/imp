@@ -28,6 +28,7 @@ from Imp.ast.variables import AttributeVariable, Reference, Variable
 from Imp.execute import DuplicateVariableException, NotFoundException
 from Imp.execute.scope import Scope
 from Imp.execute.state import DynamicState
+from Imp.stats import Stats
 
 class Import(GeneratorStatement):
     """
@@ -192,7 +193,9 @@ class Implement(GeneratorStatement):
             for stmt in impl.statements:
                 child_state = DynamicState(state.compiler, namespace, stmt)
                 child_state.add_to_graph(state.graph)
-                state._child_statements[stmt] = child_state    
+                state._child_statements[stmt] = child_state  
+                
+        Stats.get("refine").increment(len(implementations))  
             
     def __repr__(self):
         return "EntityImplement(%s)" % self.instance

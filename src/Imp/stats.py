@@ -17,58 +17,49 @@
     Technical Contact: bart.vanbrabant@cs.kuleuven.be
 """
 
+import json
+
 class Stats(object):
-    _st = None
+    _st = {}
     
     @classmethod
-    def get(cls):
+    def get(cls, name):
         """
             Get a reference to a stats object
         """
-        if cls._st is None:
-            cls._st = Stats()
+        if name not in cls._st:
+            cls._st[name] = Stats(name)
             
-        return cls._st
+        return cls._st[name]
     
-    def __init__(self):
+    def __init__(self, name):
         self._counter = 0
-        self._lock = None
+        self._name = name
     
-    def lock(self, lock_id):
-        """
-            Lock the stats and ignore all calls until unlocked with the given
-            id.
-        """
-        if self._lock is None:
-            self._lock = lock_id
-            
-    def unlock_and_increment(self, lock_id):
-        """
-            Unlock the counter and increment it
-        """
-        if self._lock == lock_id:
-            self._counter += 1
-            self._lock = None
-            
-    def unlock(self, lock_id):
-        """
-            Unlock the counter
-        """
-        if self._lock == lock_id:
-            self._lock = None
-
     def count(self):
         """
             Get the lock count
         """
         return self._counter
     
-    def increment(self):
+    def increment(self, step = 1):
         """
             Increment the count
         """
-        if self._lock is None:
-            self._counter += 1
+        self._counter += step
+        
+    @classmethod
+    def dump(cls):
+        """
+        Get all stats and dump them
+        """
+        data = {}
+        for name, stat in cls._st.items():
+            data[name] = stat.count()
+            
+        with open("stats.json", "w+") as fd:
+            json.dump(data, fd)
+        
             
 class TemplateStats(object):
     instance = None
@@ -78,8 +69,8 @@ class TemplateStats(object):
         
         TemplateStats.instance = self
     
-    def record_access(self, varstr, value, index, type):
-        self._access.append((varstr, value, index, type))
+    def record_access(self, varstr, value, index, _type):
+        self._access.append((varstr, value, index, _type))
 
     def get_stats(self):
         return self._access

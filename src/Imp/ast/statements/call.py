@@ -19,6 +19,7 @@
 
 from . import CallStatement
 from Imp.ast.variables import Variable
+from Imp.stats import Stats
 
 class FunctionCall(CallStatement):
     """
@@ -103,6 +104,7 @@ class FunctionCall(CallStatement):
         function.check_args(arguments)
         
         result = function(*arguments)
+        Stats.get("function call").increment()
         
         new_statement = function.emit_statement()
         

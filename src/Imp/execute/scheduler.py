@@ -28,6 +28,7 @@ from Imp.execute.proxy import UnsetException
 from Imp.ast.variables import AttributeVariable, Variable
 from Imp.compiler import CallbackHandler
 from Imp.plugins.base import Context
+from Imp.stats import Stats
     
 DEBUG = True
 LOGGER = logging.getLogger(__name__)
@@ -92,7 +93,7 @@ class Scheduler(object):
             attr_var = AttributeVariable.create(Variable(exception.instance), 
                                                 exception.attribute)
             self._graph.add_actions(statement, [("get", attr_var)])
-            
+            Stats.get("backtrack").increment()
         except Exception as exception:
             self.show_exception(statement, exception)
             

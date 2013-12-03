@@ -259,6 +259,9 @@ class Parser(object):
         
         for stmt in node.children[1].children:
             impl.add_statement(self._handle_node(stmt))
+
+        if len(node.children) > 2:
+            impl.entity = self._handle_node(node.children[2])
             
         return impl
     

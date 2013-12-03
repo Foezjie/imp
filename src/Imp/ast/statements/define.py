@@ -118,6 +118,20 @@ class DefineImplementation(DefinitionStatement):
         DefinitionStatement.__init__(self)
         self.name = name
         self.statements = []
+        self.entity = None
+        
+    def types(self):
+        """
+            The types this statement requires
+        """
+        if self.entity is not None:
+            return [("entity", self.entity)]
+        """
+        print("Deprecated: defining implementations without a reference to the entity they implement " +
+              "is deprecated and will be removed in future versions. Use the "+
+              "'implementation %s for Entity:' syntax. at line %d of %s" % (self.name, self.line, self.filename))
+        """
+        return []
         
     def add_statement(self, statement):
         """
@@ -136,7 +150,11 @@ class DefineImplementation(DefinitionStatement):
         """
             Evaluate this statement in the given scope
         """
-        cls = Implementation(self.name)
+        if self.entity is not None:
+            cls = Implementation(self.name, state.get_type("entity"))
+        else:
+            cls = Implementation(self.name)
+            
         cls.statements = self.statements
         local_scope.add_variable(self.name, Variable(cls))
 
@@ -187,7 +205,13 @@ class DefineImplement(DefinitionStatement):
         i = 0
         for _impl in self.implementations:
             i += 1
-            implement.implementations.append(state.get_type("impl%d" % i))
+            # check if the implementation has the correct type 
+            impl_obj = state.get_type("impl%d" % i)
+            if impl_obj.entity is not None and not (entity_type is impl_obj.entity or entity_type.is_parent(impl_obj.entity)):
+                raise Exception("Type mismatch: cannot use %s as implementation for %s because its implementing type is %s" % (impl_obj.name, entity_type, impl_obj.entity))
+            
+            # add it
+            implement.implementations.append(impl_obj)
         
         entity_type.add_implementation(implement)
 

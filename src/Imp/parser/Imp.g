@@ -93,7 +93,7 @@ lambda_func
 	;
 
 implementation_def
-	: 'implementation' ID implementation -> ^(DEF_IMPLEMENTATION ID implementation)
+	: 'implementation' ID ('for' class_ref)? implementation -> ^(DEF_IMPLEMENTATION ID implementation class_ref?)
 	;
 
 // implement File using PosixFile, LinuxFile when os is "redhat"

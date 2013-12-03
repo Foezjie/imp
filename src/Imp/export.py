@@ -217,10 +217,15 @@ class Exporter(object):
         self._validate_graph()
 
         json_data = self.resources_to_json()
-        self.deploy_code(self._version)
+        if self.options and self.options.json:
+            with open(self.options.json, "wb+") as fd:
+                fd.write(json_data)
+        
+        else:
+            self.deploy_code(self._version)
 
-        if len(self._resources) > 0 and not offline:   
-            self.commit_resources(self._version, json_data)
+            if len(self._resources) > 0 and not offline:
+                self.commit_resources(self._version, json_data)
         
         LOGGER.info("Committed resources with version %d" % self._version)
         
