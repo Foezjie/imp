@@ -24,7 +24,9 @@ from Imp.loader import CodeLoader
 
 from . import persistence
 
-from amqplib import client_0_8 as amqp
+#from amqplib import client_0_8 as amqp
+
+import amqp
 
 import sys, logging, os, time, re, json, threading, base64, datetime
 import tornado.ioloop
@@ -343,28 +345,36 @@ class MQServer(threading.Thread):
         """
             Connect to AMQP and subscribe
         """
-        self._conn = amqp.Connection(host = self._config["communication"]["host"], 
-                            userid = self._config["communication"]["user"],
-                            password = self._config["communication"]["password"],
-                            virtual_host = "/")
+        self._logger.info("Connecting to AMQP server")
         
-        self._exchange_name =  self._config["communication"]["exchange"]
-        
-        self._channel = self._conn.channel()
-        self._channel.exchange_declare(exchange = self._exchange_name, type = "topic")
-        
-        result = self._channel.queue_declare(exclusive = True)
-        queue_name = result[0]
-        self._queue_name = queue_name
-        
-        self._channel.queue_bind(exchange = self._exchange_name, queue = queue_name,
-                       routing_key="control")
-        self._channel.queue_bind(exchange = self._exchange_name, queue = queue_name,
-                       routing_key="updated")
-        self._channel.queue_bind(exchange = self._exchange_name, queue = queue_name,
-                       routing_key="resources.*.*")
-
-        self._channel.basic_consume(queue = queue_name, callback=self.on_message, no_ack=True)
+        try:
+            self._conn = amqp.Connection(host = self._config["communication"]["host"], 
+                                userid = self._config["communication"]["user"],
+                                password = self._config["communication"]["password"],
+                                virtual_host = "/", connect_timeout = 5)
+            
+            self._exchange_name =  self._config["communication"]["exchange"]
+            
+            self._channel = self._conn.channel()
+            self._channel.exchange_declare(exchange = self._exchange_name, type = "topic")
+            
+            result = self._channel.queue_declare(exclusive = True)
+            queue_name = result[0]
+            self._queue_name = queue_name
+            
+            self._channel.queue_bind(exchange = self._exchange_name, queue = queue_name,
+                           routing_key="control")
+            self._channel.queue_bind(exchange = self._exchange_name, queue = queue_name,
+                           routing_key="updated")
+            self._channel.queue_bind(exchange = self._exchange_name, queue = queue_name,
+                           routing_key="resources.*.*")
+    
+            self._channel.basic_consume(queue = queue_name, callback=self.on_message, no_ack=True)
+            self._logger.info("Connected")
+        except OSError:
+            # this means the connection failed
+            self._logger.warning("Connection failed, retrying in 10s")
+            time.sleep(10)
         
     def run(self):
         """
@@ -374,17 +384,32 @@ class MQServer(threading.Thread):
         if not os.path.exists(self._config["server"]["storage"]):
             os.mkdir(self._config["server"]["storage"])
         
-        # connect
-        self._connect()
+        while True:
+            try:
+                self._do_connect()
+            except:
+                pass
+
+                
+    def _do_connect(self):
+        # try to connect
+        while self._conn is None:
+            self._connect()
         
         while self._channel.callbacks and self._run:
             try:
                 self._channel.wait()
             
             except Exception:
-                self._logger.exception("Received exception in MQ handler")
-                
-            
+                if self._conn is None or not self._conn.connected:
+                    self._logger.warning("Connection to server lost, reconnecting")
+                    conn = self._conn
+                    self._conn = None
+                    conn.close()
+                else:
+                    self._logger.exception("Received exception in MQ handler")
+    
+    
     def on_message(self, msg):
         """
             Receive a new file
