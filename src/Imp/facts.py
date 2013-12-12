@@ -28,9 +28,22 @@ def get_fact(res, fact_name):
         Get the fact with the given name from the database
     """
     cfg = Config.get()
-    url = cfg["config"]["server"] + "/fact/%s?id=%s" % (fact_name,  Exporter.get_id(res))
-    try:
-        with request.urlopen(url) as f:
-            return f.read().decode('utf-8')
-    except:
-        return Unknown(source = res)
+    resource_id = Exporter.get_id(res)
+
+    fact_value = None
+    if cfg["config"]["offline"] == "true":
+        fact_value = Offline.get().get_fact(resource_id, fact_name, Unknown(source = res))
+
+    else:
+        url = cfg["config"]["server"] + "/fact/%s?id=%s" % (fact_name,  resource_id)
+        try:
+            with request.urlopen(url) as f:
+                fact_value = f.read().decode('utf-8')
+        except:
+            fact_value = Unknown(source = res)
+
+    if cfg["config"]["unknown-dummy"] == "true" and isinstance(fact_value, Unknown):
+        return dummy_value
+
+    Stats.get("get fact").increment()
+    return fact_value
