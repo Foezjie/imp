@@ -57,7 +57,6 @@ def deploy(config, root_scope, remote = None, dry_run = True, ip_address = None)
     if remote is not None and ip_address is None:
         ip_address = remote
 
-    print(ip_address)
     agent = Agent(config, False, hostname, offline = True, deploy = not dry_run, remote = ip_address)
     agent._offline_files = files
 
