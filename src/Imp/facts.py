@@ -30,11 +30,11 @@ def get_fact(res, fact_name, dummy_value):
     """
     cfg = Config.get()
     resource_id = Exporter.get_id(res)
-    
+
     fact_value = None
-    if bool(cfg["config"]["offline"]):
+    if cfg["config"]["offline"] == "true":
         fact_value = Offline.get().get_fact(resource_id, fact_name, Unknown(source = res))
-    
+
     else:
         url = cfg["config"]["server"] + "/fact/%s?id=%s" % (fact_name,  resource_id)
         try:
@@ -42,8 +42,8 @@ def get_fact(res, fact_name, dummy_value):
                 fact_value = f.read().decode('utf-8')
         except:
             fact_value = Unknown(source = res)
-    
-    if bool(cfg["config"]["unknown-dummy"]) and isinstance(fact_value, Unknown):
+
+    if cfg["config"]["unknown-dummy"] == "true" and isinstance(fact_value, Unknown):
         return dummy_value
 
     Stats.get("get fact").increment()
