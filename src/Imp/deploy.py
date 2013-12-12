@@ -30,33 +30,34 @@ def deploy(config, root_scope, remote = None, dry_run = True, ip_address = None)
         hostname = socket.gethostname()
     else:
         hostname = remote
-    
+
     print("Deploying on %s (dry-run = %s)" % (hostname, dry_run))
-        
+
     try:
         servers = root_scope.get_variable("Host", ["std"]).value
-        
+
         for server in servers:
             all_names.append(server.name)
             if server.name == hostname:
                 deploy_host = server
-        
+
     except Exception:
         print("The std module is not loaded or does not contain the definition of Host")
         return
-        
+
     if deploy_host is None:
         print("Unable to find a host to deploy on the current machine %s" % hostname)
         print("Host found in model: " + ", ".join(all_names))
         return
-    
+
     export = Exporter(config)
     json_data = export.run(root_scope, offline = True)
     files = export.get_offline_files()
-    
-    if remote is not None:
+
+    if remote is not None and ip_address is None:
         ip_address = remote
-    
+
+    print(ip_address)
     agent = Agent(config, False, hostname, offline = True, deploy = not dry_run, remote = ip_address)
     agent._offline_files = files
 
@@ -68,7 +69,7 @@ def deploy(config, root_scope, remote = None, dry_run = True, ip_address = None)
     if agent._queue.size() == 0:
         print("No configuration found for host %s" % hostname)
         return
-            
+
     print("Deploying config")
     agent.deploy_config()
     #agent.close()
