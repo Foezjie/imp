@@ -420,7 +420,7 @@ class Agent(object):
                 LOGGER.exception("Unable to find a handler for %s" % resource_id)
             
         elif operation == "QUEUE":
-            response = {"queue" : ["%s,v=%d" % (x.id, x.version) for x in self._queue.all()]}
+            response = {"queue" : ["%s" % (x.id) for x in self._queue.all()]}
                 
             self._mq_send("control", "QUEUE_REPLY", response)
                 
